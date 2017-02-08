@@ -1,0 +1,22 @@
+#! /usr/bin/env node
+
+var pkg = require('../package.json');
+var program = require('commander');
+
+// tasks
+var go = require('../lib/go');
+var init = require('../lib/init');
+
+program
+    .command('go')
+    .description('Generate SQL files for all stored procedures, functions, views, etc.')
+    .action(go);
+
+program
+    .command('init')
+    .description('Create default config file.')
+    .action(init);
+
+program
+    .version(pkg.version)
+    .parse(process.argv);

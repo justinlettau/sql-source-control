@@ -1,0 +1,37 @@
+{
+  "name": "sql-source-control",
+  "version": "0.0.1",
+  "description": "Simple CLI for getting SQL into source control systems.",
+  "keywords": [
+    "sql",
+    "sql-server",
+    "source-control",
+    "git",
+    "svn",
+    "mercurial"
+  ],
+  "homepage": "https://github.com/justinlettau/sql-source-control",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justinlettau/sql-source-control"
+  },
+  "bugs": {
+    "url": "https://github.com/justinlettau/sql-source-control/issues"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "test": "jshint lib"
+  },
+  "bin": {
+    "ssc": "bin/ssc"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs-extra": "^2.0.0",
+    "mssql": "^3.3.0",
+    "tedious": "^1.14.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.4"
+  }
+}
