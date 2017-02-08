@@ -10,6 +10,7 @@
     "svn",
     "mercurial"
   ],
+  "license": "MIT",
   "homepage": "https://github.com/justinlettau/sql-source-control",
   "repository": {
     "type": "git",
