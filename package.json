@@ -1,6 +1,6 @@
 {
   "name": "sql-source-control",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple CLI for getting SQL into source control systems.",
   "keywords": [
     "sql",
