@@ -67,10 +67,16 @@ Example output:
     "server": "dev.example.com\\development",
     "database": "awesome-db",
     "port": 1433,
-    "include": "cool.*", // include everything from `cool` schema
-    "exclude": "*.danger*" // exlude all scripts that start with `danger`
+    "include": "cool.*",
+    "exclude": "*.danger*"
 }
 ```
+
+In the above example:
+
+The `include` property includes everything from `cool` schema.
+
+The `exclude` property exludes all scripts that start with `danger`.
 
 # Development
 For easy development, run the following commands in the `sql-source-control` directory:
