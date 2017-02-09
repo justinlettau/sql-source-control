@@ -60,6 +60,8 @@ Example output:
 ```
 
 # Config Options
+Required proprties are `user`, `password`, `server`, `database`, and `port`. All others are otpional.
+
 ```json
 {
     "user": "example",
