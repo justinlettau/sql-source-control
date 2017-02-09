@@ -10,7 +10,7 @@ discovers database objects and scripts them out using native database code. All 
 in the `sql-database` directory. From there, you can use you any source control CLI or GUI to commit
 to your source control system.
 
-Works with Microsoft SQL Server.
+Works with Microsoft SQL Server 2005 and higher.
 
 # Installation
 ```
@@ -46,16 +46,16 @@ Example output:
 ```
 /sql-database
     /stored-procedures
-        - people-read.sql
+        people-read.sql
         ...
     /functions/table-valued
-        - awesome-table-func.sql
+        awesome-table-func.sql
         ...
     /functions/scalar-valued
-        - complex-math.sql
+        complex-math.sql
         ...
     /views
-        - super-cool-view.sql
+        super-cool-view.sql
         ...
 ```
 

@@ -9,7 +9,7 @@ var init = require('../lib/init');
 
 program
     .command('go')
-    .description('Generate SQL files for all stored procedures, functions, views, etc.')
+    .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(go);
 
 program
