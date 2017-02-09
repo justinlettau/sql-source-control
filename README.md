@@ -1,3 +1,4 @@
+[![NPM Version](https://badge.fury.io/js/sql-source-control.svg)](https://badge.fury.io/js/sql-source-control)
 [![Build Status](https://travis-ci.org/justinlettau/sql-source-control.svg?branch=master)](https://travis-ci.org/justinlettau/sql-source-controlls)
 [![Dependency Status](https://david-dm.org/justinlettau/sql-source-control.svg)](https://david-dm.org/justinlettau/sql-source-control)
 [![Dev Dependency Status](https://david-dm.org/justinlettau/sql-source-control/dev-status.svg)](https://david-dm.org/justinlettau/sql-source-control?type=dev)
@@ -8,6 +9,8 @@ for use with source control systems such as Git, SVN or Mercurial. Under the hoo
 discovers database objects and scripts them out using native database code. All SQL scripts are placed
 in the `sql-database` directory. From there, you can use you any source control CLI or GUI to commit
 to your source control system.
+
+Works with Microsoft SQL Server.
 
 # Installation
 ```
@@ -23,23 +26,43 @@ ssc --help
 ```
 
 ## Init
-Create default `ssc.json` config file. After creation, you will need to enter database connection
-information in the `ssc.json` file.
+Create default `ssc.json` config file. After creation, you will need to enter the database connection
+information into the config file.
 
 ```
 ssc init
 ```
 
 ## Go
-Generate SQL files for all stored procedures, functions, views, etc.
+Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in a
+`sql-database` directory and SQL scripts will be organizaed into subdirectories.
 
 ```
 ssc go
 ```
 
-# Development
-For easy development, run the following command in the `sql-source-control` directory:
+Example output:
 
 ```
+/sql-database
+    /stored-procedures
+        - people-read.sql
+        ...
+    /functions/table-valued
+        - awesome-table-func.sql
+        ...
+    /functions/scalar-valued
+        - complex-math.sql
+        ...
+    /views
+        - super-cool-view.sql
+        ...
+```
+
+# Development
+For easy development, run the following commands in the `sql-source-control` directory:
+
+```
+npm install
 npm link
 ```
