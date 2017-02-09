@@ -29,6 +29,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "fs-extra": "^2.0.0",
+    "minimatch": "^3.0.3",
     "mssql": "^3.3.0",
     "tedious": "^1.14.0"
   },

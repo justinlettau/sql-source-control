@@ -13,7 +13,7 @@ to your source control system.
 Works with Microsoft SQL Server 2005 and higher.
 
 # Installation
-```
+```bash
 npm install -g sql-source-control
 ```
 
@@ -21,7 +21,7 @@ npm install -g sql-source-control
 `sql-source-control` connects to your database with settings from a `ssc.json` config file. Commands
 are directory specific, so run all commands in the directory you want the scripts created in.
 
-```
+```bash
 ssc --help
 ```
 
@@ -29,7 +29,7 @@ ssc --help
 Create default `ssc.json` config file. After creation, you will need to enter the database connection
 information into the config file.
 
-```
+```bash
 ssc init
 ```
 
@@ -37,7 +37,7 @@ ssc init
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in a
 `sql-database` directory and SQL scripts will be organizaed into subdirectories.
 
-```
+```bash
 ssc go
 ```
 
@@ -59,10 +59,23 @@ Example output:
         ...
 ```
 
+# Config Options
+```json
+{
+    "user": "example",
+    "password": "qwerty",
+    "server": "dev.example.com\\development",
+    "database": "awesome-db",
+    "port": 1433,
+    "include": "cool.*", // include everything from `cool` schema
+    "exclude": "*.danger*" // exlude all scripts that start with `danger`
+}
+```
+
 # Development
 For easy development, run the following commands in the `sql-source-control` directory:
 
-```
+```bash
 npm install
 npm link
 ```
