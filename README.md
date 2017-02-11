@@ -6,9 +6,8 @@
 # SQL Source Control
 `sql-source-control` is an open source CLI for scripting out SQL objects into a flat file structure
 for use with source control systems such as Git, SVN or Mercurial. Under the hood, `sql-source-control`
-discovers database objects and scripts them out using native database code. All SQL scripts are placed
-in the `sql-database` directory. From there, you can use you any source control CLI or GUI to commit
-to your source control system.
+discovers database objects and scripts them out using native database code. From there, you can use
+you any source control CLI or GUI to commit to your source control system.
 
 Works with Microsoft SQL Server 2005 and higher.
 
@@ -26,12 +25,15 @@ ssc --help
 ```
 
 ## Init
-Create default `ssc.json` config file. After creation, you will need to enter the database connection
-information into the config file.
+This will ask you a bunch of questions, and then write a `ssc.json` file for you.
 
 ```bash
 ssc init
 ```
+
+Options:
+- `-f` or `--force` will overwrite an existing config file, if present.
+- `-s` or `--skip`will use defaults and not prompt you for any options.
 
 ## Go
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in a

@@ -8,14 +8,16 @@ var go = require('../lib/go');
 var init = require('../lib/init');
 
 program
+    .command('init')
+    .description('Create default config file.')
+    .option('-f, --force', 'Overwrite existing config file, if present.')
+    .option('-s, --skip', 'Use defaults only and skip the option prompts.')
+    .action(init);
+
+program
     .command('go')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(go);
-
-program
-    .command('init')
-    .description('Create default config file.')
-    .action(init);
 
 program
     .version(pkg.version)
