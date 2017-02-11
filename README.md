@@ -33,11 +33,12 @@ ssc init
 
 Options:
 - `-f` or `--force` will overwrite an existing config file, if present.
-- `-s` or `--skip`will use defaults and not prompt you for any options.
+- `-s` or `--skip` will use defaults and not prompt you for any options.
 
 ## Go
-Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in a
-`sql-database` directory and SQL scripts will be organizaed into subdirectories.
+Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
+the output root directory and SQL scripts will be organizaed into subdirectories (based on config
+file).
 
 ```bash
 ssc go
