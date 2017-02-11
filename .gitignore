@@ -6,5 +6,5 @@
 
 # Other
 node_modules/
-**/sql-database/
+sql-database/
 ssc.json
