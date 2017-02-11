@@ -99,7 +99,10 @@ Configuration options are stored in a `ssc.json` file.
         "table-valued": "/functions/table-valued",
 
         // directory to script scalar functions  (relative to root)
-        "scalar-valued": "/functions/scalar-valued"
+        "scalar-valued": "/functions/scalar-valued",
+
+        // directory to script triggers  (relative to root)
+        "triggers": "/triggers"
     }
 }
 ```
