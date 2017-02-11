@@ -86,6 +86,9 @@ Configuration options are stored in a `ssc.json` file.
         // directory to place scripted files into
         "root": "/sqlite-databse",
 
+        // add idempotency to scripts
+        "idempotency": false,
+
         // directory to script procs (relative to root)
         "procs": "/procs",
 
