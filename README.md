@@ -17,7 +17,7 @@ npm install -g sql-source-control
 ```
 
 # Usage
-`sql-source-control` connects to your database with settings from a `ssc.json` config file. Commands
+`sql-source-control` connects to your database with settings from a config file. Commands
 are directory specific, so run all commands in the directory you want the scripts created in.
 
 ```bash
@@ -25,7 +25,7 @@ ssc --help
 ```
 
 ## Init
-This will ask you a bunch of questions, and then write a `ssc.json` file for you.
+This will ask you a bunch of questions, and then write a config file for you.
 
 ```bash
 ssc init
@@ -62,6 +62,8 @@ Example output:
 ```
 
 # Config Options
+Configuration options are stored in a `ssc.json` file.
+
 ```json
 {
     "user": "example",
@@ -70,16 +72,33 @@ Example output:
     "database": "awesome-db",
     "port": 1433,
 
-    // optional
+    // the following options are optional ..
+
+    // glob of files to include
     "include": "cool.*",
-    "exclude": "*.danger*"
+
+    // glob of files to exclude
+    "exclude": "*.danger*",
+
+    "output": {
+
+        // directory to place scripted files into
+        "root": "/sqlite-databse",
+
+        // directory to script procs (relative to root)
+        "procs": "/procs",
+
+        // directory to script views (relative to root)
+        "views": "/views",
+
+        // directory to script table functions  (relative to root)
+        "table-valued": "/functions/table-valued",
+
+        // directory to script scalar functions  (relative to root)
+        "scalar-valued": "/functions/scalar-valued"
+    }
 }
 ```
-
-In the above example:
-
-- The `include` property includes everything from `cool` schema.
-- The `exclude` property exludes all scripts that start with `danger`.
 
 # Development
 For easy development, run the following commands in the `sql-source-control` directory:
