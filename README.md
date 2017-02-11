@@ -60,8 +60,6 @@ Example output:
 ```
 
 # Config Options
-Required proprties are `user`, `password`, `server`, `database`, and `port`. All others are otpional.
-
 ```json
 {
     "user": "example",
@@ -69,6 +67,8 @@ Required proprties are `user`, `password`, `server`, `database`, and `port`. All
     "server": "dev.example.com\\development",
     "database": "awesome-db",
     "port": 1433,
+
+    // optional
     "include": "cool.*",
     "exclude": "*.danger*"
 }
@@ -76,9 +76,8 @@ Required proprties are `user`, `password`, `server`, `database`, and `port`. All
 
 In the above example:
 
-The `include` property includes everything from `cool` schema.
-
-The `exclude` property exludes all scripts that start with `danger`.
+- The `include` property includes everything from `cool` schema.
+- The `exclude` property exludes all scripts that start with `danger`.
 
 # Development
 For easy development, run the following commands in the `sql-source-control` directory:
