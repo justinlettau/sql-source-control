@@ -65,7 +65,7 @@ Example output:
 # Config Options
 Configuration options are stored in a `ssc.json` file.
 
-```json
+```
 {
     "user": "example",
     "password": "qwerty",
