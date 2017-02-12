@@ -27,6 +27,9 @@ ssc --help
 ## Init
 This will ask you a bunch of questions, and then write a config file for you.
 
+If the current directory contains a `web.config` file with the `connectionStrings` property, the
+first node will be used for default values.
+
 ```bash
 ssc init
 ```
@@ -67,11 +70,11 @@ Configuration options are stored in a `ssc.json` file.
 
 ```
 {
-    "user": "example",
-    "password": "qwerty",
     "server": "dev.example.com\\development",
     "database": "awesome-db",
     "port": 1433,
+    "user": "example",
+    "password": "qwerty",
 
     // the following options are optional ..
 
@@ -83,26 +86,26 @@ Configuration options are stored in a `ssc.json` file.
 
     "output": {
 
-        // directory to place scripted files into
-        "root": "/sqlite-databse",
+        // directory to place scripted files into (relative to config file)
+        "root": "./sqlite-databse",
 
         // add idempotency to scripts
         "idempotency": false,
 
         // directory to script procs (relative to root)
-        "procs": "/procs",
+        "procs": "./procs",
 
         // directory to script views (relative to root)
-        "views": "/views",
+        "views": "./views",
 
         // directory to script table functions  (relative to root)
-        "table-valued": "/functions/table-valued",
+        "table-valued": "./functions/table-valued",
 
         // directory to script scalar functions  (relative to root)
-        "scalar-valued": "/functions/scalar-valued",
+        "scalar-valued": "./functions/scalar-valued",
 
         // directory to script triggers  (relative to root)
-        "triggers": "/triggers"
+        "triggers": "./triggers"
     }
 }
 ```
