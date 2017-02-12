@@ -89,23 +89,31 @@ Configuration options are stored in a `ssc.json` file.
         // directory to place scripted files into (relative to config file)
         "root": "./sqlite-databse",
 
-        // add idempotency to scripts
-        "idempotency": false,
-
         // directory to script procs (relative to root)
         "procs": "./procs",
 
         // directory to script views (relative to root)
         "views": "./views",
 
-        // directory to script table functions  (relative to root)
+        // directory to script table functions (relative to root)
         "table-valued": "./functions/table-valued",
 
-        // directory to script scalar functions  (relative to root)
+        // directory to script scalar functions (relative to root)
         "scalar-valued": "./functions/scalar-valued",
 
-        // directory to script triggers  (relative to root)
+        // directory to script triggers (relative to root)
         "triggers": "./triggers"
+    },
+
+    "idempotency": {
+
+        // options: "if-exists-drop", "if-not-exists", or false
+        "procs": "if-exists-drop",
+        "views": "if-exists-drop",
+        "table-valued": "if-exists-drop",
+        "scalar-valued": "if-exists-drop",
+        "triggers": "if-exists-drop"
+
     }
 }
 ```
