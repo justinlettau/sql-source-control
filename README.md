@@ -50,18 +50,21 @@ ssc pull
 Example output:
 
 ```
-/sql-database
-    /stored-procedures
-        people-read.sql
+./sql-database
+    ./functions/scalar-valued
+        dbo.complex-math.sql
         ...
-    /functions/table-valued
-        awesome-table-func.sql
+    ./functions/table-valued
+        dbo.awesome-table-func.sql
         ...
-    /functions/scalar-valued
-        complex-math.sql
+    ./stored-procedures
+        dbo.people-read.sql
         ...
-    /views
-        super-cool-view.sql
+    ./tables
+        dbo.people.sql
+        ...
+    ./views
+        dbo.super-cool-view.sql
         ...
 ```
 
@@ -76,7 +79,7 @@ Configuration options are stored in a `ssc.json` file.
     "user": "example",
     "password": "qwerty",
 
-    // the following options are optional ..
+    // the following options are optional ...
 
     // glob of files to include
     "include": "cool.*",
@@ -89,37 +92,41 @@ Configuration options are stored in a `ssc.json` file.
         // directory to place scripted files into (relative to config file)
         "root": "./sqlite-databse",
 
-        // directory to script procs (relative to root)
-        "procs": "./procs",
-
-        // directory to script views (relative to root)
-        "views": "./views",
+        // directory to script scalar functions (relative to root)
+        "scalar-valued": "./functions/scalar-valued",
 
         // directory to script table functions (relative to root)
         "table-valued": "./functions/table-valued",
 
-        // directory to script scalar functions (relative to root)
-        "scalar-valued": "./functions/scalar-valued",
+        // directory to script procs (relative to root)
+        "procs": "./stored-procedures",
+
+        // directory to script tables (relative to root)
+        "tables": "./tables",
 
         // directory to script triggers (relative to root)
         "triggers": "./triggers"
+
+        // directory to script views (relative to root)
+        "views": "./views"
     },
 
     "idempotency": {
 
         // options: "if-exists-drop", "if-not-exists", or false
         "procs": "if-exists-drop",
-        "views": "if-exists-drop",
-        "table-valued": "if-exists-drop",
         "scalar-valued": "if-exists-drop",
-        "triggers": "if-exists-drop"
+        "table-valued": "if-exists-drop",
+        "tables": "if-not-exists",
+        "triggers": "if-exists-drop",
+        "views": "if-exists-drop"
 
     }
 }
 ```
 
 # Development
-For easy development, run the following commands in the `sql-source-control` directory:
+For easy development, clone the repo and run the following commands in the `sql-source-control` directory:
 
 ```bash
 npm install
