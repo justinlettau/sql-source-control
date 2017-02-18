@@ -4,7 +4,7 @@ var pkg = require('../package.json');
 var program = require('commander');
 
 // tasks
-var go = require('../lib/go');
+var pull = require('../lib/pull');
 var init = require('../lib/init');
 
 program
@@ -15,9 +15,9 @@ program
     .action(init);
 
 program
-    .command('go')
+    .command('pull')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
-    .action(go);
+    .action(pull);
 
 program
     .version(pkg.version)
