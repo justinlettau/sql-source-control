@@ -71,7 +71,7 @@ Example output:
 # Config Options
 Configuration options are stored in a `ssc.json` file.
 
-```
+```js
 {
     "connection": {
         "server": "dev.example.com\\development",
