@@ -50,7 +50,7 @@ ssc pull
 Example output:
 
 ```
-./sql-database
+./_sql-database
     ./functions/scalar-valued
         dbo.complex-math.sql
         ...
@@ -90,7 +90,7 @@ Configuration options are stored in a `ssc.json` file.
     "output": {
 
         // directory to place scripted files into (relative to config file)
-        "root": "./sqlite-databse",
+        "root": "./_sql-databse",
 
         // directory to script scalar functions (relative to root)
         "scalar-valued": "./functions/scalar-valued",
