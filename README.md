@@ -73,11 +73,13 @@ Configuration options are stored in a `ssc.json` file.
 
 ```
 {
-    "server": "dev.example.com\\development",
-    "database": "awesome-db",
-    "port": 1433,
-    "user": "example",
-    "password": "qwerty",
+    "connection": {
+        "server": "dev.example.com\\development",
+        "database": "awesome-db",
+        "port": 1433,
+        "user": "example",
+        "password": "qwerty"
+    },
 
     // the following options are optional ...
 
