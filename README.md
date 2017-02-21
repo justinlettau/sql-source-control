@@ -73,6 +73,7 @@ Configuration options are stored in a `ssc.json` file.
 
 ```js
 {
+    // SQL server connection options ...
     "connection": {
         "server": "dev.example.com\\development",
         "database": "awesome-db",
@@ -80,6 +81,9 @@ Configuration options are stored in a `ssc.json` file.
         "user": "example",
         "password": "qwerty"
     },
+
+    // ... OR, path to Web.config file with connectionStrings
+    "connection": "./Web.config"
 
     // the following options are optional ...
 
