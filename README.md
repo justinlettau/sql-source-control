@@ -37,6 +37,7 @@ ssc init
 Options:
 - `-f` or `--force` will overwrite an existing config file, if present.
 - `-s` or `--skip` will use defaults and not prompt you for any options.
+- `-w` or `--webconfig` to provide a relative path to a `Web.config` file.
 
 ## Pull
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
@@ -83,15 +84,15 @@ Configuration options are stored in a `ssc.json` file.
     },
 
     // ... OR, path to Web.config file with connectionStrings
-    "connection": "./Web.config"
+    "connection": "../Web.config"
 
-    // the following options are optional ...
+    // the following options are optional (default values shown) ...
 
-    // glob of files to include
-    "include": "cool.*",
+    // glob of files to include (example: "cool.*")
+    "include": "",
 
-    // glob of files to exclude
-    "exclude": "*.danger*",
+    // glob of files to exclude (example: "danger_*")
+    "exclude": "",
 
     "output": {
 
