@@ -32,8 +32,8 @@
     "fs-extra": "^2.0.0",
     "glob": "^7.1.1",
     "inquirer": "^3.0.1",
-    "minimatch": "^3.0.3",
     "mssql": "^3.3.0",
+    "multimatch": "^2.1.0",
     "tedious": "^1.14.0",
     "xml2js": "^0.4.17"
   },

@@ -89,11 +89,8 @@ Configuration options are stored in a `ssc.json` file.
 
     // the following options are optional (default values shown) ...
 
-    // glob of files to include (example: "cool.*")
-    "include": "",
-
-    // glob of files to exclude (example: "danger_*")
-    "exclude": "",
+    // glob of files to include / exclude (examples: ["dbo.*"] or ["*", "!dbo.*"])
+    "files": [],
 
     "output": {
 
