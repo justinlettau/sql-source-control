@@ -7,7 +7,7 @@
 `sql-source-control` is an open source CLI for scripting out SQL objects into a flat file structure
 for use with source control systems such as Git, SVN or Mercurial. Under the hood, `sql-source-control`
 discovers database objects and scripts them out using native database code. From there, you can use
-you any source control CLI or GUI to commit to your source control system.
+any source control CLI or GUI to commit to your source control system.
 
 Works with Microsoft SQL Server 2005 and higher.
 
