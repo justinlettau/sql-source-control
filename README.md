@@ -42,7 +42,7 @@ Options:
 
 ## Pull
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
-the output root directory and SQL scripts will be organizaed into subdirectories (based on config
+the output root directory and SQL scripts will be organized into subdirectories (based on config
 file).
 
 ```bash
@@ -85,7 +85,7 @@ Configuration options are stored in a `ssc.json` file.
     },
 
     // ... OR, path to Web.config file with connectionStrings
-    "connection": "../Web.config"
+    "connection": "../Web.config",
 
     // the following options are optional (default values shown) ...
 
@@ -95,7 +95,7 @@ Configuration options are stored in a `ssc.json` file.
     "output": {
 
         // directory to place scripted files into (relative to config file)
-        "root": "./_sql-databse",
+        "root": "./_sql-database",
 
         // directory to script scalar functions (relative to root)
         "scalar-valued": "./functions/scalar-valued",
