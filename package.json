@@ -27,6 +27,7 @@
     "ssc": "bin/ssc"
   },
   "dependencies": {
+    "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "deepmerge": "^1.3.2",
     "fs-extra": "^2.0.0",
