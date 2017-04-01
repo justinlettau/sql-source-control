@@ -10,6 +10,11 @@
     "svn",
     "mercurial"
   ],
+  "author": {
+    "name": "Justin Lettau",
+    "email": "me@justinlettau.com",
+    "url": "http://justinlettau.com"
+  },
   "license": "MIT",
   "homepage": "https://github.com/justinlettau/sql-source-control",
   "repository": {
@@ -21,7 +26,7 @@
   },
   "preferGlobal": true,
   "scripts": {
-    "test": "jshint lib"
+    "test": "eslint lib -c ./.eslintrc"
   },
   "bin": {
     "ssc": "bin/ssc"
@@ -39,6 +44,8 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-unicorn-science": "^1.0.1",
     "jshint": "^2.9.4"
   }
 }

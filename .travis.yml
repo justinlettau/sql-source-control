@@ -1,7 +1,9 @@
 language: node_js
+node_js:
+  - "node"
 
 before_install:
-    - npm install jshint -g
+    - npm install eslint -g
 
 script:
     - npm run test
