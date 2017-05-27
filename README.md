@@ -29,7 +29,7 @@ This will ask you a bunch of questions, and then write a config file for you.
 
 If the current directory contains a `Web.config` file with the `connectionStrings` property, the
 first node will be used for default values. Alternatively, a path to a `Web.config` file can be
-specfied with the `--webconfig` flag.
+specified with the `--webconfig` flag.
 
 ```bash
 ssc init
