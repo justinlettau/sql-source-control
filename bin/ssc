@@ -1,25 +1,3 @@
 #! /usr/bin/env node
 
-var pkg = require('../package.json');
-var program = require('commander');
-
-// tasks
-var pull = require('../lib/pull');
-var init = require('../lib/init');
-
-program
-    .command('init')
-    .description('Create default config file.')
-    .option('-f, --force', 'Overwrite existing config file, if present.')
-    .option('-s, --skip', 'Use defaults only and skip the option prompts.')
-    .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
-    .action(init);
-
-program
-    .command('pull')
-    .description('Generate SQL files for all tables, stored procedures, functions, etc.')
-    .action(pull);
-
-program
-    .version(pkg.version)
-    .parse(process.argv);
+require(__dirname + '/../dist/index.js');

@@ -136,4 +136,5 @@ For easy development, clone the repo and run the following commands in the `sql-
 ```bash
 npm install
 npm link
+npm run build
 ```
