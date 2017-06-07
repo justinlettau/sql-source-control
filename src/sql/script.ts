@@ -19,6 +19,7 @@ import {
  */
 export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): string {
     let obj: string;
+    item.type = item.type.trim();
 
     // get proper object type for `drop` statement
     switch (item.type) {
