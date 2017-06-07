@@ -9,6 +9,7 @@ var os_1 = require("os");
  */
 function idempotency(item, type) {
     var obj;
+    item.type = item.type.trim();
     // get proper object type for `drop` statement
     switch (item.type) {
         case 'U':
