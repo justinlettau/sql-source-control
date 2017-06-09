@@ -12,7 +12,7 @@ program
     .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
     .action(init_1.init);
 program
-    .command('pull')
+    .command('pull [name]')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(pull_1.pull);
 program

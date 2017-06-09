@@ -13,7 +13,7 @@ program
     .action(init);
 
 program
-    .command('pull')
+    .command('pull [name]')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(pull);
 

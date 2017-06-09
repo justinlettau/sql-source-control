@@ -11,11 +11,11 @@ var connection_1 = require("../common/connection");
  */
 function init(options) {
     var webConfigFile = options.webconfig || util.webConfigFile;
-    var webConfigConn = util.getWebConfigConn(webConfigFile);
+    var webConfigConns = util.getWebConfigConns(webConfigFile);
     var conn = new connection_1.Connection();
-    if (webConfigConn) {
+    if (webConfigConns) {
         // use options from web config
-        Object.assign(conn, webConfigConn);
+        Object.assign(conn, webConfigConns[0]);
     }
     if (fs.existsSync(util.configFile) && !options.force) {
         // don't overwrite existing config file
@@ -23,57 +23,63 @@ function init(options) {
     }
     if (options.skip) {
         // skip prompts and create with defaults
-        util.setConfig({ connection: conn });
+        util.setConfig({ connections: options.webconfig || [conn] });
         return;
     }
     var questions = [
         {
             name: 'path',
-            message: 'Use web.config file?',
+            message: 'Use connections from Web.config file?',
             type: 'confirm',
-            when: function () { return !!webConfigConn; }
+            when: function () { return !!webConfigConns; }
         }, {
             name: 'server',
             message: 'Server URL.',
             default: (conn.server || undefined),
-            when: function (answers) { return (!webConfigConn || !answers.path); }
+            when: function (answers) { return (!webConfigConns || !answers.path); }
         }, {
             name: 'port',
             message: 'Server port.',
             default: (conn.port || undefined),
-            when: function (answers) { return (!webConfigConn || !answers.path); }
+            when: function (answers) { return (!webConfigConns || !answers.path); }
         }, {
             name: 'database',
             message: 'Database name.',
             default: (conn.database || undefined),
-            when: function (answers) { return (!webConfigConn || !answers.path); }
+            when: function (answers) { return (!webConfigConns || !answers.path); }
         }, {
             name: 'user',
             message: 'Login username.',
             default: (conn.user || undefined),
-            when: function (answers) { return (!webConfigConn || !answers.path); }
+            when: function (answers) { return (!webConfigConns || !answers.path); }
         }, {
             name: 'password',
             message: 'Login password.',
             default: (conn.password || undefined),
-            when: function (answers) { return (!webConfigConn || !answers.path); }
+            when: function (answers) { return (!webConfigConns || !answers.path); }
+        }, {
+            name: 'name',
+            message: 'Connection name.',
+            default: 'dev',
+            when: function (answers) { return (!webConfigConns || !answers.path); }
         }
     ];
     // prompt user for config options
     inquirer.prompt(questions).then(function (answers) {
         if (answers.path) {
             // use Web.config path
-            util.setConfig({ connection: webConfigFile });
+            util.setConfig({ connections: webConfigFile });
         }
         else {
             util.setConfig({
-                connection: {
-                    server: answers.server,
-                    port: answers.port,
-                    database: answers.database,
-                    user: answers.user,
-                    password: answers.password,
-                }
+                connections: [new connection_1.Connection({
+                        name: answers.name,
+                        server: answers.server,
+                        port: answers.port,
+                        database: answers.database,
+                        user: answers.user,
+                        password: answers.password,
+                    })]
             });
         }
     });

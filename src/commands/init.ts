@@ -21,12 +21,12 @@ interface InitOptions {
  */
 export function init(options: InitOptions): void {
     const webConfigFile: string = options.webconfig || util.webConfigFile;
-    const webConfigConn: Connection = util.getWebConfigConn(webConfigFile);
+    const webConfigConns: Connection[] = util.getWebConfigConns(webConfigFile);
     const conn: Connection = new Connection();
 
-    if (webConfigConn) {
+    if (webConfigConns) {
         // use options from web config
-        Object.assign(conn, webConfigConn);
+        Object.assign(conn, webConfigConns[0]);
     }
 
     if (fs.existsSync(util.configFile) && !options.force) {
@@ -36,41 +36,46 @@ export function init(options: InitOptions): void {
 
     if (options.skip) {
         // skip prompts and create with defaults
-        util.setConfig({ connection: conn });
+        util.setConfig({ connections: options.webconfig || [conn] });
         return;
     }
 
     const questions: inquirer.Questions = [
         {
             name: 'path',
-            message: 'Use web.config file?',
+            message: 'Use connections from Web.config file?',
             type: 'confirm',
-            when: () => !!webConfigConn
+            when: (): boolean => !!webConfigConns
         }, {
             name: 'server',
             message: 'Server URL.',
             default: (conn.server || undefined),
-            when: (answers) => (!webConfigConn || !answers.path)
+            when: (answers): boolean => (!webConfigConns || !answers.path)
         }, {
             name: 'port',
             message: 'Server port.',
             default: (conn.port || undefined),
-            when: (answers) => (!webConfigConn || !answers.path)
+            when: (answers): boolean => (!webConfigConns || !answers.path)
         }, {
             name: 'database',
             message: 'Database name.',
             default: (conn.database || undefined),
-            when: (answers) => (!webConfigConn || !answers.path)
+            when: (answers): boolean => (!webConfigConns || !answers.path)
         }, {
             name: 'user',
             message: 'Login username.',
             default: (conn.user || undefined),
-            when: (answers) => (!webConfigConn || !answers.path)
+            when: (answers): boolean => (!webConfigConns || !answers.path)
         }, {
             name: 'password',
             message: 'Login password.',
             default: (conn.password || undefined),
-            when: (answers) => (!webConfigConn || !answers.path)
+            when: (answers): boolean => (!webConfigConns || !answers.path)
+        }, {
+            name: 'name',
+            message: 'Connection name.',
+            default: 'dev',
+            when: (answers): boolean => (!webConfigConns || !answers.path)
         }
     ];
 
@@ -78,16 +83,17 @@ export function init(options: InitOptions): void {
     inquirer.prompt(questions).then((answers: inquirer.Answers): void => {
         if (answers.path) {
             // use Web.config path
-            util.setConfig({ connection: webConfigFile });
+            util.setConfig({ connections: webConfigFile });
         } else {
             util.setConfig({
-                connection: {
+                connections: [new Connection({
+                    name: answers.name,
                     server: answers.server,
                     port: answers.port,
                     database: answers.database,
                     user: answers.user,
                     password: answers.password,
-                }
+                })]
             });
         }
     });

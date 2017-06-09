@@ -13,12 +13,12 @@ var util = require("../common/utility");
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
  *
- * @param options CommanderJS options.
+ * @param name Connection name to use.
  */
-function pull(options) {
+function pull(name) {
     var start = process.hrtime();
     var config = util.getConfig();
-    var conn = config.connection;
+    var conn = util.getConn(config, name);
     console.log("Pulling " + chalk.magenta(conn.database) + " from " + chalk.magenta(conn.server) + " ...");
     // connect to db
     new sql.ConnectionPool(conn)

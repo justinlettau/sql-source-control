@@ -29,21 +29,14 @@ import {
 import * as util from '../common/utility';
 
 /**
- * CLI arguments for `pull` command.
- */
-interface PullOptions {
-    // empty
-}
-
-/**
  * Generate SQL files for all tables, stored procedures, functions, etc.
  *
- * @param options CommanderJS options.
+ * @param name Connection name to use.
  */
-export function pull(options: PullOptions): void {
+export function pull(name: string): void {
     const start: [number, number] = process.hrtime();
     const config: Config = util.getConfig();
-    const conn: Connection = <Connection>config.connection;
+    const conn: Connection = util.getConn(config, name);
 
     console.log(`Pulling ${chalk.magenta(conn.database)} from ${chalk.magenta(conn.server)} ...`);
 

@@ -1,3 +1,4 @@
+import * as chalk from 'chalk';
 import * as deepmerge from 'deepmerge';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -21,7 +22,7 @@ export const webConfigFile: string = './Web.config';
  * Default values for config file.
  */
 export const configDefaults: Config = {
-    connection: undefined,
+    connections: [],
     files: [],
     output: {
         root: '_sql-database',
@@ -60,18 +61,8 @@ export function getConfig(): Config {
     try {
         config = fs.readJsonSync(configFile);
     } catch (error) {
-        console.error('Could not find or parse config file. You can use the init command to create one!');
+        console.error('Could not find or parse config file. You can use the `init` command to create one!');
         process.exit();
-    }
-
-    if (isString(config.connection)) {
-        // get connection info from web config file
-        config.connection = getWebConfigConn(config.connection);
-    }
-
-    // validation
-    if (!config.connection) {
-        console.warn(`Required property 'connection' is missing from the config file!`);
     }
 
     return deepmerge(configDefaults, config);
@@ -96,18 +87,59 @@ export function setConfig(config: Config): void {
 }
 
 /**
- * Safely get connection options from `web.config` file, if available.
+ * Get a connection object by name, or the first available if `name` is not provided.
+ *
+ * @param config Config object used to search for connection.
+ * @param name Optional connection `name` to get.
+ */
+export function getConn(config: Config, name?: string): Connection {
+    let conns: Connection[];
+    let conn: Connection;
+
+    if (config.connection) {
+        // deprecated (v1.1.0)
+        console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
+
+        let legacyConn: string | Connection = config.connection;
+        config.connections = (isString(legacyConn) ? legacyConn : [legacyConn]);
+    }
+
+    if (isString(config.connections)) {
+        // get form web config
+        conns = getWebConfigConns(config.connections);
+    } else {
+        conns = config.connections;
+    }
+
+    if (name) {
+        conn = conns.find(item => item.name.toLocaleLowerCase() === name.toLowerCase());
+    } else {
+        // default to first
+        conn = conns[0];
+    }
+
+    if (!conn) {
+        const message: string = (name ? `Could not find connection by name '${name}'!` : 'Could not find default connection!');
+        console.error(message);
+        process.exit();
+    }
+
+    return conn;
+}
+
+/**
+ * Safely get connections from `web.config` file, if available.
  *
  * @param file Optional relative path to web config.
  */
-export function getWebConfigConn(file?: string): Connection {
+export function getWebConfigConns(file?: string): Connection[] {
     const parser = new xml2js.Parser();
     const webConfig: string = file || webConfigFile;
     let content: string;
-    let conn: Connection;
+    let conns: Connection[] = [];
 
     if (!fs.existsSync(webConfig)) {
-        // default web config not found, use defaults
+        // web config not found, use defaults
         return;
     }
 
@@ -116,50 +148,64 @@ export function getWebConfigConn(file?: string): Connection {
 
     // parse config file
     parser.parseString(content, (err, result): void => {
-        let connParts: string[];
-
         if (err) {
             console.error(err);
             process.exit();
         }
 
         try {
-            connParts = result.configuration.connectionStrings[0].add[0].$.connectionString.split(';');
+            const connStrings: any[] = result.configuration.connectionStrings[0].add;
+
+            for (let item of connStrings) {
+                conns.push(parseConnString(item.$.name, item.$.connectionString));
+            }
+
         } catch (err) {
-            console.error(`Could not parse connection string from Web.config file!`);
+            console.error('Could not parse connection strings from Web.config file!');
             process.exit();
         }
-
-        // get connection string parts
-        let server: string = connParts.find(x => /^(server)/ig.test(x));
-        let database: string = connParts.find(x => /^(database)/ig.test(x));
-        let port: number;
-        let user: string = connParts.find(x => /^(uid)/ig.test(x));
-        let password: string = connParts.find(x => /^(password|pwd)/ig.test(x));
-
-        // get values from connection string parts
-        server = (server && server.split('=')[1]);
-        database = (database && database.split('=')[1]);
-        user = (user && user.split('=')[1]);
-        password = (password && password.split('=')[1]);
-
-        // separate server and port
-        if (server) {
-            // format: `dev.example.com\instance,1435`
-            const parts: string[] = server.split(',');
-
-            server = parts[0];
-            port = parseInt(parts[1], 10) || undefined;
-        }
-
-        conn = {
-            server: server,
-            database: database,
-            port: port,
-            user: user,
-            password: password
-        };
     });
 
-    return conn;
+    return (conns.length ? conns : undefined);
+}
+
+/**
+ * Parse connection string into object.
+ *
+ * @param name Connection name.
+ * @param connString Connection string to parse.
+ */
+function parseConnString(name: string, connString: string): Connection {
+    const parts: string[] = connString.split(';');
+
+    // match connection parts
+    let server: string = parts.find(x => /^(server)/ig.test(x));
+    let database: string = parts.find(x => /^(database)/ig.test(x));
+    let user: string = parts.find(x => /^(uid)/ig.test(x));
+    let password: string = parts.find(x => /^(password|pwd)/ig.test(x));
+    let port: number;
+
+    // get values
+    server = (server && server.split('=')[1]);
+    database = (database && database.split('=')[1]);
+    user = (user && user.split('=')[1]);
+    password = (password && password.split('=')[1]);
+
+    // separate server and port
+    if (server) {
+        // format: `dev.example.com\instance,1435`
+        const sub: string[] = server.split(',');
+
+        server = sub[0];
+        port = parseInt(sub[1], 10) || undefined;
+    }
+
+    return new Connection({
+        name: name,
+        server: server,
+        database: database,
+        port: port,
+        user: user,
+        password: password
+    });
 }

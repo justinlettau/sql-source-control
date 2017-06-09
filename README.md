@@ -46,8 +46,11 @@ the output root directory and SQL scripts will be organized into subdirectories 
 file).
 
 ```bash
-ssc pull
+ssc pull dev
 ```
+
+Where `dev` is the optional name of the connection to use. If omitted, the first available connection
+is used.
 
 Example output:
 
@@ -75,17 +78,18 @@ Configuration options are stored in a `ssc.json` file.
 
 ```js
 {
-    // SQL server connection options ...
-    "connection": {
+    // SQL server connections ...
+    "connections": [{
+        "name": "dev",
         "server": "dev.example.com\\development",
         "database": "awesome-db",
         "port": 1433,
         "user": "example",
         "password": "qwerty"
-    },
+    }],
 
     // ... OR, path to Web.config file with connectionStrings
-    "connection": "../Web.config",
+    "connections": "../Web.config",
 
     // the following options are optional (default values shown) ...
 

@@ -8,9 +8,14 @@ import { OutputConfig } from './output';
 export interface Config {
 
     /**
-     * Path to `Web.config` file or connection object.
+     * Path to `Web.config` file or collection of connection objects.
      */
-    connection: string | Connection;
+    connections: string | Connection[];
+
+    /**
+     * Deprecated (v1.1.0).
+     */
+    connection?: string | Connection;
 
     /**
      * Glob of files to include / exclude.

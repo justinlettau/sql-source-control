@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var chalk = require("chalk");
 var deepmerge = require("deepmerge");
 var fs = require("fs-extra");
 var path = require("path");
 var xml2js = require("xml2js");
 var ts_util_is_1 = require("ts-util-is");
+var connection_1 = require("../common/connection");
 /**
  * Config file path.
  */
@@ -17,7 +19,7 @@ exports.webConfigFile = './Web.config';
  * Default values for config file.
  */
 exports.configDefaults = {
-    connection: undefined,
+    connections: [],
     files: [],
     output: {
         root: '_sql-database',
@@ -55,16 +57,8 @@ function getConfig() {
         config = fs.readJsonSync(exports.configFile);
     }
     catch (error) {
-        console.error('Could not find or parse config file. You can use the init command to create one!');
+        console.error('Could not find or parse config file. You can use the `init` command to create one!');
         process.exit();
-    }
-    if (ts_util_is_1.isString(config.connection)) {
-        // get connection info from web config file
-        config.connection = getWebConfigConn(config.connection);
-    }
-    // validation
-    if (!config.connection) {
-        console.warn("Required property 'connection' is missing from the config file!");
     }
     return deepmerge(exports.configDefaults, config);
 }
@@ -86,62 +80,112 @@ function setConfig(config) {
 }
 exports.setConfig = setConfig;
 /**
- * Safely get connection options from `web.config` file, if available.
+ * Get a connection object by name, or the first available if `name` is not provided.
+ *
+ * @param config Config object used to search for connection.
+ * @param name Optional connection `name` to get.
+ */
+function getConn(config, name) {
+    var conns;
+    var conn;
+    if (config.connection) {
+        // deprecated (v1.1.0)
+        console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
+        var legacyConn = config.connection;
+        config.connections = (ts_util_is_1.isString(legacyConn) ? legacyConn : [legacyConn]);
+    }
+    if (ts_util_is_1.isString(config.connections)) {
+        // get form web config
+        conns = getWebConfigConns(config.connections);
+    }
+    else {
+        conns = config.connections;
+    }
+    if (name) {
+        conn = conns.find(function (item) { return item.name.toLocaleLowerCase() === name.toLowerCase(); });
+    }
+    else {
+        // default to first
+        conn = conns[0];
+    }
+    if (!conn) {
+        var message = (name ? "Could not find connection by name '" + name + "'!" : 'Could not find default connection!');
+        console.error(message);
+        process.exit();
+    }
+    return conn;
+}
+exports.getConn = getConn;
+/**
+ * Safely get connections from `web.config` file, if available.
  *
  * @param file Optional relative path to web config.
  */
-function getWebConfigConn(file) {
+function getWebConfigConns(file) {
     var parser = new xml2js.Parser();
     var webConfig = file || exports.webConfigFile;
     var content;
-    var conn;
+    var conns = [];
     if (!fs.existsSync(webConfig)) {
-        // default web config not found, use defaults
+        // web config not found, use defaults
         return;
     }
     // read config file
     content = fs.readFileSync(webConfig, 'utf-8');
     // parse config file
     parser.parseString(content, function (err, result) {
-        var connParts;
         if (err) {
             console.error(err);
             process.exit();
         }
         try {
-            connParts = result.configuration.connectionStrings[0].add[0].$.connectionString.split(';');
+            var connStrings = result.configuration.connectionStrings[0].add;
+            for (var _i = 0, connStrings_1 = connStrings; _i < connStrings_1.length; _i++) {
+                var item = connStrings_1[_i];
+                conns.push(parseConnString(item.$.name, item.$.connectionString));
+            }
         }
         catch (err) {
-            console.error("Could not parse connection string from Web.config file!");
+            console.error('Could not parse connection strings from Web.config file!');
             process.exit();
         }
-        // get connection string parts
-        var server = connParts.find(function (x) { return /^(server)/ig.test(x); });
-        var database = connParts.find(function (x) { return /^(database)/ig.test(x); });
-        var port;
-        var user = connParts.find(function (x) { return /^(uid)/ig.test(x); });
-        var password = connParts.find(function (x) { return /^(password|pwd)/ig.test(x); });
-        // get values from connection string parts
-        server = (server && server.split('=')[1]);
-        database = (database && database.split('=')[1]);
-        user = (user && user.split('=')[1]);
-        password = (password && password.split('=')[1]);
-        // separate server and port
-        if (server) {
-            // format: `dev.example.com\instance,1435`
-            var parts = server.split(',');
-            server = parts[0];
-            port = parseInt(parts[1], 10) || undefined;
-        }
-        conn = {
-            server: server,
-            database: database,
-            port: port,
-            user: user,
-            password: password
-        };
     });
-    return conn;
+    return (conns.length ? conns : undefined);
 }
-exports.getWebConfigConn = getWebConfigConn;
+exports.getWebConfigConns = getWebConfigConns;
+/**
+ * Parse connection string into object.
+ *
+ * @param name Connection name.
+ * @param connString Connection string to parse.
+ */
+function parseConnString(name, connString) {
+    var parts = connString.split(';');
+    // match connection parts
+    var server = parts.find(function (x) { return /^(server)/ig.test(x); });
+    var database = parts.find(function (x) { return /^(database)/ig.test(x); });
+    var user = parts.find(function (x) { return /^(uid)/ig.test(x); });
+    var password = parts.find(function (x) { return /^(password|pwd)/ig.test(x); });
+    var port;
+    // get values
+    server = (server && server.split('=')[1]);
+    database = (database && database.split('=')[1]);
+    user = (user && user.split('=')[1]);
+    password = (password && password.split('=')[1]);
+    // separate server and port
+    if (server) {
+        // format: `dev.example.com\instance,1435`
+        var sub = server.split(',');
+        server = sub[0];
+        port = parseInt(sub[1], 10) || undefined;
+    }
+    return new connection_1.Connection({
+        name: name,
+        server: server,
+        database: database,
+        port: port,
+        user: user,
+        password: password
+    });
+}
 //# sourceMappingURL=utility.js.map
