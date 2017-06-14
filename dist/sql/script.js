@@ -42,7 +42,7 @@ function idempotency(item, type) {
         // if not exists
         return [
             "if not exists (select * from sys.objects where object_id = object_id('[" + item.schema + "].[" + item.name + "]') and type = '" + item.type + "')",
-            os_1.EOL
+            ''
         ].join(os_1.EOL);
     }
     // none
@@ -83,8 +83,6 @@ function table(item, columns, primaryKeys, foreignKeys, indexes) {
     }
     output += ")";
     output += os_1.EOL;
-    output += 'go';
-    output += os_1.EOL;
     output += os_1.EOL;
     // indexes
     for (var _f = 0, _g = indexes.filter(function (x) { return x.object_id === item.object_id; }); _f < _g.length; _f++) {
@@ -92,7 +90,6 @@ function table(item, columns, primaryKeys, foreignKeys, indexes) {
         output += index(ix);
         output += os_1.EOL;
     }
-    output += 'go';
     return output;
 }
 exports.table = table;
@@ -102,7 +99,7 @@ exports.table = table;
  * @param item Row from `sys.columns` query.
  */
 function column(item) {
-    var output = ",[" + item.name + "]";
+    var output = "[" + item.name + "]";
     if (item.is_computed) {
         output += " as " + item.definition;
     }
@@ -139,6 +136,7 @@ function column(item) {
     if (item.is_identity) {
         output += " identity(" + (item.seed_value || 0) + ", " + (item.increment_value || 1) + ")";
     }
+    output += ',';
     return output;
 }
 /**
@@ -147,7 +145,7 @@ function column(item) {
  * @param item Row from `sys.primaryKeys` query.
  */
 function primaryKey(item) {
-    return ",constraint [" + item.name + "] primary key ([" + item.column + "], " + (item.is_descending_key ? 'desc' : 'asc') + ")";
+    return "constraint [" + item.name + "] primary key ([" + item.column + "] " + (item.is_descending_key ? 'desc' : 'asc') + ")";
 }
 /**
  * Get script for table's foreign key.
@@ -189,13 +187,18 @@ function foreignKey(item) {
  * @param item Row from `sys.indexes` query.
  */
 function index(item) {
-    var output = "create";
+    var output = "";
+    // idempotency
+    output += "if not exists (select * from sys.indexes where object_id = object_id('[" + item.schema + "].[" + item.table + "]') and name = '" + item.name + "')";
+    output += os_1.EOL;
+    output += 'create';
     if (item.is_unique) {
         output += ' unique';
     }
     output += " nonclustered index [" + item.name + "] on [" + item.schema + "].[" + item.table + "]";
     output += "([" + item.column + "] " + (item.is_descending_key ? 'desc' : 'asc') + ")";
     // todo (jbl): includes
+    output += os_1.EOL;
     return output;
 }
 //# sourceMappingURL=script.js.map

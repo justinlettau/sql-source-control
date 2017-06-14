@@ -1,6 +1,7 @@
 const pkg = require('../package.json');
 import * as program from 'commander';
 
+import { cat } from './commands/cat';
 import { pull } from './commands/pull';
 import { init } from './commands/init';
 
@@ -16,6 +17,11 @@ program
     .command('pull [name]')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(pull);
+
+program
+    .command('cat')
+    .description('Concatenate all SQL files into a single file.')
+    .action(cat);
 
 program
     .version(pkg.version)

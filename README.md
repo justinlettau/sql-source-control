@@ -73,6 +73,13 @@ Example output:
         ...
 ```
 
+## Cat
+Concatenate all SQL files into a single file. Outputs to `./_sql-database/cat.sql`.
+
+```bash
+ssc cat
+```
+
 # Config Options
 Configuration options are stored in a `ssc.json` file.
 

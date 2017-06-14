@@ -53,7 +53,7 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
         // if not exists
         return [
             `if not exists (select * from sys.objects where object_id = object_id('[${item.schema}].[${item.name}]') and type = '${item.type}')`,
-            EOL
+            ''
         ].join(EOL);
     }
 
@@ -96,8 +96,6 @@ export function table(item: TableRecordSet, columns: ColumnRecordSet[], primaryK
 
     output += `)`;
     output += EOL;
-    output += 'go';
-    output += EOL;
     output += EOL;
 
     // indexes
@@ -106,7 +104,6 @@ export function table(item: TableRecordSet, columns: ColumnRecordSet[], primaryK
         output += EOL;
     }
 
-    output += 'go';
     return output;
 }
 
@@ -116,7 +113,7 @@ export function table(item: TableRecordSet, columns: ColumnRecordSet[], primaryK
  * @param item Row from `sys.columns` query.
  */
 function column(item: ColumnRecordSet): string {
-    let output: string = `,[${item.name}]`;
+    let output: string = `[${item.name}]`;
 
     if (item.is_computed) {
         output += ` as ${item.definition}`;
@@ -161,6 +158,7 @@ function column(item: ColumnRecordSet): string {
         output += ` identity(${item.seed_value || 0}, ${item.increment_value || 1})`;
     }
 
+    output += ',';
     return output;
 }
 
@@ -170,7 +168,7 @@ function column(item: ColumnRecordSet): string {
  * @param item Row from `sys.primaryKeys` query.
  */
 function primaryKey(item: PrimaryKeyRecordSet): string {
-    return `,constraint [${item.name}] primary key ([${item.column}], ${item.is_descending_key ? 'desc' : 'asc'})`;
+    return `constraint [${item.name}] primary key ([${item.column}] ${item.is_descending_key ? 'desc' : 'asc'})`;
 }
 
 /**
@@ -217,7 +215,13 @@ function foreignKey(item: ForeignKeyRecordSet): string {
  * @param item Row from `sys.indexes` query.
  */
 function index(item: IndexRecordSet): string {
-    let output: string = `create`;
+    let output: string = ``;
+
+    // idempotency
+    output += `if not exists (select * from sys.indexes where object_id = object_id('[${item.schema}].[${item.table}]') and name = '${item.name}')`;
+    output += EOL;
+
+    output += 'create';
 
     if (item.is_unique) {
         output += ' unique';
@@ -228,5 +232,6 @@ function index(item: IndexRecordSet): string {
 
     // todo (jbl): includes
 
+    output += EOL;
     return output;
 }

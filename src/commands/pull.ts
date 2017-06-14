@@ -160,7 +160,7 @@ function createFile(config: Config, item: any, file: string, content: string): s
 
     // create file
     console.log(`Creating '${chalk.cyan(dir)}' ...`);
-    fs.outputFileSync(dir, content);
+    fs.outputFileSync(dir, content.trim());
 
     return dir;
 }

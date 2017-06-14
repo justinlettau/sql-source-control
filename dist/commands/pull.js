@@ -129,7 +129,7 @@ function createFile(config, item, file, content) {
     content = script.idempotency(item, type) + content;
     // create file
     console.log("Creating '" + chalk.cyan(dir) + "' ...");
-    fs.outputFileSync(dir, content);
+    fs.outputFileSync(dir, content.trim());
     return dir;
 }
 /**
