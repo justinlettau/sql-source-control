@@ -9,6 +9,14 @@ export interface AbstractRecordSet {
 }
 
 /**
+ * Mock dataset, properties from table query.
+ */
+export interface SchemaRecordSet {
+    name: string;
+    type: string;
+}
+
+/**
  * Dataset returned from table query.
  */
 export interface TableRecordSet extends AbstractRecordSet {

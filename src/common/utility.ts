@@ -25,18 +25,19 @@ export const configDefaults: Config = {
     connections: [],
     files: [],
     output: {
-        root: '_sql-database',
+        'root': '_sql-database',
+        'procs': './stored-procedures',
+        'schemas': './schemas',
         'scalar-valued': './functions/scalar-valued',
         'table-valued': './functions/table-valued',
-        'procs': './stored-procedures',
         'tables': './tables',
         'triggers': './triggers',
         'views': './views'
     },
     idempotency: {
+        'procs': 'if-exists-drop',
         'scalar-valued': 'if-exists-drop',
         'table-valued': 'if-exists-drop',
-        'procs': 'if-exists-drop',
         'tables': 'if-not-exists',
         'triggers': 'if-exists-drop',
         'views': 'if-exists-drop'

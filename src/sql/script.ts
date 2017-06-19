@@ -8,7 +8,8 @@ import {
     IndexRecordSet,
     ObjectRecordSet,
     PrimaryKeyRecordSet,
-    TableRecordSet
+    TableRecordSet,
+    SchemaRecordSet
 } from '../sql/record-set';
 
 /**
@@ -59,6 +60,22 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
 
     // none
     return '';
+}
+
+/**
+ * Get script for schema creation.
+ *
+ * @param item Object containing schema info.
+ */
+export function schema(item: SchemaRecordSet): string {
+    let output: string = '';
+
+    // idempotency
+    output += `if not exists (select * from sys.schemas where name = '${item.name}')`;
+    output += EOL;
+
+    output += `create schema ${item.name}`;
+    return output;
 }
 
 /**

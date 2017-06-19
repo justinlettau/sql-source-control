@@ -122,10 +122,10 @@ export const indexRead: string = `
  */
 export const objectRead: string = `
     select
-        so.name
-        ,s.name as [schema]
-        ,so.type as [type]
-        ,stuff
+        so.name,
+        s.name as [schema],
+        so.type as [type],
+        stuff
         (
             (
                 select

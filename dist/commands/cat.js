@@ -14,6 +14,7 @@ function cat() {
     var output = '';
     // order is important
     var directories = [
+        config.output.schemas,
         config.output.tables,
         config.output.views,
         config.output['scalar-valued'],

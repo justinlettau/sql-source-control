@@ -59,9 +59,24 @@ function scriptFiles(config, results) {
     var primaryKeys = results[3].recordset;
     var foreignKeys = results[4].recordset;
     var indexes = results[5].recordset;
+    // get unique schema names
+    var schemas = tables.map(function (item) {
+        return { name: item.schema, type: 'SCHEMA' };
+    });
+    // write files for schemas
+    for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
+        var item = schemas_1[_i];
+        var file = util.safeFile(item.name + ".sql");
+        if (!include(config, file)) {
+            continue;
+        }
+        var content = script.schema(item);
+        var dir = createFile(config, item, file, content);
+        exclude(existing, dir);
+    }
     // write files for stored procedures, functions, ect.
-    for (var _i = 0, objects_1 = objects; _i < objects_1.length; _i++) {
-        var item = objects_1[_i];
+    for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
+        var item = objects_1[_a];
         var file = util.safeFile(item.schema + "." + item.name + ".sql");
         if (!include(config, file)) {
             continue;
@@ -70,8 +85,8 @@ function scriptFiles(config, results) {
         exclude(existing, dir);
     }
     // write files for tables
-    for (var _a = 0, tables_1 = tables; _a < tables_1.length; _a++) {
-        var item = tables_1[_a];
+    for (var _b = 0, tables_1 = tables; _b < tables_1.length; _b++) {
+        var item = tables_1[_b];
         var file = util.safeFile(item.schema + "." + item.name + ".sql");
         if (!include(config, file)) {
             continue;
@@ -96,6 +111,10 @@ function createFile(config, item, file, content) {
     var output;
     var type;
     switch (item.type.trim()) {
+        case 'SCHEMA':
+            output = config.output.schemas;
+            type = null;
+            break;
         case 'U':
             output = config.output.tables;
             type = config.idempotency.tables;

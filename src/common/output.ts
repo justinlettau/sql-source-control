@@ -3,9 +3,10 @@
  */
 export interface OutputConfig {
     'root'?: string;
+    'procs'?: string;
+    'schemas'?: string;
     'scalar-valued'?: string;
     'table-valued'?: string;
-    'procs'?: string;
     'tables'?: string;
     'triggers'?: string;
     'views'?: string;

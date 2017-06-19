@@ -50,6 +50,20 @@ function idempotency(item, type) {
 }
 exports.idempotency = idempotency;
 /**
+ * Get script for schema creation.
+ *
+ * @param item Object containing schema info.
+ */
+function schema(item) {
+    var output = '';
+    // idempotency
+    output += "if not exists (select * from sys.schemas where name = '" + item.name + "')";
+    output += os_1.EOL;
+    output += "create schema " + item.name;
+    return output;
+}
+exports.schema = schema;
+/**
  * Get script for table's column.
  *
  * @param item Row from `sys.columns` query.

@@ -16,6 +16,7 @@ export function cat(): void {
 
     // order is important
     const directories: string[] = [
+        config.output.schemas,
         config.output.tables,
         config.output.views,
         config.output['scalar-valued'],

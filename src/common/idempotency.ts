@@ -2,9 +2,9 @@
  * Supported idempotency configuration.
  */
 export interface IdempotencyConfig {
+    'procs'?: IdempotencyOption;
     'scalar-valued'?: IdempotencyOption;
     'table-valued'?: IdempotencyOption;
-    'procs'?: IdempotencyOption;
     'tables'?: IdempotencyOption;
     'triggers'?: IdempotencyOption;
     'views'?: IdempotencyOption;

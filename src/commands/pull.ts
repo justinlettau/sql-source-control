@@ -16,7 +16,8 @@ import {
     IndexRecordSet,
     ObjectRecordSet,
     PrimaryKeyRecordSet,
-    TableRecordSet
+    TableRecordSet,
+    SchemaRecordSet
 } from '../sql/record-set';
 import {
     columnRead,
@@ -81,6 +82,24 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     const foreignKeys: ForeignKeyRecordSet[] = results[4].recordset;
     const indexes: IndexRecordSet[] = results[5].recordset;
 
+    // get unique schema names
+    const schemas: SchemaRecordSet[] = tables.map(item => {
+        return { name: item.schema, type: 'SCHEMA' };
+    });
+
+    // write files for schemas
+    for (let item of schemas) {
+        const file: string = util.safeFile(`${item.name}.sql`);
+
+        if (!include(config, file)) {
+            continue;
+        }
+
+        const content: string = script.schema(item);
+        const dir: string = createFile(config, item, file, content);
+        exclude(existing, dir);
+    }
+
     // write files for stored procedures, functions, ect.
     for (let item of objects) {
         const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
@@ -124,6 +143,10 @@ function createFile(config: Config, item: any, file: string, content: string): s
     let type: IdempotencyOption;
 
     switch (item.type.trim()) {
+        case 'SCHEMA': // not a real object type
+            output = config.output.schemas;
+            type = null;
+            break;
         case 'U':
             output = config.output.tables;
             type = config.idempotency.tables;

@@ -62,6 +62,9 @@ Example output:
     ./functions/table-valued
         dbo.awesome-table-func.sql
         ...
+    ./schemas
+        dbo.sql
+        ...
     ./stored-procedures
         dbo.people-read.sql
         ...
@@ -108,14 +111,17 @@ Configuration options are stored in a `ssc.json` file.
         // directory to place scripted files into (relative to config file)
         "root": "./_sql-database",
 
+        // directory to script procs (relative to root)
+        "procs": "./stored-procedures",
+
+        // directory to script schemas (relative to root)
+        "schemas": "./schemas",
+
         // directory to script scalar functions (relative to root)
         "scalar-valued": "./functions/scalar-valued",
 
         // directory to script table functions (relative to root)
         "table-valued": "./functions/table-valued",
-
-        // directory to script procs (relative to root)
-        "procs": "./stored-procedures",
 
         // directory to script tables (relative to root)
         "tables": "./tables",
