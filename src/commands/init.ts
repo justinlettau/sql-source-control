@@ -92,7 +92,7 @@ export function init(options: InitOptions): void {
                     port: answers.port,
                     database: answers.database,
                     user: answers.user,
-                    password: answers.password,
+                    password: answers.password
                 })]
             });
         }

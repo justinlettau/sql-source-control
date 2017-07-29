@@ -26,10 +26,10 @@ export function cat(): void {
         config.output.triggers
     ];
 
-    for (let dir of directories) {
+    for (const dir of directories) {
         const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
 
-        for (let file of files) {
+        for (const file of files) {
             const content: string = fs.readFileSync(file).toString();
             const end: string = content.substr(-2).toLowerCase();
 

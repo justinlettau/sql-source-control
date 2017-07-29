@@ -9,6 +9,7 @@ var os_1 = require("os");
  */
 function idempotency(item, type) {
     var obj;
+    var objectId = item.schema + "].[" + item.name;
     item.type = item.type.trim();
     // get proper object type for `drop` statement
     switch (item.type) {
@@ -32,16 +33,16 @@ function idempotency(item, type) {
     if (type === 'if-exists-drop') {
         // if exists drop
         return [
-            "if exists (select * from sys.objects where object_id = object_id('[" + item.schema + "].[" + item.name + "]') and type = '" + item.type + "')",
-            "drop " + obj + " [" + item.schema + "].[" + item.name + "]",
-            "go",
+            "if exists (select * from sys.objects where object_id = object_id('[" + objectId + "]') and type = '" + item.type + "')",
+            "drop " + obj + " [" + objectId + "]",
+            'go',
             os_1.EOL
         ].join(os_1.EOL);
     }
     else if (type === 'if-not-exists') {
         // if not exists
         return [
-            "if not exists (select * from sys.objects where object_id = object_id('[" + item.schema + "].[" + item.name + "]') and type = '" + item.type + "')",
+            "if not exists (select * from sys.objects where object_id = object_id('[" + objectId + "]') and type = '" + item.type + "')",
             ''
         ].join(os_1.EOL);
     }
@@ -95,7 +96,7 @@ function table(item, columns, primaryKeys, foreignKeys, indexes) {
         output += '    ' + foreignKey(fk);
         output += os_1.EOL;
     }
-    output += ")";
+    output += ')';
     output += os_1.EOL;
     output += os_1.EOL;
     // indexes
@@ -167,9 +168,10 @@ function primaryKey(item) {
  * @param item Row from `sys.foreignKeys` query.
  */
 function foreignKey(item) {
-    var output = "alter table [" + item.schema + "].[" + item.table + "] with " + (item.is_not_trusted ? 'nocheck' : 'check');
+    var objectId = item.schema + "].[" + item.table;
+    var output = "alter table [" + objectId + "] with " + (item.is_not_trusted ? 'nocheck' : 'check');
     output += " add constraint [" + item.name + "] foreign key([" + item.column + "])";
-    output += " references [" + item.schema + "].[" + item.table + "] ([" + item.reference + "])";
+    output += " references [" + objectId + "] ([" + item.reference + "])";
     switch (item.delete_referential_action) {
         case 1:
             output += ' on delete cascade';
@@ -192,7 +194,7 @@ function foreignKey(item) {
             output += ' on update set default';
             break;
     }
-    output += " alter table [" + item.schema + "].[" + item.table + "] check constraint [" + item.name + "]";
+    output += " alter table [" + objectId + "] check constraint [" + item.name + "]";
     return output;
 }
 /**
@@ -201,15 +203,16 @@ function foreignKey(item) {
  * @param item Row from `sys.indexes` query.
  */
 function index(item) {
-    var output = "";
+    var objectId = item.schema + "].[" + item.table;
+    var output = '';
     // idempotency
-    output += "if not exists (select * from sys.indexes where object_id = object_id('[" + item.schema + "].[" + item.table + "]') and name = '" + item.name + "')";
+    output += "if not exists (select * from sys.indexes where object_id = object_id('[" + objectId + "]') and name = '" + item.name + "')";
     output += os_1.EOL;
     output += 'create';
     if (item.is_unique) {
         output += ' unique';
     }
-    output += " nonclustered index [" + item.name + "] on [" + item.schema + "].[" + item.table + "]";
+    output += " nonclustered index [" + item.name + "] on [" + objectId + "]";
     output += "([" + item.column + "] " + (item.is_descending_key ? 'desc' : 'asc') + ")";
     // todo (jbl): includes
     output += os_1.EOL;

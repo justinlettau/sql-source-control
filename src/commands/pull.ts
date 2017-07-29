@@ -16,8 +16,8 @@ import {
     IndexRecordSet,
     ObjectRecordSet,
     PrimaryKeyRecordSet,
-    TableRecordSet,
-    SchemaRecordSet
+    SchemaRecordSet,
+    TableRecordSet
 } from '../sql/record-set';
 import {
     columnRead,
@@ -88,7 +88,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     });
 
     // write files for schemas
-    for (let item of schemas) {
+    for (const item of schemas) {
         const file: string = util.safeFile(`${item.name}.sql`);
 
         if (!include(config, file)) {
@@ -101,7 +101,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     }
 
     // write files for stored procedures, functions, ect.
-    for (let item of objects) {
+    for (const item of objects) {
         const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
 
         if (!include(config, file)) {
@@ -113,7 +113,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     }
 
     // write files for tables
-    for (let item of tables) {
+    for (const item of tables) {
         const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
 
         if (!include(config, file)) {
@@ -203,7 +203,7 @@ function include(config: Config, file: string | string[]): boolean {
         file = [file];
     }
 
-    const results = multimatch(file, config.files);
+    const results: string[] = multimatch(file, config.files);
     return !!results.length;
 }
 
@@ -213,7 +213,7 @@ function include(config: Config, file: string | string[]): boolean {
  * @param existing Collection of file paths to check against.
  * @param dir File path to check.
  */
-function exclude(existing: string[], dir: string) {
+function exclude(existing: string[], dir: string): void {
     const index: number = existing.indexOf(dir.replace(/\\/g, '/'));
 
     if (index !== -1) {
@@ -227,7 +227,7 @@ function exclude(existing: string[], dir: string) {
  * @param files Array of file paths to delete.
  */
 function removeFiles(files: string[]): void {
-    for (let file of files) {
+    for (const file of files) {
         console.log(`Removing '${chalk.cyan(file)}' ...`);
         fs.removeSync(file);
     }

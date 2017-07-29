@@ -19,9 +19,8 @@ export interface SchemaRecordSet {
 /**
  * Dataset returned from table query.
  */
-export interface TableRecordSet extends AbstractRecordSet {
-
-}
+// tslint:disable-next-line:no-empty-interface
+export interface TableRecordSet extends AbstractRecordSet { }
 
 /**
  * Dataset returned from column query.

@@ -111,7 +111,7 @@ function createFile(config, item, file, content) {
     var output;
     var type;
     switch (item.type.trim()) {
-        case 'SCHEMA':
+        case 'SCHEMA':// not a real object type
             output = config.output.schemas;
             type = null;
             break;

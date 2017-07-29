@@ -40,7 +40,10 @@ export const columnRead: string = `
         sys.columns c
         join sys.types tp on c.user_type_id = tp.user_type_id
         left join sys.computed_columns cc on c.object_id = cc.object_id and c.column_id = cc.column_id
-        left join sys.default_constraints dc on c.default_object_id != 0 and c.object_id = dc.parent_object_id and c.column_id = dc.parent_column_id
+        left join sys.default_constraints dc on
+            c.default_object_id != 0
+            and c.object_id = dc.parent_object_id
+            and c.column_id = dc.parent_column_id
         left join sys.identity_columns ic on c.is_identity = 1 and c.object_id = ic.object_id and c.column_id = ic.column_id
     order by
         ic.is_identity desc,

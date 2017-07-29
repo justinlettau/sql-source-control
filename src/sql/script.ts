@@ -8,8 +8,8 @@ import {
     IndexRecordSet,
     ObjectRecordSet,
     PrimaryKeyRecordSet,
-    TableRecordSet,
-    SchemaRecordSet
+    SchemaRecordSet,
+    TableRecordSet
 } from '../sql/record-set';
 
 /**
@@ -20,6 +20,8 @@ import {
  */
 export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): string {
     let obj: string;
+    const objectId: string = `${item.schema}].[${item.name}`;
+
     item.type = item.type.trim();
 
     // get proper object type for `drop` statement
@@ -45,15 +47,15 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     if (type === 'if-exists-drop') {
         // if exists drop
         return [
-            `if exists (select * from sys.objects where object_id = object_id('[${item.schema}].[${item.name}]') and type = '${item.type}')`,
-            `drop ${obj} [${item.schema}].[${item.name}]`,
-            `go`,
+            `if exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+            `drop ${obj} [${objectId}]`,
+            'go',
             EOL
         ].join(EOL);
     } else if (type === 'if-not-exists') {
         // if not exists
         return [
-            `if not exists (select * from sys.objects where object_id = object_id('[${item.schema}].[${item.name}]') and type = '${item.type}')`,
+            `if not exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
             ''
         ].join(EOL);
     }
@@ -87,36 +89,42 @@ export function schema(item: SchemaRecordSet): string {
  * @param foreignKeys Array of records from `sys.foreignKeys` query.
  * @param indexes Array of records from `sys.indexes` query.
  */
-export function table(item: TableRecordSet, columns: ColumnRecordSet[], primaryKeys: PrimaryKeyRecordSet[], foreignKeys: ForeignKeyRecordSet[], indexes: IndexRecordSet[]): string {
+export function table(
+    item: TableRecordSet,
+    columns: ColumnRecordSet[],
+    primaryKeys: PrimaryKeyRecordSet[],
+    foreignKeys: ForeignKeyRecordSet[],
+    indexes: IndexRecordSet[]
+): string {
     let output: string = `create table [${item.schema}].[${item.name}]`;
     output += EOL;
     output += '(';
     output += EOL;
 
     // columns
-    for (let col of columns.filter(x => x.object_id === item.object_id)) {
+    for (const col of columns.filter(x => x.object_id === item.object_id)) {
         output += '    ' + column(col);
         output += EOL;
     }
 
     // primary keys
-    for (let pk of primaryKeys.filter(x => x.object_id === item.object_id)) {
+    for (const pk of primaryKeys.filter(x => x.object_id === item.object_id)) {
         output += '    ' + primaryKey(pk);
         output += EOL;
     }
 
     // foreign keys
-    for (let fk of foreignKeys.filter(x => x.object_id === item.object_id)) {
+    for (const fk of foreignKeys.filter(x => x.object_id === item.object_id)) {
         output += '    ' + foreignKey(fk);
         output += EOL;
     }
 
-    output += `)`;
+    output += ')';
     output += EOL;
     output += EOL;
 
     // indexes
-    for (let ix of indexes.filter(x => x.object_id === item.object_id)) {
+    for (const ix of indexes.filter(x => x.object_id === item.object_id)) {
         output += index(ix);
         output += EOL;
     }
@@ -194,9 +202,11 @@ function primaryKey(item: PrimaryKeyRecordSet): string {
  * @param item Row from `sys.foreignKeys` query.
  */
 function foreignKey(item: ForeignKeyRecordSet): string {
-    let output: string = `alter table [${item.schema}].[${item.table}] with ${item.is_not_trusted ? 'nocheck' : 'check'}`;
+    const objectId: string = `${item.schema}].[${item.table}`;
+
+    let output: string = `alter table [${objectId}] with ${item.is_not_trusted ? 'nocheck' : 'check'}`;
     output += ` add constraint [${item.name}] foreign key([${item.column}])`;
-    output += ` references [${item.schema}].[${item.table}] ([${item.reference}])`;
+    output += ` references [${objectId}] ([${item.reference}])`;
 
     switch (item.delete_referential_action) {
         case 1:
@@ -222,7 +232,7 @@ function foreignKey(item: ForeignKeyRecordSet): string {
             break;
     }
 
-    output += ` alter table [${item.schema}].[${item.table}] check constraint [${item.name}]`;
+    output += ` alter table [${objectId}] check constraint [${item.name}]`;
     return output;
 }
 
@@ -232,10 +242,11 @@ function foreignKey(item: ForeignKeyRecordSet): string {
  * @param item Row from `sys.indexes` query.
  */
 function index(item: IndexRecordSet): string {
-    let output: string = ``;
+    const objectId: string = `${item.schema}].[${item.table}`;
+    let output: string = '';
 
     // idempotency
-    output += `if not exists (select * from sys.indexes where object_id = object_id('[${item.schema}].[${item.table}]') and name = '${item.name}')`;
+    output += `if not exists (select * from sys.indexes where object_id = object_id('[${objectId}]') and name = '${item.name}')`;
     output += EOL;
 
     output += 'create';
@@ -244,7 +255,7 @@ function index(item: IndexRecordSet): string {
         output += ' unique';
     }
 
-    output += ` nonclustered index [${item.name}] on [${item.schema}].[${item.table}]`;
+    output += ` nonclustered index [${item.name}] on [${objectId}]`;
     output += `([${item.column}] ${item.is_descending_key ? 'desc' : 'asc'})`;
 
     // todo (jbl): includes

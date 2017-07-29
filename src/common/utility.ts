@@ -101,7 +101,7 @@ export function getConn(config: Config, name?: string): Connection {
         // deprecated (v1.1.0)
         console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
 
-        let legacyConn: string | Connection = config.connection;
+        const legacyConn: string | Connection = config.connection;
         config.connections = (isString(legacyConn) ? legacyConn : [legacyConn]);
     }
 
@@ -134,10 +134,10 @@ export function getConn(config: Config, name?: string): Connection {
  * @param file Optional relative path to web config.
  */
 export function getWebConfigConns(file?: string): Connection[] {
-    const parser = new xml2js.Parser();
+    const parser: xml2js.Parser = new xml2js.Parser();
     const webConfig: string = file || webConfigFile;
     let content: string;
-    let conns: Connection[] = [];
+    const conns: Connection[] = [];
 
     if (!fs.existsSync(webConfig)) {
         // web config not found, use defaults
@@ -157,7 +157,7 @@ export function getWebConfigConns(file?: string): Connection[] {
         try {
             const connStrings: any[] = result.configuration.connectionStrings[0].add;
 
-            for (let item of connStrings) {
+            for (const item of connStrings) {
                 conns.push(parseConnString(item.$.name, item.$.connectionString));
             }
 
@@ -202,11 +202,11 @@ function parseConnString(name: string, connString: string): Connection {
     }
 
     return new Connection({
-        name: name,
-        server: server,
-        database: database,
-        port: port,
-        user: user,
-        password: password
+        name,
+        server,
+        database,
+        port,
+        user,
+        password
     });
 }

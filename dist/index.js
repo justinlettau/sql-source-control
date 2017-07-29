@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var pkg = require('../package.json');
+var pkg = require("../package.json");
 var program = require("commander");
 var cat_1 = require("./commands/cat");
 var pull_1 = require("./commands/pull");
