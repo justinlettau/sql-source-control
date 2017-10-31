@@ -67,6 +67,10 @@ export const primaryKeyRead: string = `
         ic.is_included_column = 0
         and ic.index_id = k.unique_index_id
         and k.type = 'PK'
+    order by c.object_id,
+        ic.is_descending_key,
+        k.name,
+        [column]
 `;
 
 /**
@@ -90,6 +94,11 @@ export const foreignKeyRead: string = `
         join sys.columns c on c.object_id = k.parent_object_id and c.column_id = k.parent_column_id
         join sys.foreign_keys fk on fk.object_id = k.constraint_object_id
         join sys.objects ro on ro.object_id = fk.referenced_object_id
+    order by ro.object_id,
+        k.constraint_object_id,
+        fk.is_not_trusted,
+        [column],
+        [reference]
 `;
 
 /**
