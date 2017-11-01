@@ -84,15 +84,14 @@ ssc cat
 ```
 
 ## sf
-sf sql(select) filename
 create a file with the result of select operation.
-Example:
-```
-ssc sf 'select * from table_name' 'table_content.sql' 
-```
 
+useage:
+sf sql(select) filename
+
+Example:  
 ```bash
-ssc cat
+ssc sf 'select * from table_name' 'table_content.sql'
 ```
 
 # Config Options
