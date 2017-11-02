@@ -4,6 +4,7 @@ import * as program from 'commander';
 import { cat } from './commands/cat';
 import { pull } from './commands/pull';
 import { init } from './commands/init';
+import { sql2file } from './commands/sql2file';
 
 program
     .command('init')
@@ -22,6 +23,11 @@ program
     .command('cat')
     .description('Concatenate all SQL files into a single file.')
     .action(cat);
+
+program
+    .command('sf [sql] [file]')
+    .description('Create data file from sql text.')
+    .action(sql2file);
 
 program
     .version((pkg as any).version)

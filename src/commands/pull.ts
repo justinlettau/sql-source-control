@@ -94,7 +94,6 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
         if (!include(config, file)) {
             continue;
         }
-
         const content: string = script.schema(item);
         const dir: string = createFile(config, item, file, content);
         exclude(existing, dir);
