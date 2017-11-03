@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var chalk = require("chalk");
+var chalk_1 = require("chalk");
 var fs = require("fs-extra");
 var glob = require("glob");
 var os_1 = require("os");
@@ -38,7 +38,7 @@ function cat() {
     }
     fs.outputFileSync(config.output.root + "/cat.sql", output);
     var time = process.hrtime(start);
-    console.log(chalk.green("Finished after " + time[0] + "s!"));
+    console.log(chalk_1.default.green("Finished after " + time[0] + "s!"));
 }
 exports.cat = cat;
 //# sourceMappingURL=cat.js.map

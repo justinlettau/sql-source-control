@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var chalk = require("chalk");
+var chalk_1 = require("chalk");
 var fs = require("fs-extra");
 var glob = require("glob");
 var multimatch = require("multimatch");
@@ -19,7 +19,7 @@ function pull(name) {
     var start = process.hrtime();
     var config = util.getConfig();
     var conn = util.getConn(config, name);
-    console.log("Pulling " + chalk.magenta(conn.database) + " from " + chalk.magenta(conn.server) + " ...");
+    console.log("Pulling " + chalk_1.default.magenta(conn.database) + " from " + chalk_1.default.magenta(conn.server) + " ...");
     // connect to db
     new sql.ConnectionPool(conn)
         .connect()
@@ -39,7 +39,7 @@ function pull(name) {
         .then(function (results) { return scriptFiles(config, results); })
         .then(function () {
         var time = process.hrtime(start);
-        console.log(chalk.green("Finished after " + time[0] + "s!"));
+        console.log(chalk_1.default.green("Finished after " + time[0] + "s!"));
     })
         .catch(function (err) { return console.error(err); });
 }
@@ -147,7 +147,7 @@ function createFile(config, item, file, content) {
     // idempotent prefix
     content = script.idempotency(item, type) + content;
     // create file
-    console.log("Creating '" + chalk.cyan(dir) + "' ...");
+    console.log("Creating '" + chalk_1.default.cyan(dir) + "' ...");
     fs.outputFileSync(dir, content.trim());
     return dir;
 }
@@ -187,7 +187,7 @@ function exclude(existing, dir) {
 function removeFiles(files) {
     for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
         var file = files_1[_i];
-        console.log("Removing '" + chalk.cyan(file) + "' ...");
+        console.log("Removing '" + chalk_1.default.cyan(file) + "' ...");
         fs.removeSync(file);
     }
 }

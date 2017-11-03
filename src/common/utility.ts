@@ -1,4 +1,4 @@
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as deepmerge from 'deepmerge';
 import * as fs from 'fs-extra';
 import * as path from 'path';

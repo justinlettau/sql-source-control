@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * SQL server connection configuration.
  */
-var Connection = (function () {
+var Connection = /** @class */ (function () {
     function Connection(conn) {
         this.name = '';
         this.server = '';

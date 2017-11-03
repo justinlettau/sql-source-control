@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var chalk = require("chalk");
+var chalk_1 = require("chalk");
 var deepmerge = require("deepmerge");
 var fs = require("fs-extra");
 var path = require("path");
@@ -91,7 +91,7 @@ function getConn(config, name) {
     var conn;
     if (config.connection) {
         // deprecated (v1.1.0)
-        console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
+        console.warn(chalk_1.default.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
         var legacyConn = config.connection;
         config.connections = (ts_util_is_1.isString(legacyConn) ? legacyConn : [legacyConn]);
     }
