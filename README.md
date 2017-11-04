@@ -40,6 +40,19 @@ Options:
 - `-s` or `--skip` will use defaults and not prompt you for any options.
 - `-w` or `--webconfig` to provide a relative path to a `Web.config` file.
 
+## sf
+sf sql(select) filename
+create a file with the result of select operation.
+Example:
+```
+ssc sf 'select * from table_name' 'table_content.sql'
+```
+
+```bash
+ssc cat
+```
+
+
 ## Pull
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
 the output root directory and SQL scripts will be organized into subdirectories (based on config

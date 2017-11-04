@@ -1,4 +1,4 @@
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { Connection } from '../common/connection';
 import * as util from '../common/utility';
 import { Config } from '../common/config';
