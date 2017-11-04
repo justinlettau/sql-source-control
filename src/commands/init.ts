@@ -9,7 +9,6 @@ import { Connection } from '../common/connection';
  * CLI arguments for `init` command.
  */
 interface InitOptions {
-    webconfig?: string;
     force?: boolean;
     skip?: boolean;
 }
@@ -20,14 +19,7 @@ interface InitOptions {
  * @param options CommanderJS options.
  */
 export function init(options: InitOptions): void {
-    const webConfigFile: string = options.webconfig || util.webConfigFile;
-    const webConfigConns: Connection[] = util.getWebConfigConns(webConfigFile);
     const conn: Connection = new Connection();
-
-    if (webConfigConns) {
-        // use options from web config
-        Object.assign(conn, webConfigConns[0]);
-    }
 
     if (fs.existsSync(util.configFile) && !options.force) {
         // don't overwrite existing config file
@@ -36,65 +28,55 @@ export function init(options: InitOptions): void {
 
     if (options.skip) {
         // skip prompts and create with defaults
-        util.setConfig({ connections: options.webconfig || [conn] });
+        util.setConfig({ connections: [conn] , currentConnection: conn});
         return;
     }
 
     const questions: inquirer.Questions = [
-        {
-            name: 'path',
-            message: 'Use connections from Web.config file?',
-            type: 'confirm',
-            when: (): boolean => !!webConfigConns
-        }, {
+         {
             name: 'server',
             message: 'Server URL.',
             default: (conn.server || undefined),
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }, {
             name: 'port',
             message: 'Server port.',
             default: (conn.port || undefined),
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }, {
             name: 'database',
             message: 'Database name.',
             default: (conn.database || undefined),
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }, {
             name: 'user',
             message: 'Login username.',
             default: (conn.user || undefined),
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }, {
             name: 'password',
             message: 'Login password.',
             default: (conn.password || undefined),
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }, {
             name: 'name',
             message: 'Connection name.',
             default: 'dev',
-            when: (answers): boolean => (!webConfigConns || !answers.path)
+            when: (answers): boolean => ( !answers.path)
         }
     ];
 
     // prompt user for config options
     inquirer.prompt(questions).then((answers: inquirer.Answers): void => {
-        if (answers.path) {
-            // use Web.config path
-            util.setConfig({ connections: webConfigFile });
-        } else {
-            util.setConfig({
-                connections: [new Connection({
-                    name: answers.name,
-                    server: answers.server,
-                    port: answers.port,
-                    database: answers.database,
-                    user: answers.user,
-                    password: answers.password
-                })]
-            });
-        }
+        util.setConfig({
+            connections: [new Connection({
+                name: answers.name,
+                server: answers.server,
+                port: answers.port,
+                database: answers.database,
+                user: answers.user,
+                password: answers.password
+            })]
+        });
     });
 }

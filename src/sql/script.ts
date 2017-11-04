@@ -148,19 +148,20 @@ function column(item: ColumnRecordSet): string {
 
     switch (item.datatype) {
         case 'varchar':
+            break;
         case 'char':
             output += '(' + (item.max_length === -1 ? 'max' : item.max_length) + ')';
             break;
-        case 'varbinary':
-        case 'binary':
-        case 'text':
-        case 'nvarchar':
+        case 'varbinary': break;
+        case 'binary': break;
+        case 'text': break;
+        case 'nvarchar': break;
         case 'nchar':
             output += '(' + (item.max_length === -1 ? 'max' : item.max_length / 2) + ')';
             break;
-        case 'ntext':
-        case 'datetime2':
-        case 'time2':
+        case 'ntext': break;
+        case 'datetime2': break;
+        case 'time2': break;
         case 'datetimeoffset':
             output += '(' + item.scale + ')';
             break;

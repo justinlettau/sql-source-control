@@ -39,7 +39,6 @@ export function cat(): void {
             output += EOL + EOL;
         }
     }
-
     fs.outputFileSync(`${config.output.root}/cat.sql`, output);
 
     const time: [number, number] = process.hrtime(start);

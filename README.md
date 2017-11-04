@@ -83,18 +83,6 @@ Concatenate all SQL files into a single file. Outputs to `./_sql-database/cat.sq
 ssc cat
 ```
 
-## sf
-create a file with the result of select operation.
-
-useage:
-
-sf sql(select) filename
-
-Example:  
-```bash
-ssc sf 'select * from table_name' 'table_content.sql'
-```
-
 # Config Options
 Configuration options are stored in a `ssc.json` file.
 

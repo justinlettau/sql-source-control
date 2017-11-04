@@ -10,12 +10,15 @@ export interface Config {
     /**
      * Path to `Web.config` file or collection of connection objects.
      */
-    connections: string | Connection[];
-
+    connections: Connection[];
+    /*
+    * current context
+    * */
+    currentConnection?: Connection ;
     /**
      * Deprecated (v1.1.0).
      */
-    connection?: string | Connection;
+    connection?: Connection;
 
     /**
      * Glob of files to include / exclude.

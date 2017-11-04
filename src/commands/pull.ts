@@ -28,6 +28,7 @@ import {
     tableRead
 } from '../sql/sys';
 import * as util from '../common/utility';
+// import { context } from '../commands/context';
 
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
@@ -37,9 +38,19 @@ import * as util from '../common/utility';
 export function pull(name: string): void {
     const start: [number, number] = process.hrtime();
     const config: Config = util.getConfig();
-    const conn: Connection = util.getConn(config, name);
+    let conn: Connection ;
 
-    console.log(`Pulling ${chalk.magenta(conn.database)} from ${chalk.magenta(conn.server)} ...`);
+    if ( name !== '' ) {
+        conn = util.getConn(config, name);
+
+    } else
+    if ((context !== '') || ( name === '' )) {
+        conn = util.getConn(config, context);
+    } else {
+        console.log(chalk.red('context is need to set with "use"  '));
+        return;
+    }
+    console.log(`Pulling ${chalk.magenta(conn.database)} from [${chalk.magenta(conn.name)}]${chalk.magenta(conn.server)} ...`);
 
     // connect to db
     new sql.ConnectionPool(conn)

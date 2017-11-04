@@ -14,18 +14,13 @@ import { Connection } from '../common/connection';
 export const configFile: string = path.join(process.cwd(), 'ssc.json');
 
 /**
- * Web config file path.
- */
-export const webConfigFile: string = './Web.config';
-
-/**
  * Default values for config file.
  */
 export const configDefaults: Config = {
     connections: [],
-    files: [],
+    currentConnection: '',
     output: {
-        'root': '_sql-database',
+        'root': '_sql_database',
         'procs': './stored-procedures',
         'schemas': './schemas',
         'scalar-valued': './functions/scalar-valued',
@@ -102,16 +97,9 @@ export function getConn(config: Config, name?: string): Connection {
         console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
 
         const legacyConn: string | Connection = config.connection;
-        config.connections = (isString(legacyConn) ? legacyConn : [legacyConn]);
+        config.connections = [legacyConn];
     }
-
-    if (isString(config.connections)) {
-        // get form web config
-        conns = getWebConfigConns(config.connections);
-    } else {
-        conns = config.connections;
-    }
-
+    conns = config.connections;
     if (name) {
         conn = conns.find(item => item.name.toLocaleLowerCase() === name.toLowerCase());
     } else {
@@ -126,48 +114,6 @@ export function getConn(config: Config, name?: string): Connection {
     }
 
     return conn;
-}
-
-/**
- * Safely get connections from `web.config` file, if available.
- *
- * @param file Optional relative path to web config.
- */
-export function getWebConfigConns(file?: string): Connection[] {
-    const parser: xml2js.Parser = new xml2js.Parser();
-    const webConfig: string = file || webConfigFile;
-    let content: string;
-    const conns: Connection[] = [];
-
-    if (!fs.existsSync(webConfig)) {
-        // web config not found, use defaults
-        return;
-    }
-
-    // read config file
-    content = fs.readFileSync(webConfig, 'utf-8');
-
-    // parse config file
-    parser.parseString(content, (err, result): void => {
-        if (err) {
-            console.error(err);
-            process.exit();
-        }
-
-        try {
-            const connStrings: any[] = result.configuration.connectionStrings[0].add;
-
-            for (const item of connStrings) {
-                conns.push(parseConnString(item.$.name, item.$.connectionString));
-            }
-
-        } catch (err) {
-            console.error('Could not parse connection strings from Web.config file!');
-            process.exit();
-        }
-    });
-
-    return (conns.length ? conns : undefined);
 }
 
 /**

@@ -4,25 +4,19 @@ var chalk = require("chalk");
 var deepmerge = require("deepmerge");
 var fs = require("fs-extra");
 var path = require("path");
-var xml2js = require("xml2js");
-var ts_util_is_1 = require("ts-util-is");
 var connection_1 = require("../common/connection");
 /**
  * Config file path.
  */
 exports.configFile = path.join(process.cwd(), 'ssc.json');
 /**
- * Web config file path.
- */
-exports.webConfigFile = './Web.config';
-/**
  * Default values for config file.
  */
 exports.configDefaults = {
     connections: [],
-    files: [],
+    currentConnection: '',
     output: {
-        'root': '_sql-database',
+        'root': '_sql_database',
         'procs': './stored-procedures',
         'schemas': './schemas',
         'scalar-valued': './functions/scalar-valued',
@@ -93,15 +87,9 @@ function getConn(config, name) {
         // deprecated (v1.1.0)
         console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
         var legacyConn = config.connection;
-        config.connections = (ts_util_is_1.isString(legacyConn) ? legacyConn : [legacyConn]);
+        config.connections = [legacyConn];
     }
-    if (ts_util_is_1.isString(config.connections)) {
-        // get form web config
-        conns = getWebConfigConns(config.connections);
-    }
-    else {
-        conns = config.connections;
-    }
+    conns = config.connections;
     if (name) {
         conn = conns.find(function (item) { return item.name.toLocaleLowerCase() === name.toLowerCase(); });
     }
@@ -117,43 +105,6 @@ function getConn(config, name) {
     return conn;
 }
 exports.getConn = getConn;
-/**
- * Safely get connections from `web.config` file, if available.
- *
- * @param file Optional relative path to web config.
- */
-function getWebConfigConns(file) {
-    var parser = new xml2js.Parser();
-    var webConfig = file || exports.webConfigFile;
-    var content;
-    var conns = [];
-    if (!fs.existsSync(webConfig)) {
-        // web config not found, use defaults
-        return;
-    }
-    // read config file
-    content = fs.readFileSync(webConfig, 'utf-8');
-    // parse config file
-    parser.parseString(content, function (err, result) {
-        if (err) {
-            console.error(err);
-            process.exit();
-        }
-        try {
-            var connStrings = result.configuration.connectionStrings[0].add;
-            for (var _i = 0, connStrings_1 = connStrings; _i < connStrings_1.length; _i++) {
-                var item = connStrings_1[_i];
-                conns.push(parseConnString(item.$.name, item.$.connectionString));
-            }
-        }
-        catch (err) {
-            console.error('Could not parse connection strings from Web.config file!');
-            process.exit();
-        }
-    });
-    return (conns.length ? conns : undefined);
-}
-exports.getWebConfigConns = getWebConfigConns;
 /**
  * Parse connection string into object.
  *

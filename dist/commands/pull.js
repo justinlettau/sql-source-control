@@ -10,6 +10,7 @@ var ts_util_is_1 = require("ts-util-is");
 var script = require("../sql/script");
 var sys_1 = require("../sql/sys");
 var util = require("../common/utility");
+// import { context } from '../commands/context';
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
  *
@@ -18,8 +19,18 @@ var util = require("../common/utility");
 function pull(name) {
     var start = process.hrtime();
     var config = util.getConfig();
-    var conn = util.getConn(config, name);
-    console.log("Pulling " + chalk.magenta(conn.database) + " from " + chalk.magenta(conn.server) + " ...");
+    var conn;
+    if (name !== '') {
+        conn = util.getConn(config, name);
+    }
+    else if ((context !== '') || (name === '')) {
+        conn = util.getConn(config, context);
+    }
+    else {
+        console.log(chalk.red('context is need to set with "use"  '));
+        return;
+    }
+    console.log("Pulling " + chalk.magenta(conn.database) + " from [" + chalk.magenta(conn.name) + "]" + chalk.magenta(conn.server) + " ...");
     // connect to db
     new sql.ConnectionPool(conn)
         .connect()

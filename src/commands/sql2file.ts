@@ -29,20 +29,26 @@ import {
 } from '../sql/sys';
 
 import * as util from '../common/utility';
-import {objects} from "inquirer";
-import {equal} from "assert";
-import {forEachComment} from "tslint";
+import { objects } from 'inquirer';
+import { equal } from 'assert';
+import { forEachComment } from 'tslint';
+import { context } from '../commands/context';
 
 /**
  * Generate SQL files for sql query data.
- *
  * @param sqlSelect
  * @param outputfilename
  */
 export function sql2file(sqlSelect: string, outputfilename: string): void {
     const start: [number, number] = process.hrtime();
     const config: Config = util.getConfig();
-    const conn: Connection = util.getConn(config);
+    let conn: Connection ;
+    if (context !== '') {
+        conn = util.getConn(config, context);
+    } else {
+        console.log(chalk.red('context is need to set with "use" '));
+        return;
+    }
     // connect to db
     new sql.ConnectionPool(conn)
         .connect()
@@ -68,28 +74,29 @@ export function sql2file(sqlSelect: string, outputfilename: string): void {
  *
  * @param config Current configuration to use.
  * @param results Array of data sets from SQL queries.
- * @param filename 输出文件名
+ * @param filename out file name
  */
 function resultsetTofiles(config: Config, results: sql.IResult<any>[], filename: string ): void {
-    let columns: Array<any> = [];
-    let contenttext: Array<any> = [];
+    const columns: any[] = [];
+    const contenttext: any[] = [];
 
     for (const obj in results[0].recordset.columns) {
-        if (false!=false) {
-            columns.push("\t"+obj);
+        if (false !== false) {
+            columns.push('\t' + obj);
         } else {
-            columns.push("\t"+obj);
-            contenttext.push("\t"+obj);
+            columns.push('\t' + obj);
+            contenttext.push('\t' + obj);
         }
     }
     // combine content of table
     for (const row of results[0].recordset) {
         contenttext.push('\n');
-        for(const col of columns){contenttext.push(row[col.replace('\t','')] + '\t' );}
+        for (const col of columns) {
+            contenttext.push(row[col.replace('\t', '')] + '\t' );
+        }
     }
 
-    if(contenttext.length>0)
-    {
+    if (contenttext.length > 0) {
         let dir: string;
         // get full output path
         dir = path.join(config.output.root, filename);

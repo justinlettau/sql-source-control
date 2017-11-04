@@ -121,19 +121,23 @@ function column(item) {
     output += " " + item.datatype;
     switch (item.datatype) {
         case 'varchar':
-        case 'char':
-        case 'varbinary':
-        case 'binary':
-        case 'text':
             output += '(' + (item.max_length === -1 ? 'max' : item.max_length) + ')';
             break;
+        case 'char':
+            output += '(' + (item.max_length === -1 ? 'max' : item.max_length) + ')';
+            break;
+        case 'varbinary': break;
+        case 'binary': break;
+        case 'text': break;
         case 'nvarchar':
-        case 'nchar':
-        case 'ntext':
             output += '(' + (item.max_length === -1 ? 'max' : item.max_length / 2) + ')';
             break;
-        case 'datetime2':
-        case 'time2':
+        case 'nchar':
+            output += '(' + (item.max_length === -1 ? 'max' : item.max_length / 2) + ')';
+            break;
+        case 'ntext': break;
+        case 'datetime2': break;
+        case 'time2': break;
         case 'datetimeoffset':
             output += '(' + item.scale + ')';
             break;
