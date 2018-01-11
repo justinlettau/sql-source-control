@@ -128,6 +128,7 @@ function createFile(config, item, file, content) {
             type = config.idempotency.views;
             break;
         case 'TF':
+        case 'IF':
             output = config.output['table-valued'];
             type = config.idempotency['table-valued'];
             break;

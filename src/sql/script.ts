@@ -36,6 +36,7 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
             obj = 'view';
             break;
         case 'TF':
+        case 'IF':
         case 'FN':
             obj = 'function';
             break;

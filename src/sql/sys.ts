@@ -148,7 +148,7 @@ export const objectRead: string = `
         ) as [text]
     from
         sys.objects so
-        inner join syscomments sc on sc.id = so.object_id and so.type in ('P', 'V', 'TF', 'FN', 'TR')
+        inner join syscomments sc on sc.id = so.object_id and so.type in ('P', 'V', 'TF', 'IF', 'FN', 'TR')
         inner join sys.schemas s on s.schema_id = so.schema_id
     group by
         so.name

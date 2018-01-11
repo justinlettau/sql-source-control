@@ -160,6 +160,7 @@ function createFile(config: Config, item: any, file: string, content: string): s
             type = config.idempotency.views;
             break;
         case 'TF':
+        case 'IF':
             output = config.output['table-valued'];
             type = config.idempotency['table-valued'];
             break;

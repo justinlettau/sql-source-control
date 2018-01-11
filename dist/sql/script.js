@@ -23,6 +23,7 @@ function idempotency(item, type) {
             obj = 'view';
             break;
         case 'TF':
+        case 'IF':
         case 'FN':
             obj = 'function';
             break;
