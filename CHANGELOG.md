@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/justinlettau/sql-source-control/compare/v1.3.0...v1.3.1) (2018-01-11)
+
+
+### Bug Fixes
+
+* pull inline-table value functions ([#11](https://github.com/justinlettau/sql-source-control/issues/11)) ([dfdbfa6](https://github.com/justinlettau/sql-source-control/commit/dfdbfa6))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/justinlettau/sql-source-control/compare/v1.2.0...v1.3.0) (2017-11-03)
 
