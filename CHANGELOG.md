@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/justinlettau/sql-source-control/compare/v1.3.1...v1.3.2) (2018-01-13)
+
+
+### Bug Fixes
+
+* properly handle relative root directory ([#9](https://github.com/justinlettau/sql-source-control/issues/9)) ([a782fd1](https://github.com/justinlettau/sql-source-control/commit/a782fd1))
+* remove duplicate schemas ([056d58e](https://github.com/justinlettau/sql-source-control/commit/056d58e))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/justinlettau/sql-source-control/compare/v1.3.0...v1.3.1) (2018-01-11)
 
