@@ -1,9 +1,8 @@
 import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 
-import * as util from '../common/utility';
-import { Config } from '../common/config';
 import { Connection } from '../common/connection';
+import * as util from '../common/utility';
 
 /**
  * CLI arguments for `init` command.

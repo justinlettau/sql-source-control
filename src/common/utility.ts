@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import * as deepmerge from 'deepmerge';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as xml2js from 'xml2js';
 import { isString } from 'ts-util-is';
+import * as xml2js from 'xml2js';
 
 import { Config } from '../common/config';
 import { Connection } from '../common/connection';
@@ -88,15 +88,11 @@ export function setConfig(config: Config): void {
 }
 
 /**
- * Get a connection object by name, or the first available if `name` is not provided.
+ * Get a list of all available connections.
  *
- * @param config Config object used to search for connection.
- * @param name Optional connection `name` to get.
+ * @param config Config object used to search for connections.
  */
-export function getConn(config: Config, name?: string): Connection {
-    let conns: Connection[];
-    let conn: Connection;
-
+export function getConns(config: Config): Connection[] {
     if (config.connection) {
         // deprecated (v1.1.0)
         console.warn(chalk.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
@@ -107,10 +103,21 @@ export function getConn(config: Config, name?: string): Connection {
 
     if (isString(config.connections)) {
         // get form web config
-        conns = getWebConfigConns(config.connections);
+        return getWebConfigConns(config.connections);
     } else {
-        conns = config.connections;
+        return config.connections;
     }
+}
+
+/**
+ * Get a connection object by name, or the first available if `name` is not provided.
+ *
+ * @param config Config object used to search for connection.
+ * @param name Optional connection `name` to get.
+ */
+export function getConn(config: Config, name?: string): Connection {
+    const conns: Connection[] = getConns(config);
+    let conn: Connection;
 
     if (name) {
         conn = conns.find(item => item.name.toLocaleLowerCase() === name.toLowerCase());

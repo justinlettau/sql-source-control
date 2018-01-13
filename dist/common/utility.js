@@ -4,8 +4,8 @@ var chalk_1 = require("chalk");
 var deepmerge = require("deepmerge");
 var fs = require("fs-extra");
 var path = require("path");
-var xml2js = require("xml2js");
 var ts_util_is_1 = require("ts-util-is");
+var xml2js = require("xml2js");
 var connection_1 = require("../common/connection");
 /**
  * Config file path.
@@ -81,14 +81,11 @@ function setConfig(config) {
 }
 exports.setConfig = setConfig;
 /**
- * Get a connection object by name, or the first available if `name` is not provided.
+ * Get a list of all available connections.
  *
- * @param config Config object used to search for connection.
- * @param name Optional connection `name` to get.
+ * @param config Config object used to search for connections.
  */
-function getConn(config, name) {
-    var conns;
-    var conn;
+function getConns(config) {
     if (config.connection) {
         // deprecated (v1.1.0)
         console.warn(chalk_1.default.yellow('Warning! The config `connection` object is deprecated. Use `connections` instead.'));
@@ -97,11 +94,22 @@ function getConn(config, name) {
     }
     if (ts_util_is_1.isString(config.connections)) {
         // get form web config
-        conns = getWebConfigConns(config.connections);
+        return getWebConfigConns(config.connections);
     }
     else {
-        conns = config.connections;
+        return config.connections;
     }
+}
+exports.getConns = getConns;
+/**
+ * Get a connection object by name, or the first available if `name` is not provided.
+ *
+ * @param config Config object used to search for connection.
+ * @param name Optional connection `name` to get.
+ */
+function getConn(config, name) {
+    var conns = getConns(config);
+    var conn;
     if (name) {
         conn = conns.find(function (item) { return item.name.toLocaleLowerCase() === name.toLowerCase(); });
     }

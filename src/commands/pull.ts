@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
+import * as sql from 'mssql';
 import * as multimatch from 'multimatch';
 import * as path from 'path';
-import * as sql from 'mssql';
 import { isArray } from 'ts-util-is';
 
 import { Config } from '../common/config';
 import { Connection } from '../common/connection';
 import { IdempotencyOption } from '../common/idempotency';
-import * as script from '../sql/script';
+import * as util from '../common/utility';
 import {
     ColumnRecordSet,
     ForeignKeyRecordSet,
@@ -19,15 +19,8 @@ import {
     SchemaRecordSet,
     TableRecordSet
 } from '../sql/record-set';
-import {
-    columnRead,
-    foreignKeyRead,
-    indexRead,
-    objectRead,
-    primaryKeyRead,
-    tableRead
-} from '../sql/sys';
-import * as util from '../common/utility';
+import * as script from '../sql/script';
+import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead } from '../sql/sys';
 
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.

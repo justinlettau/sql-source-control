@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs-extra");
 var inquirer = require("inquirer");
-var util = require("../common/utility");
 var connection_1 = require("../common/connection");
+var util = require("../common/utility");
 /**
  * Create default config file.
  *

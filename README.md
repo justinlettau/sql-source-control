@@ -40,6 +40,13 @@ Options:
 - `-s` or `--skip` will use defaults and not prompt you for any options.
 - `-w` or `--webconfig` to provide a relative path to a `Web.config` file.
 
+## Conns
+List all available connections specified in the configuration file.
+
+```bash
+ssc conns
+```
+
 ## Pull
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
 the output root directory and SQL scripts will be organized into subdirectories (based on config

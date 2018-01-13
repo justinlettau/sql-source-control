@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var chalk_1 = require("chalk");
 var fs = require("fs-extra");
 var glob = require("glob");
+var sql = require("mssql");
 var multimatch = require("multimatch");
 var path = require("path");
-var sql = require("mssql");
 var ts_util_is_1 = require("ts-util-is");
+var util = require("../common/utility");
 var script = require("../sql/script");
 var sys_1 = require("../sql/sys");
-var util = require("../common/utility");
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
  *

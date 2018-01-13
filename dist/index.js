@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var pkg = require("../package.json");
 var program = require("commander");
+var pkg = require("../package.json");
 var cat_1 = require("./commands/cat");
-var pull_1 = require("./commands/pull");
+var conns_1 = require("./commands/conns");
 var init_1 = require("./commands/init");
+var pull_1 = require("./commands/pull");
 program
     .command('init')
     .description('Create default config file.')
@@ -12,6 +13,10 @@ program
     .option('-s, --skip', 'Use defaults only and skip the option prompts.')
     .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
     .action(init_1.init);
+program
+    .command('conns')
+    .description('List all available connections.')
+    .action(conns_1.conns);
 program
     .command('pull [name]')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')

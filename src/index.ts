@@ -1,9 +1,10 @@
-import pkg = require('../package.json');
 import * as program from 'commander';
 
+import pkg = require('../package.json');
 import { cat } from './commands/cat';
-import { pull } from './commands/pull';
+import { conns } from './commands/conns';
 import { init } from './commands/init';
+import { pull } from './commands/pull';
 
 program
     .command('init')
@@ -12,6 +13,11 @@ program
     .option('-s, --skip', 'Use defaults only and skip the option prompts.')
     .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
     .action(init);
+
+program
+    .command('conns')
+    .description('List all available connections.')
+    .action(conns);
 
 program
     .command('pull [name]')
