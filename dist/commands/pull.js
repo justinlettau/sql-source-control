@@ -73,7 +73,7 @@ function scriptFiles(config, results) {
         }
         var content = script.schema(item);
         var dir = createFile(config, item, file, content);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
     // write files for stored procedures, functions, ect.
     for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
@@ -83,7 +83,7 @@ function scriptFiles(config, results) {
             continue;
         }
         var dir = createFile(config, item, file, item.text);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
     // write files for tables
     for (var _b = 0, tables_1 = tables; _b < tables_1.length; _b++) {
@@ -94,7 +94,7 @@ function scriptFiles(config, results) {
         }
         var content = script.table(item, columns, primaryKeys, foreignKeys, indexes);
         var dir = createFile(config, item, file, content);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
     // all remaining files in `existing` need deleted
     removeFiles(existing);
@@ -172,10 +172,14 @@ function include(config, file) {
 /**
  * Remove `dir` from `existing` if it exists.
  *
+ * @param config Current configuration to use.
  * @param existing Collection of file paths to check against.
  * @param dir File path to check.
  */
-function exclude(existing, dir) {
+function exclude(config, existing, dir) {
+    if (config.output.root.startsWith('./') && !dir.startsWith('./')) {
+        dir = "./" + dir;
+    }
     var index = existing.indexOf(dir.replace(/\\/g, '/'));
     if (index !== -1) {
         existing.splice(index, 1);

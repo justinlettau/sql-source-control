@@ -25,7 +25,7 @@ export const configDefaults: Config = {
     connections: [],
     files: [],
     output: {
-        'root': '_sql-database',
+        'root': './_sql-database',
         'procs': './stored-procedures',
         'schemas': './schemas',
         'scalar-valued': './functions/scalar-valued',

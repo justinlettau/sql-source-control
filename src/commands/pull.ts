@@ -98,7 +98,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
 
         const content: string = script.schema(item);
         const dir: string = createFile(config, item, file, content);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
 
     // write files for stored procedures, functions, ect.
@@ -110,7 +110,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
         }
 
         const dir: string = createFile(config, item, file, item.text);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
 
     // write files for tables
@@ -123,7 +123,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
 
         const content: string = script.table(item, columns, primaryKeys, foreignKeys, indexes);
         const dir: string = createFile(config, item, file, content);
-        exclude(existing, dir);
+        exclude(config, existing, dir);
     }
 
     // all remaining files in `existing` need deleted
@@ -212,10 +212,15 @@ function include(config: Config, file: string | string[]): boolean {
 /**
  * Remove `dir` from `existing` if it exists.
  *
+ * @param config Current configuration to use.
  * @param existing Collection of file paths to check against.
  * @param dir File path to check.
  */
-function exclude(existing: string[], dir: string): void {
+function exclude(config: Config, existing: string[], dir: string): void {
+    if (config.output.root.startsWith('./') && !dir.startsWith('./')) {
+        dir = `./${dir}`;
+    }
+
     const index: number = existing.indexOf(dir.replace(/\\/g, '/'));
 
     if (index !== -1) {
