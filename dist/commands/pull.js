@@ -60,9 +60,10 @@ function scriptFiles(config, results) {
     var foreignKeys = results[4].recordset;
     var indexes = results[5].recordset;
     // get unique schema names
-    var schemas = tables.map(function (item) {
-        return { name: item.schema, type: 'SCHEMA' };
-    });
+    var schemas = tables
+        .map(function (item) { return item.schema; })
+        .filter(function (value, index, array) { return array.indexOf(value) === index; })
+        .map(function (value) { return ({ name: value, type: 'SCHEMA' }); });
     // write files for schemas
     for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
         var item = schemas_1[_i];
@@ -148,7 +149,7 @@ function createFile(config, item, file, content) {
     // idempotent prefix
     content = script.idempotency(item, type) + content;
     // create file
-    console.log("Creating '" + chalk_1.default.cyan(dir) + "' ...");
+    console.log("Creating " + chalk_1.default.cyan(dir) + " ...");
     fs.outputFileSync(dir, content.trim());
     return dir;
 }
@@ -188,7 +189,7 @@ function exclude(existing, dir) {
 function removeFiles(files) {
     for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
         var file = files_1[_i];
-        console.log("Removing '" + chalk_1.default.cyan(file) + "' ...");
+        console.log("Removing " + chalk_1.default.cyan(file) + " ...");
         fs.removeSync(file);
     }
 }

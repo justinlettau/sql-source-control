@@ -83,9 +83,10 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     const indexes: IndexRecordSet[] = results[5].recordset;
 
     // get unique schema names
-    const schemas: SchemaRecordSet[] = tables.map(item => {
-        return { name: item.schema, type: 'SCHEMA' };
-    });
+    const schemas: SchemaRecordSet[] = tables
+        .map(item => item.schema)
+        .filter((value, index, array) => array.indexOf(value) === index)
+        .map(value => ({ name: value, type: 'SCHEMA' }));
 
     // write files for schemas
     for (const item of schemas) {
@@ -183,7 +184,7 @@ function createFile(config: Config, item: any, file: string, content: string): s
     content = script.idempotency(item, type) + content;
 
     // create file
-    console.log(`Creating '${chalk.cyan(dir)}' ...`);
+    console.log(`Creating ${chalk.cyan(dir)} ...`);
     fs.outputFileSync(dir, content.trim());
 
     return dir;
@@ -229,7 +230,7 @@ function exclude(existing: string[], dir: string): void {
  */
 function removeFiles(files: string[]): void {
     for (const file of files) {
-        console.log(`Removing '${chalk.cyan(file)}' ...`);
+        console.log(`Removing ${chalk.cyan(file)} ...`);
         fs.removeSync(file);
     }
 }
