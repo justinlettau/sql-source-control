@@ -33,6 +33,10 @@
   "bin": {
     "ssc": "bin/ssc"
   },
+  "files": [
+    "bin/",
+    "dist"
+  ],
   "dependencies": {
     "chalk": "^2.3.0",
     "cli-table": "^0.3.1",

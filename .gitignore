@@ -1,10 +1,11 @@
 # Editors
-.vs
-.vscode
 .idea
 .settings
+.vs
+.vscode
 
 # Other
-node_modules/
 _sql-database/
+dist/
+node_modules/
 ssc.json
