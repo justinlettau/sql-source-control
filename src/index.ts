@@ -1,10 +1,14 @@
 import * as program from 'commander';
+import * as updateNotifier from 'update-notifier';
 
 import pkg = require('../package.json');
 import { cat } from './commands/cat';
 import { conns } from './commands/conns';
 import { init } from './commands/init';
 import { pull } from './commands/pull';
+
+// check for updates
+updateNotifier({ pkg }).notify();
 
 program
     .command('init')
