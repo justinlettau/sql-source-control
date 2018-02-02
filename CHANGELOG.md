@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/justinlettau/sql-source-control/compare/v1.4.0...v1.5.0) (2018-02-02)
+
+
+### Features
+
+* add update notification ([cbc21c2](https://github.com/justinlettau/sql-source-control/commit/cbc21c2))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/justinlettau/sql-source-control/compare/v1.3.2...v1.4.0) (2018-01-13)
 
