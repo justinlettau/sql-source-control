@@ -83,7 +83,7 @@ Example output:
         ...
 ```
 
-## Push
+## Push (beta)
 Execute all local scripts against the requested database.
 
 ```bash
