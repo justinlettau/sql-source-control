@@ -6,6 +6,7 @@ import { cat } from './commands/cat';
 import { conns } from './commands/conns';
 import { init } from './commands/init';
 import { pull } from './commands/pull';
+import { push } from './commands/push';
 
 // check for updates
 updateNotifier({ pkg }).notify();
@@ -27,6 +28,11 @@ program
     .command('pull [name]')
     .description('Generate SQL files for all tables, stored procedures, functions, etc.')
     .action(pull);
+
+program
+    .command('push [name]')
+    .description('Execute all scripts against the requested database.')
+    .action(push);
 
 program
     .command('cat')

@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import * as deepmerge from 'deepmerge';
 import * as fs from 'fs-extra';
+import * as glob from 'glob';
 import * as path from 'path';
 import { isString } from 'ts-util-is';
 import * as xml2js from 'xml2js';
@@ -175,6 +176,31 @@ export function getWebConfigConns(file?: string): Connection[] {
     });
 
     return (conns.length ? conns : undefined);
+}
+
+/**
+ * Get all SQL files in correct execution order.
+ *
+ * @param config Config object used to search for connection.
+ */
+export function getFilesOrdered(config: Config): string[] {
+    const output: string[] = [];
+    const directories: string[] = [
+        config.output.schemas,
+        config.output.tables,
+        config.output.views,
+        config.output['scalar-valued'],
+        config.output['table-valued'],
+        config.output.procs,
+        config.output.triggers
+    ];
+
+    for (const dir of directories) {
+        const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
+        output.push(...files);
+    }
+
+    return output;
 }
 
 /**

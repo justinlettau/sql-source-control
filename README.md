@@ -83,6 +83,17 @@ Example output:
         ...
 ```
 
+## Push
+Execute all local scripts against the requested database.
+
+```bash
+ssc push prod
+```
+
+WARNING:
+All scripts are directly executed against the requested connetion. This can not be undone! Be sure
+to backup your database before running the `push` command.
+
 ## Cat
 Concatenate all SQL files into a single file. Outputs to `./_sql-database/cat.sql`.
 

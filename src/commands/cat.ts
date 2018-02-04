@@ -15,29 +15,16 @@ export function cat(): void {
     let output: string = '';
 
     // order is important
-    const directories: string[] = [
-        config.output.schemas,
-        config.output.tables,
-        config.output.views,
-        config.output['scalar-valued'],
-        config.output['table-valued'],
-        config.output.views,
-        config.output.procs,
-        config.output.triggers
-    ];
+    const files: string[] = util.getFilesOrdered(config);
 
-    for (const dir of directories) {
-        const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
+    for (const file of files) {
+        const content: string = fs.readFileSync(file).toString();
+        const end: string = content.substr(-2).toLowerCase();
 
-        for (const file of files) {
-            const content: string = fs.readFileSync(file).toString();
-            const end: string = content.substr(-2).toLowerCase();
-
-            output += content;
-            output += EOL;
-            output += (end !== 'go' ? 'go' : '');
-            output += EOL + EOL;
-        }
+        output += content;
+        output += EOL;
+        output += (end !== 'go' ? 'go' : '');
+        output += EOL + EOL;
     }
 
     fs.outputFileSync(`${config.output.root}/cat.sql`, output);

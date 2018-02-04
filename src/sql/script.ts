@@ -77,7 +77,7 @@ export function schema(item: SchemaRecordSet): string {
     output += `if not exists (select * from sys.schemas where name = '${item.name}')`;
     output += EOL;
 
-    output += `create schema ${item.name}`;
+    output += `exec('create schema ${item.name}')`;
     return output;
 }
 
