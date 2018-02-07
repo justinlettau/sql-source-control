@@ -148,7 +148,7 @@ Configuration options are stored in a `ssc.json` file.
         "tables": "./tables",
 
         // directory to script triggers (relative to root)
-        "triggers": "./triggers"
+        "triggers": "./triggers",
 
         // directory to script views (relative to root)
         "views": "./views"
