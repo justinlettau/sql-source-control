@@ -90,6 +90,9 @@ Execute all local scripts against the requested database.
 ssc push prod
 ```
 
+Where `prod` is the optional name of the connection to use. If omitted, the first available connection
+is used.
+
 WARNING:
 All scripts are directly executed against the requested connetion. This can not be undone! Be sure
 to backup your database before running the `push` command.
