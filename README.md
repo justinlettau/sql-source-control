@@ -81,7 +81,7 @@ Example output:
     ./views
         dbo.super-cool-view.sql
     ./user-defined-types/table-valued-parameters
-        dbo.tvp_people.sql
+        dbo.insert-people-params.sql
         ...
 ```
 
