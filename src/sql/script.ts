@@ -52,7 +52,9 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
         // if exists drop
         if (item.type === 'TT') {
           return [
-              `if exists (select * from sys.table_types as t join sys.schemas s on t.schema_id = s.schema_id where t.name = '${item.name}' and s.name = '${item.schema}')`,
+              `if exists (select * from sys.table_types as t `,
+              `join sys.schemas s on t.schema_id = s.schema_id `,
+              `where t.name = '${item.name}' and s.name = '${item.schema}')`,
               `drop type [${objectId}]`,
               'go',
               EOL
@@ -69,7 +71,9 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
         // if not exists
         if (item.type === 'TT') {
           return [
-            `if exists (select * from sys.table_types as t join sys.schemas s on t.schema_id = s.schema_id where t.name = '${item.name}' and s.name = '${item.schema}')`,
+            `if exists (select * from sys.table_types as t `,
+            `join sys.schemas s on t.schema_id = s.schema_id `,
+            `where t.name = '${item.name}' and s.name = '${item.schema}')`,
             ''
           ].join(EOL);
         } else {

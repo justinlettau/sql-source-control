@@ -34,7 +34,7 @@ export const configDefaults: Config = {
         'tables': './tables',
         'triggers': './triggers',
         'views': './views',
-        'table-valued-parameters': './user-defined-types/table-valued-parameters',
+        'table-valued-parameters': './user-defined-types/table-valued-parameters'
     },
     idempotency: {
         'procs': 'if-exists-drop',
