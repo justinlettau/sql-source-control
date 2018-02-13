@@ -155,6 +155,7 @@ Configuration options are stored in a `ssc.json` file.
         // directory to script views (relative to root)
         "views": "./views"
 
+        // directory to script table-valued parameters (relative to root)
         "table-valued-parameters": "./user-defined-types/table-valued-parameters"
     },
 
