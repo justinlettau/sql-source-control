@@ -138,7 +138,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
             continue;
         }
 
-        const content: string = script.tvp(item, columns, primaryKeys, foreignKeys, indexes);
+        const content: string = script.tvp(item, columns);
         const dir: string = createFile(config, item, file, content);
         exclude(config, existing, dir);
     }

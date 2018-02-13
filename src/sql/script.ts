@@ -161,16 +161,10 @@ export function table(
  *
  * @param item Row from `sys.columns` query.
  * @param columns Array of records from `sys.columns` query.
- * @param primaryKeys Array of records from `sys.primaryKeys` query.
- * @param foreignKeys Array of records from `sys.foreignKeys` query.
- * @param indexes Array of records from `sys.indexes` query.
  */
 export function tvp(
     item: TableRecordSet,
-    columns: ColumnRecordSet[],
-    primaryKeys: PrimaryKeyRecordSet[],
-    foreignKeys: ForeignKeyRecordSet[],
-    indexes: IndexRecordSet[]
+    columns: ColumnRecordSet[]
 ): string {
     let output: string = `create type [${item.schema}].[${item.name}] as table`;
     output += EOL;
@@ -183,27 +177,9 @@ export function tvp(
         output += EOL;
     }
 
-    // primary keys
-    for (const pk of primaryKeys.filter(x => x.object_id === item.object_id)) {
-        output += '    ' + primaryKey(pk);
-        output += EOL;
-    }
-
-    // foreign keys
-    for (const fk of foreignKeys.filter(x => x.object_id === item.object_id)) {
-        output += '    ' + foreignKey(fk);
-        output += EOL;
-    }
-
     output += ')';
     output += EOL;
     output += EOL;
-
-    // indexes
-    for (const ix of indexes.filter(x => x.object_id === item.object_id)) {
-        output += index(ix);
-        output += EOL;
-    }
 
     return output;
 }
