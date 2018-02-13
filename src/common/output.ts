@@ -10,4 +10,5 @@ export interface OutputConfig {
     'tables'?: string;
     'triggers'?: string;
     'views'?: string;
+    'table-valued-parameters'?: string;
 }

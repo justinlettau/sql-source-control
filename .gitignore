@@ -9,3 +9,4 @@ _sql-database/
 dist/
 node_modules/
 ssc.json
+test/
