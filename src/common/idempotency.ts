@@ -8,6 +8,7 @@ export interface IdempotencyConfig {
     'tables'?: IdempotencyOption;
     'triggers'?: IdempotencyOption;
     'views'?: IdempotencyOption;
+    'table-valued-parameters'?: IdempotencyOption;
 }
 
 /**

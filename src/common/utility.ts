@@ -33,7 +33,8 @@ export const configDefaults: Config = {
         'table-valued': './functions/table-valued',
         'tables': './tables',
         'triggers': './triggers',
-        'views': './views'
+        'views': './views',
+        'table-valued-parameters': './user-defined-types/table-valued-parameters',
     },
     idempotency: {
         'procs': 'if-exists-drop',
@@ -41,7 +42,8 @@ export const configDefaults: Config = {
         'table-valued': 'if-exists-drop',
         'tables': 'if-not-exists',
         'triggers': 'if-exists-drop',
-        'views': 'if-exists-drop'
+        'views': 'if-exists-drop',
+        'table-valued-parameters': 'if-not-exists'
     }
 };
 
@@ -192,7 +194,8 @@ export function getFilesOrdered(config: Config): string[] {
         config.output['scalar-valued'],
         config.output['table-valued'],
         config.output.procs,
-        config.output.triggers
+        config.output.triggers,
+        config.output['table-valued-parameters']
     ];
 
     for (const dir of directories) {
