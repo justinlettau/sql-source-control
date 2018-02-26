@@ -29,6 +29,9 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
         case 'U':
             obj = 'table';
             break;
+        case 'TT':
+            obj = 'table';
+            break;
         case 'P':
             obj = 'procedure';
             break;
@@ -47,18 +50,38 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
 
     if (type === 'if-exists-drop') {
         // if exists drop
-        return [
-            `if exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
-            `drop ${obj} [${objectId}]`,
-            'go',
-            EOL
-        ].join(EOL);
+        if (item.type === 'TT') {
+          return [
+              'if exists (select * from sys.table_types as t ',
+              'join sys.schemas s on t.schema_id = s.schema_id ',
+              `where t.name = '${item.name}' and s.name = '${item.schema}')`,
+              `drop type [${objectId}]`,
+              'go',
+              EOL
+          ].join(EOL);
+        } else {
+          return [
+              `if exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+              `drop ${obj} [${objectId}]`,
+              'go',
+              EOL
+          ].join(EOL);
+        }
     } else if (type === 'if-not-exists') {
         // if not exists
-        return [
-            `if not exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+        if (item.type === 'TT') {
+          return [
+            'if exists (select * from sys.table_types as t ',
+            'join sys.schemas s on t.schema_id = s.schema_id ',
+            `where t.name = '${item.name}' and s.name = '${item.schema}')`,
             ''
-        ].join(EOL);
+          ].join(EOL);
+        } else {
+          return [
+              `if not exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+              ''
+          ].join(EOL);
+        }
     }
 
     // none
@@ -129,6 +152,34 @@ export function table(
         output += index(ix);
         output += EOL;
     }
+
+    return output;
+}
+
+/**
+ * Get script for user-defined table-valued parameter's column.
+ *
+ * @param item Row from `sys.columns` query.
+ * @param columns Array of records from `sys.columns` query.
+ */
+export function tvp(
+    item: TableRecordSet,
+    columns: ColumnRecordSet[]
+): string {
+    let output: string = `create type [${item.schema}].[${item.name}] as table`;
+    output += EOL;
+    output += '(';
+    output += EOL;
+
+    // columns
+    for (const col of columns.filter(x => x.object_id === item.object_id)) {
+        output += '    ' + column(col);
+        output += EOL;
+    }
+
+    output += ')';
+    output += EOL;
+    output += EOL;
 
     return output;
 }
