@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/justinlettau/sql-source-control/compare/v1.6.0...v1.7.0) (2018-02-27)
+
+
+### Features
+
+* add support for table-valued parameters ([25d4c0d](https://github.com/justinlettau/sql-source-control/commit/25d4c0d))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/justinlettau/sql-source-control/compare/v1.5.0...v1.6.0) (2018-02-04)
 
