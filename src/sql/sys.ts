@@ -124,20 +124,20 @@ export const indexRead: string = `
  * Get SQL information for table-valued parameters.
  */
 export const tvpRead: string = `
-		select
-				o.object_id,
-				o.type,
-				s.name as [schema],
-				t.name
-		from sys.table_types t
-		inner join sys.objects o on o.object_id = t.type_table_object_id
-				join sys.schemas s on t.schema_id = s.schema_id
-		where
-				o.type = 'TT'
-				and t.is_user_defined = 1
-		order by
-				s.name,
-				o.name
+    select
+        o.object_id,
+        o.type,
+        s.name as [schema],
+        t.name
+    from sys.table_types t
+        inner join sys.objects o on o.object_id = t.type_table_object_id
+        join sys.schemas s on t.schema_id = s.schema_id
+    where
+        o.type = 'TT'
+        and t.is_user_defined = 1
+    order by
+        s.name,
+        o.name
 `;
 
 /**

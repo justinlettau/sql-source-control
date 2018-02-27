@@ -51,36 +51,40 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     if (type === 'if-exists-drop') {
         // if exists drop
         if (item.type === 'TT') {
-          return [
-              'if exists (select * from sys.table_types as t ',
-              'join sys.schemas s on t.schema_id = s.schema_id ',
-              `where t.name = '${item.name}' and s.name = '${item.schema}')`,
-              `drop type [${objectId}]`,
-              'go',
-              EOL
+            return [
+                'if exists (',
+                '   select * from sys.table_types as t',
+                '   join sys.schemas s on t.schema_id = s.schema_id',
+                `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
+                ')',
+                `drop type [${objectId}]`,
+                'go',
+                EOL
           ].join(EOL);
         } else {
           return [
-              `if exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
-              `drop ${obj} [${objectId}]`,
-              'go',
-              EOL
+                `if exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+                `drop ${obj} [${objectId}]`,
+                'go',
+                EOL
           ].join(EOL);
         }
     } else if (type === 'if-not-exists') {
         // if not exists
         if (item.type === 'TT') {
-          return [
-            'if exists (select * from sys.table_types as t ',
-            'join sys.schemas s on t.schema_id = s.schema_id ',
-            `where t.name = '${item.name}' and s.name = '${item.schema}')`,
-            ''
-          ].join(EOL);
+            return [
+                'if exists (',
+                '   select * from sys.table_types as t',
+                '   join sys.schemas s on t.schema_id = s.schema_id',
+                `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
+                ')',
+                ''
+            ].join(EOL);
         } else {
-          return [
-              `if not exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
-              ''
-          ].join(EOL);
+            return [
+                `if not exists (select * from sys.objects where object_id = object_id('[${objectId}]') and type = '${item.type}')`,
+                ''
+            ].join(EOL);
         }
     }
 
