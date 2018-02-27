@@ -80,6 +80,8 @@ Example output:
         ...
     ./views
         dbo.super-cool-view.sql
+    ./user-defined-types/table-valued-parameters
+        dbo.insert-people-params.sql
         ...
 ```
 
@@ -152,6 +154,9 @@ Configuration options are stored in a `ssc.json` file.
 
         // directory to script views (relative to root)
         "views": "./views"
+
+        // directory to script table-valued parameters (relative to root)
+        "table-valued-parameters": "./user-defined-types/table-valued-parameters"
     },
 
     "idempotency": {
@@ -162,7 +167,8 @@ Configuration options are stored in a `ssc.json` file.
         "table-valued": "if-exists-drop",
         "tables": "if-not-exists",
         "triggers": "if-exists-drop",
-        "views": "if-exists-drop"
+        "views": "if-exists-drop",
+        "table-valued-parameters": "if-not-exists";
 
     }
 }

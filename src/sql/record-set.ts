@@ -23,6 +23,12 @@ export interface SchemaRecordSet {
 export interface TableRecordSet extends AbstractRecordSet { }
 
 /**
+ * Dataset returned from user-defined table-valued parameter query.
+ */
+// tslint:disable-next-line:no-empty-interface
+export interface TvpRecordSet extends AbstractRecordSet { }
+
+/**
  * Dataset returned from column query.
  */
 export interface ColumnRecordSet {

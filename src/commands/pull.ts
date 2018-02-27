@@ -17,10 +17,19 @@ import {
     ObjectRecordSet,
     PrimaryKeyRecordSet,
     SchemaRecordSet,
-    TableRecordSet
+    TableRecordSet,
+    TvpRecordSet
 } from '../sql/record-set';
 import * as script from '../sql/script';
-import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead } from '../sql/sys';
+import {
+    columnRead,
+    foreignKeyRead,
+    indexRead,
+    objectRead,
+    primaryKeyRead,
+    tableRead,
+    tvpRead
+  } from '../sql/sys';
 
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
@@ -44,7 +53,8 @@ export function pull(name: string): void {
                 pool.request().query(columnRead),
                 pool.request().query(primaryKeyRead),
                 pool.request().query(foreignKeyRead),
-                pool.request().query(indexRead)
+                pool.request().query(indexRead),
+                pool.request().query(tvpRead)
             ]).then(results => {
                 pool.close();
                 return results;
@@ -74,6 +84,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     const primaryKeys: PrimaryKeyRecordSet[] = results[3].recordset;
     const foreignKeys: ForeignKeyRecordSet[] = results[4].recordset;
     const indexes: IndexRecordSet[] = results[5].recordset;
+    const tvps: TvpRecordSet[] = results[6].recordset;
 
     // get unique schema names
     const schemas: SchemaRecordSet[] = tables
@@ -115,6 +126,19 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
         }
 
         const content: string = script.table(item, columns, primaryKeys, foreignKeys, indexes);
+        const dir: string = createFile(config, item, file, content);
+        exclude(config, existing, dir);
+    }
+
+    // write files for user-defined table-valued parameter
+    for (const item of tvps) {
+        const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
+
+        if (!include(config, file)) {
+            continue;
+        }
+
+        const content: string = script.tvp(item, columns);
         const dir: string = createFile(config, item, file, content);
         exclude(config, existing, dir);
     }
@@ -165,6 +189,10 @@ function createFile(config: Config, item: any, file: string, content: string): s
         case 'TR':
             output = config.output.triggers;
             type = config.idempotency.triggers;
+            break;
+        case 'TT':
+            output = config.output['table-valued-parameters'];
+            type = config.idempotency['table-valued-parameters'];
             break;
         default:
             output = 'unknown';
