@@ -7,28 +7,28 @@ import { OutputConfig } from './output';
  */
 export interface Config {
 
-    /**
-     * Path to `Web.config` file or collection of connection objects.
-     */
-    connections: string | Connection[];
+  /**
+   * Path to `Web.config` file or collection of connection objects.
+   */
+  connections: string | Connection[];
 
-    /**
-     * Deprecated (v1.1.0).
-     */
-    connection?: string | Connection;
+  /**
+   * Deprecated (v1.1.0).
+   */
+  connection?: string | Connection;
 
-    /**
-     * Glob of files to include / exclude.
-     */
-    files?: string[];
+  /**
+   * Glob of files to include / exclude.
+   */
+  files?: string[];
 
-    /**
-     * Describes output folder structure.
-     */
-    output?: OutputConfig;
+  /**
+   * Describes output folder structure.
+   */
+  output?: OutputConfig;
 
-    /**
-     * Describes idempotent script to be used.
-     */
-    idempotency?: IdempotencyConfig;
+  /**
+   * Describes idempotent script to be used.
+   */
+  idempotency?: IdempotencyConfig;
 }

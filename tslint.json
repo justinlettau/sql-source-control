@@ -1,6 +1,6 @@
 {
-    "extends": "tslint-config-unicorn-science",
-    "rules": {
-        "no-console": false
-    }
+  "extends": "tslint-config-unicorn-science",
+  "rules": {
+    "no-console": false
+  }
 }
