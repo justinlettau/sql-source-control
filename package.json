@@ -44,7 +44,7 @@
     "deepmerge": "^2.1.0",
     "fs-extra": "^4.0.3",
     "glob": "^7.1.2",
-    "inquirer": "^3.3.0",
+    "inquirer": "^5.0.0",
     "mssql": "^4.1.0",
     "multimatch": "^2.1.0",
     "tedious": "^2.6.1",
