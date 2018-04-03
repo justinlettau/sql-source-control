@@ -73,7 +73,7 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     // if not exists
     if (item.type === 'TT') {
       return [
-        'if exists (',
+        'if not exists (',
         '   select * from sys.table_types as t',
         '   join sys.schemas s on t.schema_id = s.schema_id',
         `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
