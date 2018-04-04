@@ -73,7 +73,7 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     // if not exists
     if (item.type === 'TT') {
       return [
-        'if exists (',
+        'if not exists (',
         '   select * from sys.table_types as t',
         '   join sys.schemas s on t.schema_id = s.schema_id',
         `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
@@ -132,7 +132,7 @@ export function table(
 
   // columns
   for (const col of columns.filter(x => x.object_id === item.object_id)) {
-    output += '  ' + column(col);
+    output += '  ' + column(col) + ',';
     output += EOL;
   }
 
@@ -177,10 +177,18 @@ export function tvp(
   output += EOL;
 
   // columns
-  for (const col of columns.filter(x => x.object_id === item.object_id)) {
-    output += '  ' + column(col);
-    output += EOL;
-  }
+  columns
+    .filter(x => x.object_id === item.object_id)
+    .forEach((col, idx, array) => {
+      output += '  ' + column(col);
+
+      // if it is not the last column
+      if (idx !== array.length - 1) {
+        output += ',';
+      }
+
+      output += EOL;
+    });
 
   output += ')';
   output += EOL;
@@ -240,7 +248,6 @@ function column(item: ColumnRecordSet): string {
     output += ` identity(${item.seed_value || 0}, ${item.increment_value || 1})`;
   }
 
-  output += ',';
   return output;
 }
 
