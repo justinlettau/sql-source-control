@@ -1,6 +1,6 @@
 {
   "name": "sql-source-control",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Simple CLI for getting SQL into source control systems.",
   "keywords": [
     "sql",
@@ -28,6 +28,7 @@
   "scripts": {
     "lint": "tslint -c ./tslint.json -p ./tsconfig.json",
     "build": "tsc -p ./tsconfig.json",
+    "prepublishOnly": "npm run build",
     "release": "standard-version"
   },
   "bin": {

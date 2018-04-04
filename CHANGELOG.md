@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.1"></a>
+## [1.7.1](https://github.com/justinlettau/sql-source-control/compare/v1.7.0...v1.7.1) (2018-04-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to ^5.0.0 ([#20](https://github.com/justinlettau/sql-source-control/issues/20)) ([33813b6](https://github.com/justinlettau/sql-source-control/commit/33813b6))
+* **deps:** update dependency inquirer to ^5.0.0 ([#21](https://github.com/justinlettau/sql-source-control/issues/21)) ([e61dfff](https://github.com/justinlettau/sql-source-control/commit/e61dfff))
+* **pull:** correct table-valued parameters not exists idempotency ([#23](https://github.com/justinlettau/sql-source-control/issues/23)) ([4c1df49](https://github.com/justinlettau/sql-source-control/commit/4c1df49)), closes [#22](https://github.com/justinlettau/sql-source-control/issues/22)
+* script indent inconsistencies ([68b20da](https://github.com/justinlettau/sql-source-control/commit/68b20da))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/justinlettau/sql-source-control/compare/v1.6.0...v1.7.0) (2018-02-27)
 
