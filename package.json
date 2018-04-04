@@ -42,7 +42,7 @@
     "cli-table": "^0.3.1",
     "commander": "^2.15.0",
     "deepmerge": "^2.1.0",
-    "fs-extra": "^4.0.3",
+    "fs-extra": "^5.0.0",
     "glob": "^7.1.2",
     "inquirer": "^5.0.0",
     "mssql": "^4.1.0",
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@types/commander": "^2.12.2",
     "@types/deepmerge": "^2.1.0",
-    "@types/fs-extra": "^4.0.8",
+    "@types/fs-extra": "^5.0.0",
     "@types/glob": "^5.0.35",
     "@types/inquirer": "^0.0.41",
     "@types/mssql": "^4.0.7",
