@@ -53,9 +53,9 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     if (item.type === 'TT') {
       return [
         'if exists (',
-        '   select * from sys.table_types as t',
-        '   join sys.schemas s on t.schema_id = s.schema_id',
-        `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
+        '    select * from sys.table_types as t',
+        '    join sys.schemas s on t.schema_id = s.schema_id',
+        `    where t.name = '${item.name}' and s.name = '${item.schema}'`,
         ')',
         `drop type [${objectId}]`,
         'go',
@@ -74,9 +74,9 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
     if (item.type === 'TT') {
       return [
         'if not exists (',
-        '   select * from sys.table_types as t',
-        '   join sys.schemas s on t.schema_id = s.schema_id',
-        `   where t.name = '${item.name}' and s.name = '${item.schema}'`,
+        '    select * from sys.table_types as t',
+        '    join sys.schemas s on t.schema_id = s.schema_id',
+        `    where t.name = '${item.name}' and s.name = '${item.schema}'`,
         ')',
         ''
       ].join(EOL);
@@ -132,19 +132,19 @@ export function table(
 
   // columns
   for (const col of columns.filter(x => x.object_id === item.object_id)) {
-    output += '  ' + column(col) + ',';
+    output += '    ' + column(col) + ',';
     output += EOL;
   }
 
   // primary keys
   for (const pk of primaryKeys.filter(x => x.object_id === item.object_id)) {
-    output += '  ' + primaryKey(pk);
+    output += '    ' + primaryKey(pk);
     output += EOL;
   }
 
   // foreign keys
   for (const fk of foreignKeys.filter(x => x.object_id === item.object_id)) {
-    output += '  ' + foreignKey(fk);
+    output += '    ' + foreignKey(fk);
     output += EOL;
   }
 
@@ -180,7 +180,7 @@ export function tvp(
   columns
     .filter(x => x.object_id === item.object_id)
     .forEach((col, idx, array) => {
-      output += '  ' + column(col);
+      output += '    ' + column(col);
 
       // if it is not the last column
       if (idx !== array.length - 1) {
