@@ -97,7 +97,7 @@ Where `prod` is the optional name of the connection to use. If omitted, the firs
 is used.
 
 WARNING:
-All scripts are directly executed against the requested connetion. This can not be undone! Be sure
+All scripts are directly executed against the requested connection. This can not be undone! Be sure
 to backup your database before running the `push` command.
 
 ## Cat
@@ -112,66 +112,65 @@ Configuration options are stored in a `ssc.json` file.
 
 ```js
 {
-    // SQL server connections ...
-    "connections": [{
-        "name": "dev",
-        "server": "dev.example.com\\development",
-        "database": "awesome-db",
-        "port": 1433,
-        "user": "example",
-        "password": "qwerty"
-    }],
+  // SQL server connections ...
+  "connections": [{
+    "name": "dev",
+    "server": "dev.example.com\\development",
+    "database": "awesome-db",
+    "port": 1433,
+    "user": "example",
+    "password": "qwerty"
+  }],
 
-    // ... OR, path to Web.config file with connectionStrings
-    "connections": "../Web.config",
+  // ... OR, path to Web.config file with connectionStrings
+  "connections": "../Web.config",
 
-    // the following options are optional (default values shown) ...
+  // the following options are optional (default values shown) ...
 
-    // glob of files to include / exclude (examples: ["dbo.*"] or ["*", "!dbo.*"])
-    "files": [],
+  // glob of files to include / exclude (examples: ["dbo.*"] or ["*", "!dbo.*"])
+  "files": [],
 
-    "output": {
+  "output": {
 
-        // directory to place scripted files into (relative to config file)
-        "root": "./_sql-database",
+    // directory to place scripted files into (relative to config file)
+    "root": "./_sql-database",
 
-        // directory to script procs (relative to root)
-        "procs": "./stored-procedures",
+    // directory to script procs (relative to root)
+    "procs": "./stored-procedures",
 
-        // directory to script schemas (relative to root)
-        "schemas": "./schemas",
+    // directory to script schemas (relative to root)
+    "schemas": "./schemas",
 
-        // directory to script scalar functions (relative to root)
-        "scalar-valued": "./functions/scalar-valued",
+    // directory to script scalar functions (relative to root)
+    "scalar-valued": "./functions/scalar-valued",
 
-        // directory to script table functions (relative to root)
-        "table-valued": "./functions/table-valued",
+    // directory to script table functions (relative to root)
+    "table-valued": "./functions/table-valued",
 
-        // directory to script tables (relative to root)
-        "tables": "./tables",
+    // directory to script tables (relative to root)
+    "tables": "./tables",
 
-        // directory to script triggers (relative to root)
-        "triggers": "./triggers",
+    // directory to script triggers (relative to root)
+    "triggers": "./triggers",
 
-        // directory to script views (relative to root)
-        "views": "./views"
+    // directory to script views (relative to root)
+    "views": "./views"
 
-        // directory to script table-valued parameters (relative to root)
-        "table-valued-parameters": "./user-defined-types/table-valued-parameters"
-    },
+    // directory to script table-valued parameters (relative to root)
+    "table-valued-parameters": "./user-defined-types/table-valued-parameters"
+  },
 
-    "idempotency": {
+  "idempotency": {
 
-        // options: "if-exists-drop", "if-not-exists", or false
-        "procs": "if-exists-drop",
-        "scalar-valued": "if-exists-drop",
-        "table-valued": "if-exists-drop",
-        "tables": "if-not-exists",
-        "triggers": "if-exists-drop",
-        "views": "if-exists-drop",
-        "table-valued-parameters": "if-not-exists";
-
-    }
+    // options: "if-exists-drop", "if-not-exists", or false
+    "procs": "if-exists-drop",
+    "scalar-valued": "if-exists-drop",
+    "table-valued": "if-exists-drop",
+    "tables": "if-not-exists",
+    "triggers": "if-exists-drop",
+    "views": "if-exists-drop",
+    "table-valued-parameters": "if-not-exists";
+  }
 }
 ```
 
