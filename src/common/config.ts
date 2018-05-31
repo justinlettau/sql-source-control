@@ -23,6 +23,11 @@ export interface Config {
   files?: string[];
 
   /**
+   * Glob of tables to include / exclude for data pulling.
+   */
+  data?: string[];
+
+  /**
    * Describes output folder structure.
    */
   output?: OutputConfig;

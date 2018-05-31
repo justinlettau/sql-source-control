@@ -23,18 +23,18 @@ export function push(name?: string): void {
   const files: string[] = util.getFilesOrdered(config);
   let promise: Promise<sql.ConnectionPool> = new sql.ConnectionPool(conn).connect();
 
-  for (const file of files) {
+  files.forEach(file => {
     console.log(`Executing ${chalk.cyan(file)} ...`);
 
     const content: string = fs.readFileSync(file, 'utf8');
     const statements: string[] = content.split('go' + EOL);
 
-    for (const statement of statements) {
+    statements.forEach(statement => {
       promise = promise.then(pool => {
         return pool.request().batch(statement).then(result => pool);
       });
-    }
-  }
+    });
+  });
 
   promise
     .then(() => {

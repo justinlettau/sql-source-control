@@ -12,24 +12,17 @@ import { IdempotencyOption } from '../common/idempotency';
 import * as util from '../common/utility';
 import {
   ColumnRecordSet,
+  DataRecordSet,
   ForeignKeyRecordSet,
   IndexRecordSet,
   ObjectRecordSet,
   PrimaryKeyRecordSet,
   SchemaRecordSet,
   TableRecordSet,
-  TvpRecordSet
+  TvpRecordSet,
 } from '../sql/record-set';
 import * as script from '../sql/script';
-import {
-  columnRead,
-  foreignKeyRead,
-  indexRead,
-  objectRead,
-  primaryKeyRead,
-  tableRead,
-  tvpRead
-  } from '../sql/sys';
+import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, tvpRead } from '../sql/sys';
 
 /**
  * Generate SQL files for all tables, stored procedures, functions, etc.
@@ -46,15 +39,20 @@ export function pull(name: string): void {
   // connect to db
   new sql.ConnectionPool(conn)
     .connect()
-    .then((pool: sql.ConnectionPool): Promise<sql.IResult<any>[]> => {
-      return Promise.all([
+    .then(pool => {
+      return Promise.all<any>([
         pool.request().query(objectRead),
         pool.request().query(tableRead),
         pool.request().query(columnRead),
         pool.request().query(primaryKeyRead),
         pool.request().query(foreignKeyRead),
         pool.request().query(indexRead),
-        pool.request().query(tvpRead)
+        pool.request().query(tvpRead),
+        ...config.data.map(table => {
+          return pool.request()
+            .query(`select * from ${table}`)
+            .then(result => ({ name: table, type: 'DATA', result }))
+        })
       ]).then(results => {
         pool.close();
         return results;
@@ -74,7 +72,7 @@ export function pull(name: string): void {
  * @param config Current configuration to use.
  * @param results Array of data sets from SQL queries.
  */
-function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
+function scriptFiles(config: Config, results: any[]): void {
   const existing: string[] = glob.sync(`${config.output.root}/**/*.sql`);
 
   // note: array order MUST match query promise array
@@ -85,6 +83,7 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
   const foreignKeys: ForeignKeyRecordSet[] = results[4].recordset;
   const indexes: IndexRecordSet[] = results[5].recordset;
   const tvps: TvpRecordSet[] = results[6].recordset;
+  const data: DataRecordSet[] = results.slice(7);
 
   // get unique schema names
   const schemas: SchemaRecordSet[] = tables
@@ -93,55 +92,68 @@ function scriptFiles(config: Config, results: sql.IResult<any>[]): void {
     .map(value => ({ name: value, type: 'SCHEMA' }));
 
   // write files for schemas
-  for (const item of schemas) {
+  schemas.forEach(item => {
     const file: string = util.safeFile(`${item.name}.sql`);
 
-    if (!include(config, file)) {
-      continue;
+    if (!include(config.files, file)) {
+      return;
     }
 
     const content: string = script.schema(item);
     const dir: string = createFile(config, item, file, content);
     exclude(config, existing, dir);
-  }
+  });
 
   // write files for stored procedures, functions, ect.
-  for (const item of objects) {
+  objects.forEach(item => {
     const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
 
-    if (!include(config, file)) {
-      continue;
+    if (!include(config.files, file)) {
+      return;
     }
 
     const dir: string = createFile(config, item, file, item.text);
     exclude(config, existing, dir);
-  }
+  });
 
   // write files for tables
-  for (const item of tables) {
+  tables.forEach(item => {
     const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
 
-    if (!include(config, file)) {
-      continue;
+    if (!include(config.files, file)) {
+      return;
     }
 
     const content: string = script.table(item, columns, primaryKeys, foreignKeys, indexes);
     const dir: string = createFile(config, item, file, content);
     exclude(config, existing, dir);
-  }
+  });
 
   // write files for user-defined table-valued parameter
-  for (const item of tvps) {
+  tvps.forEach(item => {
     const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
 
-    if (!include(config, file)) {
-      continue;
+    if (!include(config.files, file)) {
+      return;
     }
 
     const content: string = script.tvp(item, columns);
     const dir: string = createFile(config, item, file, content);
     exclude(config, existing, dir);
-  }
+  });
+
+  // write files for data
+  data.forEach(item => {
+    const file: string = util.safeFile(`${item.name}.sql`);
+
+    if (!include(config.data, item.name)) {
+      return;
+    }
+
+    const content: string = script.data(item);
+    const dir: string = createFile(config, item, file, content);
+    exclude(config, existing, dir);
+  });
 
   // all remaining files in `existing` need deleted
   removeFiles(existing);
@@ -163,6 +175,10 @@ function createFile(config: Config, item: any, file: string, content: string): s
   switch (item.type.trim()) {
     case 'SCHEMA': // not a real object type
       output = config.output.schemas;
+      type = null;
+      break;
+    case 'DATA': // not a real object type
+      output = config.output.data;
       type = null;
       break;
     case 'U':
@@ -212,13 +228,13 @@ function createFile(config: Config, item: any, file: string, content: string): s
 }
 
 /**
- * Check if a file passes the `files` glob pattern.
+ * Check if a file passes the glob pattern.
  *
- * @param config Current configuration to use.
+ * @param glob Glob pattern to check against.
  * @param file File path to check.
  */
-function include(config: Config, file: string | string[]): boolean {
-  if (!config.files || !config.files.length) {
+function include(glob: string[], file: string | string[]): boolean {
+  if (!glob || !glob.length) {
     return true;
   }
 
@@ -226,7 +242,7 @@ function include(config: Config, file: string | string[]): boolean {
     file = [file];
   }
 
-  const results: string[] = multimatch(file, config.files);
+  const results: string[] = multimatch(file, glob);
   return !!results.length;
 }
 
@@ -255,8 +271,8 @@ function exclude(config: Config, existing: string[], dir: string): void {
  * @param files Array of file paths to delete.
  */
 function removeFiles(files: string[]): void {
-  for (const file of files) {
+  files.forEach(file => {
     console.log(`Removing ${chalk.cyan(file)} ...`);
     fs.removeSync(file);
-  }
+  });
 }

@@ -63,6 +63,9 @@ Example output:
 
 ```
 ./_sql-database
+    ./data
+        dbo.easy-lookup.sql
+        ...
     ./functions/scalar-valued
         dbo.complex-math.sql
         ...
@@ -78,15 +81,20 @@ Example output:
     ./tables
         dbo.people.sql
         ...
-    ./views
-        dbo.super-cool-view.sql
-        ...
     ./user-defined-types/table-valued-parameters
         dbo.insert-people-params.sql
         ...
+    ./views
+        dbo.super-cool-view.sql
+        ...
 ```
 
-## Push (beta)
+Data can be included in the `pull` via the `data` glob in the configuration file. All tables included
+in the `data` glob will result in a file that truncates the table and inserts all rows. Because a truncate
+is issued, it is recommended to only include static data tables, like lookup tables, in the `data`
+configuration.
+
+## Push
 Execute all local scripts against the requested database.
 
 ```bash
@@ -130,22 +138,31 @@ Configuration options are stored in a `ssc.json` file.
   // glob of files to include / exclude (examples: ["dbo.*"] or ["*", "!dbo.*"])
   "files": [],
 
+  // glob of tables to include / exclude for data scripting (example: ["dbo.LookupTable"])
+  "data": [],
+
   "output": {
 
     // directory to place scripted files into (relative to config file)
     "root": "./_sql-database",
 
+    // directory to script data (relative to root)
+    "data": "./data"
+
     // directory to script procs (relative to root)
     "procs": "./stored-procedures",
-
-    // directory to script schemas (relative to root)
-    "schemas": "./schemas",
 
     // directory to script scalar functions (relative to root)
     "scalar-valued": "./functions/scalar-valued",
 
+    // directory to script schemas (relative to root)
+    "schemas": "./schemas",
+
     // directory to script table functions (relative to root)
     "table-valued": "./functions/table-valued",
+
+    // directory to script table-valued parameters (relative to root)
+    "table-valued-parameters": "./user-defined-types/table-valued-parameters"
 
     // directory to script tables (relative to root)
     "tables": "./tables",
@@ -155,9 +172,6 @@ Configuration options are stored in a `ssc.json` file.
 
     // directory to script views (relative to root)
     "views": "./views"
-
-    // directory to script table-valued parameters (relative to root)
-    "table-valued-parameters": "./user-defined-types/table-valued-parameters"
   },
 
   "idempotency": {
@@ -166,10 +180,10 @@ Configuration options are stored in a `ssc.json` file.
     "procs": "if-exists-drop",
     "scalar-valued": "if-exists-drop",
     "table-valued": "if-exists-drop",
+    "table-valued-parameters": "if-not-exists",
     "tables": "if-not-exists",
     "triggers": "if-exists-drop",
-    "views": "if-exists-drop",
-    "table-valued-parameters": "if-not-exists";
+    "views": "if-exists-drop"
   }
 }
 ```

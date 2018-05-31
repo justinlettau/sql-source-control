@@ -1,3 +1,5 @@
+import * as sql from 'mssql';
+
 /**
  * Base record set for record sets.
  */
@@ -9,11 +11,20 @@ export interface AbstractRecordSet {
 }
 
 /**
- * Mock dataset, properties from table query.
+ * Mock schema record set, properties from table query.
  */
 export interface SchemaRecordSet {
   name: string;
   type: string;
+}
+
+/**
+ * Mock data record set.
+ */
+export interface DataRecordSet {
+  name: string;
+  type: string;
+  result: sql.IResult<any>;
 }
 
 /**

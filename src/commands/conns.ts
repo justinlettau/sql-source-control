@@ -16,7 +16,7 @@ export function conns(): void {
     head: ['Name', 'Server', 'Port', 'Database', 'User', 'Password']
   });
 
-  for (const conn of connections) {
+  connections.forEach(conn => {
     table.push([
       conn.name || placeholder,
       conn.server || placeholder,
@@ -25,7 +25,7 @@ export function conns(): void {
       conn.user || placeholder,
       conn.password || placeholder
     ]);
-  }
+  });
 
   console.log(table.toString());
 }
