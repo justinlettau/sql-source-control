@@ -170,7 +170,7 @@ Configuration options are stored in a `ssc.json` file.
     // directory to script triggers (relative to root), or false
     "triggers": "./triggers",
 
-    // directory to script views (relative to root), or false`
+    // directory to script views (relative to root), or false
     "views": "./views"
   },
 
