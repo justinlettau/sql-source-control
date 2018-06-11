@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/justinlettau/sql-source-control/compare/v1.7.1...v1.8.0) (2018-06-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v6 ([#24](https://github.com/justinlettau/sql-source-control/issues/24)) ([77cdbb1](https://github.com/justinlettau/sql-source-control/commit/77cdbb1))
+* **deps:** update dependency inquirer to v6 ([#25](https://github.com/justinlettau/sql-source-control/issues/25)) ([65b047e](https://github.com/justinlettau/sql-source-control/commit/65b047e))
+
+
+### Features
+
+* add config to exclude output ([9d6a21d](https://github.com/justinlettau/sql-source-control/commit/9d6a21d))
+* add data scripting to pull ([#26](https://github.com/justinlettau/sql-source-control/issues/26)) ([d874206](https://github.com/justinlettau/sql-source-control/commit/d874206))
+
+
+
 <a name="1.7.1"></a>
 ## [1.7.1](https://github.com/justinlettau/sql-source-control/compare/v1.7.0...v1.7.1) (2018-04-04)
 
