@@ -214,15 +214,18 @@ function createFile(config: Config, item: any, file: string, content: string): s
       output = 'unknown';
   }
 
-  // get full output path
-  dir = path.join(config.output.root, output, file);
+  if (output) {
 
-  // idempotent prefix
-  content = script.idempotency(item, type) + content;
+    // get full output path
+    dir = path.join(config.output.root, output, file);
 
-  // create file
-  console.log(`Creating ${chalk.cyan(dir)} ...`);
-  fs.outputFileSync(dir, content.trim());
+    // idempotent prefix
+    content = script.idempotency(item, type) + content;
+
+    // create file
+    console.log(`Creating ${chalk.cyan(dir)} ...`);
+    fs.outputFileSync(dir, content.trim());
+  }
 
   return dir;
 }
@@ -254,6 +257,10 @@ function include(files: string[], file: string | string[]): boolean {
  * @param dir File path to check.
  */
 function exclude(config: Config, existing: string[], dir: string): void {
+  if (!dir) {
+    return;
+  }
+
   if (config.output.root.startsWith('./') && !dir.startsWith('./')) {
     dir = `./${dir}`;
   }

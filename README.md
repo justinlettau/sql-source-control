@@ -149,28 +149,28 @@ Configuration options are stored in a `ssc.json` file.
     // directory to script data (relative to root)
     "data": "./data"
 
-    // directory to script procs (relative to root)
+    // directory to script procs (relative to root), or false
     "procs": "./stored-procedures",
 
-    // directory to script scalar functions (relative to root)
+    // directory to script scalar functions (relative to root), or false
     "scalar-valued": "./functions/scalar-valued",
 
-    // directory to script schemas (relative to root)
+    // directory to script schemas (relative to root), or false
     "schemas": "./schemas",
 
-    // directory to script table functions (relative to root)
+    // directory to script table functions (relative to root), or false
     "table-valued": "./functions/table-valued",
 
-    // directory to script table-valued parameters (relative to root)
+    // directory to script table-valued parameters (relative to root), or false
     "table-valued-parameters": "./user-defined-types/table-valued-parameters"
 
-    // directory to script tables (relative to root)
+    // directory to script tables (relative to root), or false
     "tables": "./tables",
 
-    // directory to script triggers (relative to root)
+    // directory to script triggers (relative to root), or false
     "triggers": "./triggers",
 
-    // directory to script views (relative to root)
+    // directory to script views (relative to root), or false`
     "views": "./views"
   },
 
