@@ -1,12 +1,13 @@
 import { EOL } from 'os';
+import { isBoolean, isDate, isString } from 'ts-util-is';
 
 import { IdempotencyOption } from '../common/idempotency';
 import {
   AbstractRecordSet,
   ColumnRecordSet,
+  DataRecordSet,
   ForeignKeyRecordSet,
   IndexRecordSet,
-  ObjectRecordSet,
   PrimaryKeyRecordSet,
   SchemaRecordSet,
   TableRecordSet
@@ -131,32 +132,40 @@ export function table(
   output += EOL;
 
   // columns
-  for (const col of columns.filter(x => x.object_id === item.object_id)) {
-    output += '    ' + column(col) + ',';
-    output += EOL;
-  }
+  columns
+    .filter(x => x.object_id === item.object_id)
+    .forEach(col => {
+      output += '    ' + column(col) + ',';
+      output += EOL;
+    });
 
   // primary keys
-  for (const pk of primaryKeys.filter(x => x.object_id === item.object_id)) {
-    output += '    ' + primaryKey(pk);
-    output += EOL;
-  }
+  primaryKeys
+    .filter(x => x.object_id === item.object_id)
+    .forEach(pk => {
+      output += '    ' + primaryKey(pk);
+      output += EOL;
+    });
 
   // foreign keys
-  for (const fk of foreignKeys.filter(x => x.object_id === item.object_id)) {
-    output += '    ' + foreignKey(fk);
-    output += EOL;
-  }
+  foreignKeys
+    .filter(x => x.object_id === item.object_id)
+    .forEach(fk => {
+      output += '    ' + foreignKey(fk);
+      output += EOL;
+    });
 
   output += ')';
   output += EOL;
   output += EOL;
 
   // indexes
-  for (const ix of indexes.filter(x => x.object_id === item.object_id)) {
-    output += index(ix);
-    output += EOL;
-  }
+  indexes
+    .filter(x => x.object_id === item.object_id)
+    .forEach(ix => {
+      output += index(ix);
+      output += EOL;
+    });
 
   return output;
 }
@@ -195,6 +204,54 @@ export function tvp(
   output += EOL;
 
   return output;
+}
+
+/**
+ * Get script for for table data.
+ *
+ * @param item Results from data query.
+ */
+export function data(item: DataRecordSet): string {
+  let output: string = '';
+
+  // idempotency
+  output += `truncate table ${item.name}`;
+  output += EOL;
+
+  item.result.recordset.forEach(row => {
+    const keys: string[] = Object.keys(row);
+    const columns: string = keys.join(', ');
+    const values: string = keys.map(key => safeValue(row[key])).join(', ');
+
+    output += `insert into ${item.name} (${columns}) values (${values})`;
+    output += EOL;
+  });
+
+  output += EOL;
+  return output;
+}
+
+/**
+ * Safely transform SQL value for scripting.
+ *
+ * @param value SQL data value.
+ */
+function safeValue(value: any): any {
+  if (isString(value)) {
+    value = value.replace("'", "''");
+    return `'${value}'`;
+  }
+
+  if (isDate(value)) {
+    value = value.toISOString();
+    return `'${value}'`;
+  }
+
+  if (isBoolean(value)) {
+    return value ? 1 : 0;
+  }
+
+  return value;
 }
 
 /**

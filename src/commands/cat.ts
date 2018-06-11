@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
-import * as glob from 'glob';
 import { EOL } from 'os';
 
 import { Config } from '../common/config';
@@ -17,7 +16,7 @@ export function cat(): void {
   // order is important
   const files: string[] = util.getFilesOrdered(config);
 
-  for (const file of files) {
+  files.forEach(file => {
     const content: string = fs.readFileSync(file).toString();
     const end: string = content.substr(-2).toLowerCase();
 
@@ -25,7 +24,7 @@ export function cat(): void {
     output += EOL;
     output += (end !== 'go' ? 'go' : '');
     output += EOL + EOL;
-  }
+  });
 
   fs.outputFileSync(`${config.output.root}/cat.sql`, output);
 

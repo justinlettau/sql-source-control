@@ -5,10 +5,10 @@ export interface IdempotencyConfig {
   'procs'?: IdempotencyOption;
   'scalar-valued'?: IdempotencyOption;
   'table-valued'?: IdempotencyOption;
+  'table-valued-parameters'?: IdempotencyOption;
   'tables'?: IdempotencyOption;
   'triggers'?: IdempotencyOption;
   'views'?: IdempotencyOption;
-  'table-valued-parameters'?: IdempotencyOption;
 }
 
 /**

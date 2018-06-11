@@ -25,25 +25,27 @@ export const webConfigFile: string = './Web.config';
 export const configDefaults: Config = {
   connections: [],
   files: [],
+  data: [],
   output: {
     'root': './_sql-database',
+    'data': './data',
     'procs': './stored-procedures',
-    'schemas': './schemas',
     'scalar-valued': './functions/scalar-valued',
+    'schemas': './schemas',
     'table-valued': './functions/table-valued',
+    'table-valued-parameters': './user-defined-types/table-valued-parameters',
     'tables': './tables',
     'triggers': './triggers',
-    'views': './views',
-    'table-valued-parameters': './user-defined-types/table-valued-parameters'
+    'views': './views'
   },
   idempotency: {
     'procs': 'if-exists-drop',
     'scalar-valued': 'if-exists-drop',
     'table-valued': 'if-exists-drop',
+    'table-valued-parameters': 'if-not-exists',
     'tables': 'if-not-exists',
     'triggers': 'if-exists-drop',
-    'views': 'if-exists-drop',
-    'table-valued-parameters': 'if-not-exists'
+    'views': 'if-exists-drop'
   }
 };
 
@@ -145,8 +147,8 @@ export function getConn(config: Config, name?: string): Connection {
 export function getWebConfigConns(file?: string): Connection[] {
   const parser: xml2js.Parser = new xml2js.Parser();
   const webConfig: string = file || webConfigFile;
-  let content: string;
   const conns: Connection[] = [];
+  let content: string;
 
   if (!fs.existsSync(webConfig)) {
     // web config not found, use defaults
@@ -166,9 +168,9 @@ export function getWebConfigConns(file?: string): Connection[] {
     try {
       const connStrings: any[] = result.configuration.connectionStrings[0].add;
 
-      for (const item of connStrings) {
+      connStrings.forEach(item => {
         conns.push(parseConnString(item.$.name, item.$.connectionString));
-      }
+      });
 
     } catch (err) {
       console.error('Could not parse connection strings from Web.config file!');
@@ -194,13 +196,14 @@ export function getFilesOrdered(config: Config): string[] {
     config.output['table-valued'],
     config.output.procs,
     config.output.triggers,
-    config.output['table-valued-parameters']
+    config.output['table-valued-parameters'],
+    config.output.data
   ];
 
-  for (const dir of directories) {
+  directories.forEach(dir => {
     const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
     output.push(...files);
-  }
+  });
 
   return output;
 }

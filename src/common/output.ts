@@ -3,12 +3,13 @@
  */
 export interface OutputConfig {
   'root'?: string;
+  'data'?: string;
   'procs'?: string;
-  'schemas'?: string;
   'scalar-valued'?: string;
+  'schemas'?: string;
   'table-valued'?: string;
+  'table-valued-parameters'?: string;
   'tables'?: string;
   'triggers'?: string;
   'views'?: string;
-  'table-valued-parameters'?: string;
 }
