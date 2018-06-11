@@ -19,7 +19,7 @@ import {
   PrimaryKeyRecordSet,
   SchemaRecordSet,
   TableRecordSet,
-  TvpRecordSet,
+  TvpRecordSet
 } from '../sql/record-set';
 import * as script from '../sql/script';
 import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, tvpRead } from '../sql/sys';
@@ -51,7 +51,7 @@ export function pull(name: string): void {
         ...config.data.map(table => {
           return pool.request()
             .query(`select * from ${table}`)
-            .then(result => ({ name: table, type: 'DATA', result }))
+            .then(result => ({ name: table, type: 'DATA', result }));
         })
       ]).then(results => {
         pool.close();
@@ -230,11 +230,11 @@ function createFile(config: Config, item: any, file: string, content: string): s
 /**
  * Check if a file passes the glob pattern.
  *
- * @param glob Glob pattern to check against.
+ * @param files Glob pattern to check against.
  * @param file File path to check.
  */
-function include(glob: string[], file: string | string[]): boolean {
-  if (!glob || !glob.length) {
+function include(files: string[], file: string | string[]): boolean {
+  if (!files || !files.length) {
     return true;
   }
 
@@ -242,7 +242,7 @@ function include(glob: string[], file: string | string[]): boolean {
     file = [file];
   }
 
-  const results: string[] = multimatch(file, glob);
+  const results: string[] = multimatch(file, files);
   return !!results.length;
 }
 

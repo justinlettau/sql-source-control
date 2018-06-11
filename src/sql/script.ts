@@ -10,7 +10,7 @@ import {
   IndexRecordSet,
   PrimaryKeyRecordSet,
   SchemaRecordSet,
-  TableRecordSet,
+  TableRecordSet
 } from '../sql/record-set';
 
 /**
@@ -165,7 +165,7 @@ export function table(
     .forEach(ix => {
       output += index(ix);
       output += EOL;
-    })
+    });
 
   return output;
 }
@@ -221,7 +221,7 @@ export function data(item: DataRecordSet): string {
   item.result.recordset.forEach(row => {
     const keys: string[] = Object.keys(row);
     const columns: string = keys.join(', ');
-    const values: string = keys.map(key => value(row[key])).join(', ');
+    const values: string = keys.map(key => safeValue(row[key])).join(', ');
 
     output += `insert into ${item.name} (${columns}) values (${values})`;
     output += EOL;
@@ -236,9 +236,9 @@ export function data(item: DataRecordSet): string {
  *
  * @param value SQL data value.
  */
-function value(value: any): any {
+function safeValue(value: any): any {
   if (isString(value)) {
-    value = value.replace(`'`, `''`);
+    value = value.replace("'", "''");
     return `'${value}'`;
   }
 
