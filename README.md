@@ -89,8 +89,8 @@ Example output:
         ...
 ```
 
-Data can be included in the `pull` via the `data` glob in the configuration file. All tables included
-in the `data` glob will result in a file that truncates the table and inserts all rows. Because a truncate
+Data can be included in the `pull` via the `data` option in the configuration file. All tables included
+in the `data` option will result in a file that truncates the table and inserts all rows. Because a truncate
 is issued, it is recommended to only include static data tables, like lookup tables, in the `data`
 configuration.
 
@@ -138,7 +138,7 @@ Configuration options are stored in a `ssc.json` file.
   // glob of files to include / exclude (examples: ["dbo.*"] or ["*", "!dbo.*"])
   "files": [],
 
-  // glob of tables to include / exclude for data scripting (example: ["dbo.LookupTable"])
+  // list of tables to include / exclude for data scripting (example: ["dbo.LookupTable"])
   "data": [],
 
   "output": {
