@@ -15,6 +15,11 @@ import { Connection } from '../common/connection';
 export const configFile: string = path.join(process.cwd(), 'ssc.json');
 
 /**
+ * Connections file path.
+ */
+export const connsFile: string = path.join(process.cwd(), 'ssc-connections.json');
+
+/**
  * Web config file path.
  */
 export const webConfigFile: string = './Web.config';
@@ -77,13 +82,14 @@ export function getConfig(): Config {
 /**
  * Write config file with provided object contents.
  *
+ * @param file Configuration file to write to.
  * @param config Object to save for config file.
  */
-export function setConfig(config: Config): void {
+export function setConfig(file: string, config: Config): void {
   const content: string = JSON.stringify(config, null, 2);
 
   // save file
-  fs.outputFile(configFile, content, (error: Error) => {
+  fs.outputFile(file, content, (error: Error) => {
     if (error) {
       return console.error(error);
     }
@@ -107,8 +113,13 @@ export function getConns(config: Config): Connection[] {
   }
 
   if (isString(config.connections)) {
-    // get form web config
-    return getWebConfigConns(config.connections);
+    const configExt: RegExp = /\.config$/;
+
+    if (configExt.test(config.connections)) {
+      return getWebConfigConns(config.connections);
+    } else {
+      return getConnsConfigConns(config.connections);
+    }
   } else {
     return config.connections;
   }
@@ -179,6 +190,24 @@ export function getWebConfigConns(file?: string): Connection[] {
   });
 
   return (conns.length ? conns : undefined);
+}
+
+/**
+ * Safely get connections from `ssc-connections.json` file.
+ *
+ * @param file Relative path to connections config file.
+ */
+export function getConnsConfigConns(file?: string): Connection[] {
+  let config: Config;
+
+  try {
+    config = fs.readJsonSync(file);
+  } catch (error) {
+    console.error('Could not find or parse connections config file!');
+    process.exit();
+  }
+
+  return config.connections as Connection[];
 }
 
 /**
