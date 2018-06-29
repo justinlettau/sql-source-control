@@ -131,7 +131,10 @@ Configuration options are stored in a `ssc.json` file.
   }],
 
   // ... OR, path to Web.config file with connectionStrings
-  "connections": "../Web.config",
+  "connections": "./Web.config",
+
+  // ... OR, path to ssc-connections.json file
+  "connections": "./ssc-connections.json",
 
   // the following options are optional (default values shown) ...
 
