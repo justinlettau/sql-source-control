@@ -134,7 +134,6 @@ export function table(
   item: TableRecordSet,
   columns: ColumnRecordSet[],
   primaryKeys: PrimaryKeyRecordSet[],
-  foreignKeys: ForeignKeyRecordSet[],
   indexes: IndexRecordSet[]
 ): string {
   let output: string = `CREATE TABLE [${item.schema}].[${item.name}]`;
@@ -190,14 +189,6 @@ export function table(
       output += EOL;
   }
 
-  // foreign keys
-  //foreignKeys
-  //    .filter(x => x.parent_object_id === item.object_id)
-  //    .forEach(fk => {
-  //        output += foreignKey(fk);
-  //        output += EOL;
-  //    });
-
   // indexes
   indexes
     .filter(x => x.object_id === item.object_id)
@@ -207,6 +198,43 @@ export function table(
     });
 
   return output;
+}
+
+export function updateTable(
+    output: string,
+    table: TableRecordSet,
+    columns: ColumnRecordSet[]
+): string {
+    let objName: string = `[${table.schema}].[${table.name}]`;
+
+    columns
+        .filter(x => x.object_id === table.object_id)
+        .forEach(col => {
+            let columnValue = column(col);
+            let columnValueExists = output.includes(columnValue);
+            let columnExists = output.includes(col.name);
+
+            if (columnExists && !columnValueExists) {
+                //alter table alter column
+                output += [
+                    EOL,
+                    `ALTER TABLE ${objName} ALTER COLUMN ${columnValue}`,
+                    'GO'
+                ].join(EOL);
+            } else if (!columnExists) {
+                //alter table add column
+                output += [
+                    EOL,
+                    `IF NOT EXISTS (select 1 from sys.columns where object_id = object_id('${objName}') and name = '${col.name}')`,
+                    'BEGIN',
+                    `  ALTER TABLE ${objName} ADD ${columnValue}`,
+                    'END',
+                    'GO'
+                ].join(EOL);
+            }
+        });
+
+    return output;
 }
 
 /**

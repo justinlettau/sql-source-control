@@ -18,5 +18,3 @@ export function cat(): void {
   const time: [number, number] = process.hrtime(start);
   console.log(chalk.green(`Finished after ${time[0]}s!`));
 }
-
-

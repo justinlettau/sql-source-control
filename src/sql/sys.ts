@@ -33,7 +33,7 @@ select
  * Get SQL column information.
  */
 export const columnRead: string = `
-  select
+select
     c.object_id,
     c.name,
     tp.name as [datatype],
@@ -59,8 +59,7 @@ export const columnRead: string = `
       and c.column_id = dc.parent_column_id
     left join sys.identity_columns ic on c.is_identity = 1 and c.object_id = ic.object_id and c.column_id = ic.column_id
   order by
-    ic.is_identity desc,
-    c.name
+    c.column_id
 `;
 
 /**

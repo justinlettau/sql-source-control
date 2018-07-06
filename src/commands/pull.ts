@@ -245,15 +245,24 @@ function scriptFiles(config: Config, results: any[]): void {
 
   // write files for tables
   tables.forEach(item => {
-    const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
+      const file: string = util.safeFile(`${item.schema}.${item.name}.sql`);
+      const existingFile: string = path.join(config.output.root, config.output.tables, file);
 
-    if (!include(config.files, file)) {
-      return;
-    }
+      if (config.idempotency.tables == 'if-not-exists' && fs.existsSync(existingFile)) {
+          let content: string = fs.readFileSync(existingFile).toString();
 
-    const content: string = script.table(item, columns, primaryKeys, foreignKeys, indexes);
-    const dir: string = createFile(config, item, file, content);
-    exclude(config, existing, dir);
+          content = script.updateTable(content, item, columns);
+          const dir: string = createSpecialFile(config, file, content, "update-table");
+          exclude(config, existing, dir);
+      } else {
+          if (!include(config.files, file)) {
+              return;
+          }
+
+          const content: string = script.table(item, columns, primaryKeys, indexes);
+          const dir: string = createFile(config, item, file, content);
+          exclude(config, existing, dir);
+      }
   });
 
   // write files for user-defined table-valued parameter
@@ -501,6 +510,9 @@ function createSpecialFile(config: Config, file: string, content: string, type: 
             break;
         case ("ft-index"):
             output = config.output['ft-index'];
+            break;
+        case ("update-table"):
+            output = config.output.tables;
             break;
     };
 
