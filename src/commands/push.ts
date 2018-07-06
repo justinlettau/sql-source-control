@@ -20,20 +20,19 @@ export function push(name?: string): void {
 
   console.log(`Pushing to ${chalk.magenta(conn.database)} on ${chalk.magenta(conn.server)} ...`);
 
-  const files: string[] = util.getFilesOrdered(config);
+  let content = util.getAllFilesContent()
+
   let promise: Promise<sql.ConnectionPool> = new sql.ConnectionPool(conn).connect();
+  if (content.includes('{synonym_target}')) {
+      content = content.replace(new RegExp('{synonym_target}', 'g'), conn.synonym_target);
+  }
 
-  files.forEach(file => {
-    console.log(`Executing ${chalk.cyan(file)} ...`);
+  let statements: string[] = content.split('GO' + EOL);
 
-    const content: string = fs.readFileSync(file, 'utf8');
-    const statements: string[] = content.split('go' + EOL);
-
-    statements.forEach(statement => {
+  statements.forEach(statement => {
       promise = promise.then(pool => {
-        return pool.request().batch(statement).then(result => pool);
+          return pool.request().batch(statement).then(result => pool);
       });
-    });
   });
 
   promise

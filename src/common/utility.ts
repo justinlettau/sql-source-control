@@ -5,6 +5,7 @@ import * as glob from 'glob';
 import * as path from 'path';
 import { isString } from 'ts-util-is';
 import * as xml2js from 'xml2js';
+import { EOL } from 'os';
 
 import { Config } from '../common/config';
 import { Connection } from '../common/connection';
@@ -41,7 +42,14 @@ export const configDefaults: Config = {
     'table-valued-parameters': './user-defined-types/table-valued-parameters',
     'tables': './tables',
     'triggers': './triggers',
-    'views': './views'
+    'views': './views',
+    'prep': './prep',
+    'foreignKeys': './foreignKeys',
+    'ft-catalog': './storage/ft-catalogs',
+    'ft-stoplist': './storage/ft-stoplists',
+    'ft-index': './storage/ft-indexes',
+    'constraints': './default-constraints',
+    'synonyms': './synonyms',
   },
   idempotency: {
     'procs': 'if-exists-drop',
@@ -210,6 +218,25 @@ export function getConnsConfigConns(file?: string): Connection[] {
   return config.connections as Connection[];
 }
 
+
+export function getAllFilesContent(): string {
+    const config: Config = getConfig();
+    let output: string = '';
+
+    // order is important
+    const files: string[] = getFilesOrdered(config);
+
+    files.forEach(file => {
+        const content: string = fs.readFileSync(file).toString();
+
+        output += content;
+        output += EOL;
+        output += EOL;
+    });
+
+    return output;
+}
+
 /**
  * Get all SQL files in correct execution order.
  *
@@ -218,15 +245,22 @@ export function getConnsConfigConns(file?: string): Connection[] {
 export function getFilesOrdered(config: Config): string[] {
   const output: string[] = [];
   const directories: string[] = [
+    config.output.prep,
     config.output.schemas,
-    config.output.tables,
-    config.output.views,
+    config.output['ft-catalog'],
+    config.output['ft-stoplist'],
+    config.output.synonyms,
+    config.output['table-valued-parameters'],
     config.output['scalar-valued'],
     config.output['table-valued'],
-    config.output.procs,
+    config.output.tables,    
+    config.output.views,
+    config.output.constraints,
+    config.output['ft-index'],
+    config.output.procs,    
     config.output.triggers,
-    config.output['table-valued-parameters'],
-    config.output.data
+    config.output.data,
+    config.output.foreignKeys,
   ];
 
   directories.forEach(dir => {
@@ -252,6 +286,7 @@ function parseConnString(name: string, connString: string): Connection {
   let user: string = parts.find(x => /^(uid)/ig.test(x));
   let password: string = parts.find(x => /^(password|pwd)/ig.test(x));
   let port: number;
+  let synonym_target: string = "";
 
   // get values
   server = (server && server.split('=')[1]);
@@ -274,6 +309,7 @@ function parseConnString(name: string, connString: string): Connection {
     database,
     port,
     user,
-    password
+    password,
+    synonym_target
   });
 }

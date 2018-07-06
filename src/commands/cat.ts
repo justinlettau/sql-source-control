@@ -11,23 +11,12 @@ import * as util from '../common/utility';
 export function cat(): void {
   const start: [number, number] = process.hrtime();
   const config: Config = util.getConfig();
-  let output: string = '';
-
-  // order is important
-  const files: string[] = util.getFilesOrdered(config);
-
-  files.forEach(file => {
-    const content: string = fs.readFileSync(file).toString();
-    const end: string = content.substr(-2).toLowerCase();
-
-    output += content;
-    output += EOL;
-    output += (end !== 'go' ? 'go' : '');
-    output += EOL + EOL;
-  });
+  let output: string = util.getAllFilesContent();
 
   fs.outputFileSync(`${config.output.root}/cat.sql`, output);
 
   const time: [number, number] = process.hrtime(start);
   console.log(chalk.green(`Finished after ${time[0]}s!`));
 }
+
+

@@ -12,4 +12,11 @@ export interface OutputConfig {
   'tables'?: string;
   'triggers'?: string;
   'views'?: string;
+  'prep'?: string;
+  'foreignKeys'?: string;
+  'constraints'?: string;
+  'ft-catalog'?: string;
+  'ft-stoplist'?: string;
+  'ft-index'?: string;
+  'synonyms'?: string;
 }

@@ -8,6 +8,8 @@ export interface AbstractRecordSet {
   type: string;
   schema: string;
   name: string;
+  filegroup: string;
+  lock_escalation: boolean;
 }
 
 /**
@@ -56,6 +58,8 @@ export interface ColumnRecordSet {
   is_identity: boolean;
   seed_value: number;
   increment_value: number;
+  computed_definition: string;
+  is_persisted: boolean;
 }
 
 /**
@@ -66,6 +70,12 @@ export interface PrimaryKeyRecordSet {
   is_descending_key: boolean;
   name: string;
   column: string;
+  indextype: string;
+  filegroup: string;
+  allow_page_locks: string;
+  allow_row_locks: string;
+  ignore_dup_key: string;
+  is_padded: string;
 }
 
 /**
@@ -73,15 +83,19 @@ export interface PrimaryKeyRecordSet {
  */
 export interface ForeignKeyRecordSet {
   object_id: number;
-  constraint_object_id: number;
-  is_not_trusted: boolean;
-  column: string;
-  reference: string;
+  parent_object_id: number;
+  check_constraint: string;
+  constraint_schema: string;
+  constraint_table: string;
   name: string;
-  schema: string;
-  table: string;
-  delete_referential_action: number;
-  update_referential_action: number;
+  constraint_columns: string;
+  ref_schema: string;
+  ref_table: string;
+  ref_columns: string;
+  delete_referential_action: string;
+  update_referential_action: string;
+  is_not_for_replication: boolean;
+  is_disabled: boolean;
 }
 
 /**
@@ -94,9 +108,12 @@ export interface IndexRecordSet {
   is_included_column: boolean;
   is_unique: boolean;
   name: string;
-  column: string;
+  columns: string;
   schema: string;
   table: string;
+  indextype: string;
+  is_unique_constraint: boolean;
+  included_columns: string;
 }
 
 /**
@@ -104,4 +121,41 @@ export interface IndexRecordSet {
  */
 export interface ObjectRecordSet extends AbstractRecordSet {
   text: string;
+}
+
+export interface FullTextCatalogRecordSet {
+  name: string;
+  accent_sensitivity: string;
+}
+
+export interface FullTextStopListRecordSet {
+  stoplist_id: number;
+  name: string;
+}
+
+export interface FullTextStopWordRecordSet {
+  stoplist_id: number;
+  name: string;
+  stopword: string;
+  language: string;
+}
+
+export interface DefaultConstraintRecordSet {
+  schema: string;
+  table_name: string;
+  column_name: string;
+  constraint_name: string;
+  definition: string;
+}
+
+export interface SynonymRecordSet {
+  schema: string;
+  name: string;
+  reference: string;
+}
+
+export interface FullTextIndexRecordSet {
+  scheme: string;
+  table_name: string;
+  sql_value: string;
 }
