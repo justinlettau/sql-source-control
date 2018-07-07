@@ -54,7 +54,6 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@types/commander": "^2.12.2",
     "@types/deepmerge": "^2.1.0",
     "@types/fs-extra": "^5.0.0",
     "@types/glob": "^5.0.35",
