@@ -56,6 +56,7 @@ export interface ColumnRecordSet {
   is_identity: boolean;
   seed_value: number;
   increment_value: number;
+  formula: string;
 }
 
 /**

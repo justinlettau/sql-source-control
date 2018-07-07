@@ -263,7 +263,8 @@ function column(item: ColumnRecordSet): string {
   let output: string = `[${item.name}]`;
 
   if (item.is_computed) {
-    output += ` as ${item.definition}`;
+    output += ` as ${item.formula}`;
+    return output;
   }
 
   output += ` ${item.datatype}`;

@@ -35,7 +35,8 @@ export const columnRead: string = `
     dc.definition,
     ic.is_identity,
     ic.seed_value,
-    ic.increment_value
+    ic.increment_value,
+    cc.definition as formula
   from
     sys.columns c
     join sys.types tp on c.user_type_id = tp.user_type_id
