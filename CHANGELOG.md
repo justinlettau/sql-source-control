@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/justinlettau/sql-source-control/compare/v1.8.0...v1.9.0) (2018-07-07)
+
+
+### Bug Fixes
+
+* remove column ordering by name ([80fb9d7](https://github.com/justinlettau/sql-source-control/commit/80fb9d7)), closes [#33](https://github.com/justinlettau/sql-source-control/issues/33)
+* **pull:** script computed field formula ([2092150](https://github.com/justinlettau/sql-source-control/commit/2092150)), closes [#30](https://github.com/justinlettau/sql-source-control/issues/30)
+
+
+### Features
+
+* add connection config file support ([#29](https://github.com/justinlettau/sql-source-control/issues/29)) ([ed92901](https://github.com/justinlettau/sql-source-control/commit/ed92901))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/justinlettau/sql-source-control/compare/v1.7.1...v1.8.0) (2018-06-11)
 
