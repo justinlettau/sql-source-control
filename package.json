@@ -43,7 +43,7 @@
     "cli-table": "^0.3.1",
     "commander": "^2.15.0",
     "deepmerge": "^2.1.0",
-    "fs-extra": "^6.0.0",
+    "fs-extra": "^7.0.0",
     "glob": "^7.1.2",
     "inquirer": "^6.0.0",
     "mssql": "^4.1.0",
