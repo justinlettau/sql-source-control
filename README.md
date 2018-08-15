@@ -24,6 +24,9 @@ are directory specific, so run all commands in the directory you want the script
 ssc --help
 ```
 
+**Note**: Make sure to enable TCP/IP in "SQL Server Network Configuration" settings ([instructions](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-or-disable-a-server-network-protocol?view=sql-server-2017#to-enable-a-server-network-protocol)).
+If TCP/IP is not enabled, you may receive a "failed to connect" error on commands.
+
 ## Init
 This will ask you a bunch of questions, and then write a config file for you.
 
