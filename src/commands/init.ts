@@ -3,24 +3,8 @@ import * as inquirer from 'inquirer';
 
 import { Connection } from '../common/connection';
 import * as util from '../common/utility';
-
-/**
- * CLI arguments for `init` command.
- */
-interface InitOptions {
-  webconfig?: string;
-  force?: boolean;
-  skip?: boolean;
-}
-
-/**
- * Connection path choices.
- */
-enum PathChoices {
-  SscConfig,
-  ConnsConfig,
-  WebConfig
-}
+import { PathChoices } from '../eums';
+import { InitOptions } from '../interfaces';
 
 /**
  * Create default config file.

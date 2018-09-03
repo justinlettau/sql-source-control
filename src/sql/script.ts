@@ -3,15 +3,15 @@ import { isBoolean, isDate, isString } from 'ts-util-is';
 
 import { IdempotencyOption } from '../common/idempotency';
 import {
-  AbstractRecordSet,
-  ColumnRecordSet,
-  DataRecordSet,
-  ForeignKeyRecordSet,
-  IndexRecordSet,
-  PrimaryKeyRecordSet,
-  SchemaRecordSet,
-  TableRecordSet
-} from '../sql/record-set';
+  AbstractSqlObject,
+  SqlColumn,
+  SqlDataResult,
+  SqlForeignKey,
+  SqlIndex,
+  SqlPrimaryKey,
+  SqlSchema,
+  SqlTable
+} from '../interfaces';
 
 /**
  * Get idempotency script prefix.
@@ -19,7 +19,7 @@ import {
  * @param item Row from query.
  * @param type Idempotency prefix type.
  */
-export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): string {
+export function idempotency(item: AbstractSqlObject, type: IdempotencyOption): string {
   let obj: string;
   const objectId: string = `${item.schema}].[${item.name}`;
 
@@ -99,7 +99,7 @@ export function idempotency(item: AbstractRecordSet, type: IdempotencyOption): s
  *
  * @param item Object containing schema info.
  */
-export function schema(item: SchemaRecordSet): string {
+export function schema(item: SqlSchema): string {
   let output: string = '';
 
   // idempotency
@@ -120,11 +120,11 @@ export function schema(item: SchemaRecordSet): string {
  * @param indexes Array of records from `sys.indexes` query.
  */
 export function table(
-  item: TableRecordSet,
-  columns: ColumnRecordSet[],
-  primaryKeys: PrimaryKeyRecordSet[],
-  foreignKeys: ForeignKeyRecordSet[],
-  indexes: IndexRecordSet[]
+  item: SqlTable,
+  columns: SqlColumn[],
+  primaryKeys: SqlPrimaryKey[],
+  foreignKeys: SqlForeignKey[],
+  indexes: SqlIndex[]
 ): string {
   let output: string = `create table [${item.schema}].[${item.name}]`;
   output += EOL;
@@ -177,8 +177,8 @@ export function table(
  * @param columns Array of records from `sys.columns` query.
  */
 export function tvp(
-  item: TableRecordSet,
-  columns: ColumnRecordSet[]
+  item: SqlTable,
+  columns: SqlColumn[]
 ): string {
   let output: string = `create type [${item.schema}].[${item.name}] as table`;
   output += EOL;
@@ -211,7 +211,7 @@ export function tvp(
  *
  * @param item Results from data query.
  */
-export function data(item: DataRecordSet): string {
+export function data(item: SqlDataResult): string {
   let output: string = '';
 
   // idempotency
@@ -259,7 +259,7 @@ function safeValue(value: any): any {
  *
  * @param item Row from `sys.columns` query.
  */
-function column(item: ColumnRecordSet): string {
+function column(item: SqlColumn): string {
   let output: string = `[${item.name}]`;
 
   if (item.is_computed) {
@@ -314,7 +314,7 @@ function column(item: ColumnRecordSet): string {
  *
  * @param item Row from `sys.primaryKeys` query.
  */
-function primaryKey(item: PrimaryKeyRecordSet): string {
+function primaryKey(item: SqlPrimaryKey): string {
   return `constraint [${item.name}] primary key ([${item.column}] ${item.is_descending_key ? 'desc' : 'asc'})`;
 }
 
@@ -323,7 +323,7 @@ function primaryKey(item: PrimaryKeyRecordSet): string {
  *
  * @param item Row from `sys.foreignKeys` query.
  */
-function foreignKey(item: ForeignKeyRecordSet): string {
+function foreignKey(item: SqlForeignKey): string {
   const objectId: string = `${item.schema}].[${item.table}`;
 
   let output: string = `alter table [${objectId}] with ${item.is_not_trusted ? 'nocheck' : 'check'}`;
@@ -363,7 +363,7 @@ function foreignKey(item: ForeignKeyRecordSet): string {
  *
  * @param item Row from `sys.indexes` query.
  */
-function index(item: IndexRecordSet): string {
+function index(item: SqlIndex): string {
   const objectId: string = `${item.schema}].[${item.table}`;
   let output: string = '';
 

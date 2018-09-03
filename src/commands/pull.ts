@@ -11,16 +11,16 @@ import { Connection } from '../common/connection';
 import { IdempotencyOption } from '../common/idempotency';
 import * as util from '../common/utility';
 import {
-  ColumnRecordSet,
-  DataRecordSet,
-  ForeignKeyRecordSet,
-  IndexRecordSet,
-  ObjectRecordSet,
-  PrimaryKeyRecordSet,
-  SchemaRecordSet,
-  TableRecordSet,
-  TvpRecordSet
-} from '../sql/record-set';
+  SqlColumn,
+  SqlDataResult,
+  SqlForeignKey,
+  SqlIndex,
+  SqlObject,
+  SqlPrimaryKey,
+  SqlSchema,
+  SqlTable,
+  SqlTableValuedParameter
+} from '../interfaces';
 import * as script from '../sql/script';
 import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, tvpRead } from '../sql/sys';
 
@@ -76,17 +76,17 @@ function scriptFiles(config: Config, results: any[]): void {
   const existing: string[] = glob.sync(`${config.output.root}/**/*.sql`);
 
   // note: array order MUST match query promise array
-  const objects: ObjectRecordSet[] = results[0].recordset;
-  const tables: TableRecordSet[] = results[1].recordset;
-  const columns: ColumnRecordSet[] = results[2].recordset;
-  const primaryKeys: PrimaryKeyRecordSet[] = results[3].recordset;
-  const foreignKeys: ForeignKeyRecordSet[] = results[4].recordset;
-  const indexes: IndexRecordSet[] = results[5].recordset;
-  const tvps: TvpRecordSet[] = results[6].recordset;
-  const data: DataRecordSet[] = results.slice(7);
+  const objects: SqlObject[] = results[0].recordset;
+  const tables: SqlTable[] = results[1].recordset;
+  const columns: SqlColumn[] = results[2].recordset;
+  const primaryKeys: SqlPrimaryKey[] = results[3].recordset;
+  const foreignKeys: SqlForeignKey[] = results[4].recordset;
+  const indexes: SqlIndex[] = results[5].recordset;
+  const tvps: SqlTableValuedParameter[] = results[6].recordset;
+  const data: SqlDataResult[] = results.slice(7);
 
   // get unique schema names
-  const schemas: SchemaRecordSet[] = tables
+  const schemas: SqlSchema[] = tables
     .map(item => item.schema)
     .filter((value, index, array) => array.indexOf(value) === index)
     .map(value => ({ name: value, type: 'SCHEMA' }));

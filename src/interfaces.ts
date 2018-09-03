@@ -1,9 +1,18 @@
 import * as sql from 'mssql';
 
 /**
- * Base record set for record sets.
+ * CLI arguments for `init` command.
  */
-export interface AbstractRecordSet {
+export interface InitOptions {
+  webconfig?: string;
+  force?: boolean;
+  skip?: boolean;
+}
+
+/**
+ * Base SQL object.
+ */
+export interface AbstractSqlObject {
   object_id: number;
   type: string;
   schema: string;
@@ -11,38 +20,38 @@ export interface AbstractRecordSet {
 }
 
 /**
- * Mock schema record set, properties from table query.
+ * SQL schema object.
  */
-export interface SchemaRecordSet {
+export interface SqlSchema {
   name: string;
   type: string;
 }
 
 /**
- * Mock data record set.
+ * SQL data results.
  */
-export interface DataRecordSet {
+export interface SqlDataResult {
   name: string;
   type: string;
   result: sql.IResult<any>;
 }
 
 /**
- * Dataset returned from table query.
+ * SQL table object.
  */
 // tslint:disable-next-line:no-empty-interface
-export interface TableRecordSet extends AbstractRecordSet { }
+export interface SqlTable extends AbstractSqlObject { }
 
 /**
- * Dataset returned from user-defined table-valued parameter query.
+ * SQL Table valued parameter.
  */
 // tslint:disable-next-line:no-empty-interface
-export interface TvpRecordSet extends AbstractRecordSet { }
+export interface SqlTableValuedParameter extends AbstractSqlObject { }
 
 /**
- * Dataset returned from column query.
+ * SQL column object.
  */
-export interface ColumnRecordSet {
+export interface SqlColumn {
   object_id: number;
   name: string;
   datatype: string;
@@ -60,9 +69,9 @@ export interface ColumnRecordSet {
 }
 
 /**
- * Dataset returned from primary key query.
+ * SQL primary key object.
  */
-export interface PrimaryKeyRecordSet {
+export interface SqlPrimaryKey {
   object_id: number;
   is_descending_key: boolean;
   name: string;
@@ -70,9 +79,9 @@ export interface PrimaryKeyRecordSet {
 }
 
 /**
- * Dataset returned from foreign query.
+ * SQL foreign key object.
  */
-export interface ForeignKeyRecordSet {
+export interface SqlForeignKey {
   object_id: number;
   constraint_object_id: number;
   is_not_trusted: boolean;
@@ -86,9 +95,9 @@ export interface ForeignKeyRecordSet {
 }
 
 /**
- * Dataset returned from index query.
+ * SQL index object.
  */
-export interface IndexRecordSet {
+export interface SqlIndex {
   object_id: number;
   index_id: number;
   is_descending_key: boolean;
@@ -101,8 +110,8 @@ export interface IndexRecordSet {
 }
 
 /**
- * Dataset returned from object query.
+ * SQL object.
  */
-export interface ObjectRecordSet extends AbstractRecordSet {
+export interface SqlObject extends AbstractSqlObject {
   text: string;
 }
