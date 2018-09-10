@@ -90,6 +90,8 @@ export interface SqlForeignKey {
   name: string;
   schema: string;
   table: string;
+  parent_schema: string;
+  parent_table: string;
   delete_referential_action: number;
   update_referential_action: number;
 }

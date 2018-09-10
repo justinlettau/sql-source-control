@@ -147,15 +147,19 @@ export function table(
       output += EOL;
     });
 
+  output += ')';
+
+  output += EOL;
+  output += EOL;
+
   // foreign keys
   foreignKeys
-    .filter(x => x.object_id === item.object_id)
-    .forEach(fk => {
-      output += '    ' + foreignKey(fk);
-      output += EOL;
-    });
+  .filter(x => x.object_id === item.object_id)
+  .forEach(fk => {
+    output += foreignKey(fk);
+    output += EOL;
+  });
 
-  output += ')';
   output += EOL;
   output += EOL;
 
@@ -325,10 +329,11 @@ function primaryKey(item: SqlPrimaryKey): string {
  */
 function foreignKey(item: SqlForeignKey): string {
   const objectId: string = `${item.schema}].[${item.table}`;
+  const parentObjectId: string = `${item.parent_schema}].[${item.parent_table}`;
 
   let output: string = `alter table [${objectId}] with ${item.is_not_trusted ? 'nocheck' : 'check'}`;
   output += ` add constraint [${item.name}] foreign key([${item.column}])`;
-  output += ` references [${objectId}] ([${item.reference}])`;
+  output += ` references [${parentObjectId}] ([${item.reference}])`;
 
   switch (item.delete_referential_action) {
     case 1:

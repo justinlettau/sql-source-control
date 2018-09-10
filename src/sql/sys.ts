@@ -72,14 +72,16 @@ export const primaryKeyRead: string = `
  */
 export const foreignKeyRead: string = `
   select
-    ro.object_id,
+    po.object_id,
     k.constraint_object_id,
     fk.is_not_trusted,
     c.name as [column],
     rc.name as [reference],
     fk.name,
     schema_name(ro.schema_id) as [schema],
-    ro.name as [table],
+    po.name as [table],
+    schema_name(ro.schema_id) as [parent_schema],
+    ro.name as [parent_table],
     fk.delete_referential_action,
     fk.update_referential_action
   from
@@ -88,6 +90,7 @@ export const foreignKeyRead: string = `
     join sys.columns c on c.object_id = k.parent_object_id and c.column_id = k.parent_column_id
     join sys.foreign_keys fk on fk.object_id = k.constraint_object_id
     join sys.objects ro on ro.object_id = fk.referenced_object_id
+    join sys.objects po on po.object_id = fk.parent_object_id
 `;
 
 /**
