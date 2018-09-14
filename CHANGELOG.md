@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.1"></a>
+## [1.9.1](https://github.com/justinlettau/sql-source-control/compare/v1.9.0...v1.9.1) (2018-09-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v7 ([#35](https://github.com/justinlettau/sql-source-control/issues/35)) ([bb4a387](https://github.com/justinlettau/sql-source-control/commit/bb4a387))
+* Fix foreign key scripting ([#40](https://github.com/justinlettau/sql-source-control/issues/40)) ([c7a48ca](https://github.com/justinlettau/sql-source-control/commit/c7a48ca)), closes [#39](https://github.com/justinlettau/sql-source-control/issues/39)
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/justinlettau/sql-source-control/compare/v1.8.0...v1.9.0) (2018-07-07)
 
