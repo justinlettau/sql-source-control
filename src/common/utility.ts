@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import * as deepmerge from 'deepmerge';
+import * as filenamify from 'filenamify';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as path from 'path';
@@ -60,7 +61,7 @@ export const configDefaults: Config = {
  * @param file Path and file name.
  */
 export function safeFile(file: string): string {
-  return file.replace(/\//g, '_');
+  return filenamify(file);
 }
 
 /**
