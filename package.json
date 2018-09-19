@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/deepmerge": "^2.1.0",
     "@types/fs-extra": "^5.0.0",
-    "@types/glob": "^5.0.35",
+    "@types/glob": "^7.0.0",
     "@types/inquirer": "^0.0.43",
     "@types/mssql": "^4.0.7",
     "@types/multimatch": "^2.1.2",
