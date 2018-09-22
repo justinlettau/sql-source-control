@@ -27,6 +27,7 @@ program
 program
   .command('pull [name]')
   .description('Generate SQL files for all tables, stored procedures, functions, etc.')
+  .option('-c, --config [value]', 'Relative path to config file.')
   .action(pull);
 
 program

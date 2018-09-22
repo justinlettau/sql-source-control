@@ -10,6 +10,13 @@ export interface InitOptions {
 }
 
 /**
+ * CLI arguments for `pull` command.
+ */
+export interface PullOptions {
+  config?: string;
+}
+
+/**
  * Base SQL object.
  */
 export interface AbstractSqlObject {

@@ -1,0 +1,12 @@
+{
+  "connections": [
+    {
+      "name": "test",
+      "server": "APPVYR-WIN\\SQL2017",
+      "port": 1433,
+      "database": "AdventureWorks2017",
+      "user": "sa",
+      "password": "Password12!"
+    }
+  ]
+}

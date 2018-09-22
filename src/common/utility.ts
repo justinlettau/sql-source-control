@@ -66,12 +66,19 @@ export function safeFile(file: string): string {
 
 /**
  * Get and parse config file.
+ *
+ * @param overridePath Optional override configuration file to use.
  */
-export function getConfig(): Config {
+export function getConfig(overridePath?: string): Config {
   let config: Config;
+  let overrideFile: string;
+
+  if (overridePath) {
+    overrideFile = path.join(process.cwd(), overridePath);
+  }
 
   try {
-    config = fs.readJsonSync(configFile);
+    config = fs.readJsonSync(overrideFile || configFile);
   } catch (error) {
     console.error('Could not find or parse config file. You can use the `init` command to create one!');
     process.exit();

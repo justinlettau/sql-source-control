@@ -1,0 +1,14 @@
+services:
+  - mssql2017
+
+install:
+  - npm install
+
+build_script:
+  - ps: .\tools\appveyor-mssql.ps1
+  - npm run build
+  - npm link
+  - ssc pull -c ./tools/appveyor-config.json
+
+test_script:
+  - node ./tools/appveyor-test.js

@@ -11,6 +11,7 @@ import { Connection } from '../common/connection';
 import { IdempotencyOption } from '../common/idempotency';
 import * as util from '../common/utility';
 import {
+  PullOptions,
   SqlColumn,
   SqlDataResult,
   SqlForeignKey,
@@ -29,9 +30,9 @@ import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tabl
  *
  * @param name Connection name to use.
  */
-export function pull(name: string): void {
+export function pull(name: string, options: PullOptions): void {
   const start: [number, number] = process.hrtime();
-  const config: Config = util.getConfig();
+  const config: Config = util.getConfig(options.config);
   const conn: Connection = util.getConn(config, name);
 
   console.log(`Pulling ${chalk.magenta(conn.database)} from ${chalk.magenta(conn.server)} ...`);
