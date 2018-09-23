@@ -3,31 +3,34 @@ import * as fs from 'fs-extra';
 import { EOL } from 'os';
 
 import { Config } from '../common/config';
-import * as util from '../common/utility';
+import Utility from '../common/utility';
 
-/**
- * Concatenate all SQL files into a single file.
- */
-export function cat(): void {
-  const start: [number, number] = process.hrtime();
-  const config: Config = util.getConfig();
-  let output: string = '';
+export class Cat {
 
-  // order is important
-  const files: string[] = util.getFilesOrdered(config);
+  /**
+   * Invoke action.
+   */
+  public invoke(): void {
+    const start: [number, number] = process.hrtime();
+    const config: Config = new Config();
+    let output: string = '';
 
-  files.forEach(file => {
-    const content: string = fs.readFileSync(file).toString();
-    const end: string = content.substr(-2).toLowerCase();
+    // order is important
+    const files: string[] = Utility.getFilesOrdered(config);
 
-    output += content;
-    output += EOL;
-    output += (end !== 'go' ? 'go' : '');
-    output += EOL + EOL;
-  });
+    files.forEach(file => {
+      const content: string = fs.readFileSync(file).toString();
+      const end: string = content.substr(-2).toLowerCase();
 
-  fs.outputFileSync(`${config.output.root}/cat.sql`, output);
+      output += content;
+      output += EOL;
+      output += (end !== 'go' ? 'go' : '');
+      output += EOL + EOL;
+    });
 
-  const time: [number, number] = process.hrtime(start);
-  console.log(chalk.green(`Finished after ${time[0]}s!`));
+    fs.outputFileSync(`${config.output.root}/cat.sql`, output);
+
+    const time: [number, number] = process.hrtime(start);
+    console.log(chalk.green(`Finished after ${time[0]}s!`));
+  }
 }

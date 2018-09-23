@@ -1,124 +1,136 @@
-import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 
+import { Config } from '../common/config';
 import { Connection } from '../common/connection';
-import * as util from '../common/utility';
 import { PathChoices } from '../eums';
 import { InitOptions } from '../interfaces';
 
-/**
- * Create default config file.
- *
- * @param options CommanderJS options.
- */
-export function init(options: InitOptions): void {
-  const webConfigFile: string = options.webconfig || util.webConfigFile;
-  const webConfigConns: Connection[] = util.getWebConfigConns(webConfigFile);
-  const conn: Connection = new Connection();
+export class Init {
 
-  if (webConfigConns) {
-    // use options from web config
-    Object.assign(conn, webConfigConns[0]);
+  /**
+   * Invoke action.
+   *
+   * @param options CLI options.
+   */
+  public invoke(options: InitOptions): void {
+    const webConfigConns: Connection[] = Config.getConnectionsFromWebConfig(options.webconfig);
+    const conn: Connection = new Connection();
+
+    if (!options.force && Config.doesDefaultExist()) {
+      // don't overwrite existing config file
+      return console.error('Config file already exists!');
+    }
+
+    if (webConfigConns) {
+      // use options from web config
+      conn.loadFromObject(webConfigConns[0]);
+    }
+
+    if (options.skip) {
+      // skip prompts and create with defaults
+      Config.write({ connections: options.webconfig || [conn] });
+      return;
+    }
+
+    inquirer.prompt(this.getQuestions(conn, !!webConfigConns))
+      .then(answers => this.writeFiles(answers));
   }
 
-  if (fs.existsSync(util.configFile) && !options.force) {
-    // don't overwrite existing config file
-    return console.error('Config file already exists!');
-  }
+  /**
+   * Get all applicable questions.
+   *
+   * @param conn Connection object to use for default values.
+   */
+  private getQuestions(conn: Connection, showWebConfig: boolean): inquirer.Questions {
+    return [
+      {
+        name: 'path',
+        message: 'Where would you like to store connections?',
+        type: 'list',
+        choices: () => {
+          const choices: object[] = [
+            {
+              name: 'Main configuration file.',
+              value: PathChoices.SscConfig
+            },
+            {
+              name: 'Separate connections configuration file.',
+              value: PathChoices.ConnsConfig
+            }
+          ];
 
-  if (options.skip) {
-    // skip prompts and create with defaults
-    util.setConfig(util.configFile, { connections: options.webconfig || [conn] });
-    return;
-  }
+          if (showWebConfig) {
+            choices.push({
+              name: 'Web.config file with connection strings.',
+              value: PathChoices.WebConfig
+            });
+          }
 
-  const questions: inquirer.Questions = [
-    {
-      name: 'path',
-      message: 'Where would you like to store connections?',
-      type: 'list',
-      choices: () => {
-        const choices: object[] = [
-          { name: 'Main configuration file.', value: PathChoices.SscConfig },
-          { name: 'Separate connections configuration file.', value: PathChoices.ConnsConfig }
-        ];
-
-        if (webConfigConns) {
-          choices.push({
-            name: 'Web.config file with connection strings.',
-            value: PathChoices.WebConfig
-          });
+          return choices;
         }
-
-        return choices;
+      },
+      {
+        name: 'server',
+        message: 'Server URL.',
+        default: (conn.server || undefined),
+        when: answers => (answers.path !== PathChoices.WebConfig)
+      },
+      {
+        name: 'port',
+        message: 'Server port.',
+        default: (conn.port || undefined),
+        when: answers => (answers.path !== PathChoices.WebConfig)
+      },
+      {
+        name: 'database',
+        message: 'Database name.',
+        default: (conn.database || undefined),
+        when: answers => (answers.path !== PathChoices.WebConfig)
+      },
+      {
+        name: 'user',
+        message: 'Login username.',
+        default: (conn.user || undefined),
+        when: answers => (answers.path !== PathChoices.WebConfig)
+      },
+      {
+        name: 'password',
+        message: 'Login password.',
+        type: 'password',
+        default: (conn.password || undefined),
+        when: answers => (answers.path !== PathChoices.WebConfig)
+      },
+      {
+        name: 'name',
+        message: 'Connection name.',
+        default: 'dev',
+        when: answers => (answers.path !== PathChoices.WebConfig)
       }
-    },
-    {
-      name: 'server',
-      message: 'Server URL.',
-      default: (conn.server || undefined),
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    },
-    {
-      name: 'port',
-      message: 'Server port.',
-      default: (conn.port || undefined),
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    },
-    {
-      name: 'database',
-      message: 'Database name.',
-      default: (conn.database || undefined),
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    },
-    {
-      name: 'user',
-      message: 'Login username.',
-      default: (conn.user || undefined),
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    },
-    {
-      name: 'password',
-      message: 'Login password.',
-      type: 'password',
-      default: (conn.password || undefined),
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    },
-    {
-      name: 'name',
-      message: 'Connection name.',
-      default: 'dev',
-      when: answers => (answers.path !== PathChoices.WebConfig)
-    }
-  ];
+    ];
+  }
 
-  // prompt user for config options
-  inquirer.prompt(questions).then((answers: inquirer.Answers): void => {
+  /**
+   * From configuration files(s) based on answers.
+   *
+   * @param answers Answers from questions.
+   */
+  private writeFiles(answers: inquirer.Answers): void {
+    const conn: object = {
+      name: answers.name,
+      server: answers.server,
+      port: answers.port,
+      database: answers.database,
+      user: answers.user,
+      password: answers.password
+    };
+
     if (answers.path === PathChoices.WebConfig) {
-      util.setConfig(util.configFile, { connections: webConfigFile });
+      Config.write({ connections: Config.defaultWebConfigFile });
     } else if (answers.path === PathChoices.ConnsConfig) {
-      util.setConfig(util.configFile, { connections: './ssc-connections.json' });
-      util.setConfig(util.connsFile, {
-        connections: [new Connection({
-          name: answers.name,
-          server: answers.server,
-          port: answers.port,
-          database: answers.database,
-          user: answers.user,
-          password: answers.password
-        })]
-      });
+      Config.write({ connections: Config.defaultConnectionsJsonFile });
+      Config.write({ connections: [conn] }, Config.defaultConnectionsJsonFile);
     } else {
-      util.setConfig(util.configFile, {
-        connections: [new Connection({
-          name: answers.name,
-          server: answers.server,
-          port: answers.port,
-          database: answers.database,
-          user: answers.user,
-          password: answers.password
-        })]
-      });
+      Config.write({ connections: [conn] });
     }
-  });
+  }
 }
