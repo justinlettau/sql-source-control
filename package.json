@@ -48,7 +48,7 @@
     "inquirer": "^6.0.0",
     "mssql": "^4.1.0",
     "multimatch": "^2.1.0",
-    "tedious": "^2.6.1",
+    "tedious": "^3.0.0",
     "ts-util-is": "^1.1.3",
     "update-notifier": "^2.3.0",
     "xml2js": "^0.4.19"
