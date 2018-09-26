@@ -25,7 +25,7 @@ export class Config {
   /**
    * Default configuration file.
    */
-  private static readonly defaultConfigFile: string = 'ssc.json';
+  public static readonly defaultConfigFile: string = 'ssc.json';
 
   /**
    * Write a config file with provided configuration.
@@ -58,13 +58,11 @@ export class Config {
    *
    * @param file Relative path to Web.config file.
    */
-  public static getConnectionsFromWebConfig(file: string): Connection[] {
+  public static getConnectionsFromWebConfig(file?: string): Connection[] {
     const configFile: string = path.join(process.cwd(), file || Config.defaultWebConfigFile);
     const parser: xml2js.Parser = new xml2js.Parser();
     const conns: Connection[] = [];
     let content: string;
-
-    console.log(configFile);
 
     if (!fs.existsSync(configFile)) {
       // not found, use defaults
@@ -200,7 +198,7 @@ export class Config {
 
       this.connections = config.connections || this.connections;
       this.data = config.data || this.data;
-      this.files = config.data || this.files;
+      this.files = config.files || this.files;
       Object.assign(this.output, config.output);
       Object.assign(this.idempotency, config.idempotency);
     } catch (error) {

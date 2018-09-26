@@ -14,4 +14,4 @@ export interface IdempotencyConfig {
 /**
  * Supported idempotency types.
  */
-export type IdempotencyOption = 'if-exists-drop' | 'if-not-exists';
+export type IdempotencyOption = 'if-exists-drop' | 'if-not-exists' | false;

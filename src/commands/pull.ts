@@ -173,7 +173,7 @@ export class Pull {
    */
   private createFile(config: Config, item: any, file: string, content: string): string {
     let dir: string;
-    let output: string;
+    let output: string | false;
     let type: IdempotencyOption;
 
     switch (item.type.trim()) {

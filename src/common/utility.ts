@@ -2,6 +2,7 @@ import * as filenamify from 'filenamify';
 import * as glob from 'glob';
 
 import { Config } from '../common/config';
+import { isString } from 'ts-util-is';
 
 /**
  * Helper methods.
@@ -34,11 +35,13 @@ export default class Utility {
       config.output.triggers,
       config.output['table-valued-parameters'],
       config.output.data
-    ];
+    ] as string[];
 
     directories.forEach(dir => {
-      const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
-      output.push(...files);
+      if (dir) {
+        const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
+        output.push(...files);
+      }
     });
 
     return output;

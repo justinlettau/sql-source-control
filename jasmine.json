@@ -1,0 +1,8 @@
+{
+  "spec_files": [
+    "src/**/*.spec.ts"
+  ],
+  "utilitys": [
+    "node_modules/ts-node/register.js"
+  ]
+}

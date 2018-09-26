@@ -29,7 +29,9 @@
     "lint": "tslint -c ./tslint.json -p ./tsconfig.json",
     "build": "tsc -p ./tsconfig.json",
     "prepublishOnly": "npm run build",
-    "release": "standard-version"
+    "release": "standard-version",
+    "test": "nyc jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json"
   },
   "bin": {
     "ssc": "bin/ssc"
@@ -58,11 +60,17 @@
     "@types/fs-extra": "^5.0.4",
     "@types/glob": "^7.0.0",
     "@types/inquirer": "^0.0.43",
+    "@types/jasmine": "^2.8.8",
     "@types/mssql": "^4.0.10",
     "@types/multimatch": "^2.1.2",
     "@types/xml2js": "^0.4.3",
     "checksum": "^0.1.1",
+    "codecov": "^3.1.0",
+    "jasmine": "^3.2.0",
+    "mock-fs": "^4.7.0",
+    "nyc": "^13.0.1",
     "standard-version": "^4.4.0",
+    "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-unicorn-science": "^1.3.0",
     "typescript": "^3.0.3"

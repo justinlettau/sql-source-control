@@ -2,7 +2,7 @@
  * Connection configuration.
  */
 export class Connection {
-  constructor(conn?: Connection) {
+  constructor(conn?: object) {
     this.loadFromObject(conn);
   }
 
@@ -24,7 +24,7 @@ export class Connection {
   /**
    * Server port.
    */
-  public port: number = 1433;
+  public port: number;
 
   /**
    * Login username.
@@ -82,7 +82,7 @@ export class Connection {
    *
    * @param conn Connection object to load.
    */
-  public loadFromObject(conn: Connection): void {
+  public loadFromObject(conn: object): void {
     if (!conn) {
       return;
     }

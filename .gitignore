@@ -5,6 +5,8 @@
 .vscode
 
 # Other
+.nyc_output/
+coverage/
 _sql-database/
 dist/
 node_modules/
