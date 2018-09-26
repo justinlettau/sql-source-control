@@ -1,8 +1,10 @@
+import { ConnectionObj } from './interfaces';
+
 /**
  * Connection configuration.
  */
-export default class Connection {
-  constructor(conn?: object) {
+export default class Connection implements ConnectionObj {
+  constructor(conn?: ConnectionObj) {
     this.loadFromObject(conn);
   }
 
@@ -82,7 +84,7 @@ export default class Connection {
    *
    * @param conn Connection object to load.
    */
-  public loadFromObject(conn: object): void {
+  public loadFromObject(conn: ConnectionObj): void {
     if (!conn) {
       return;
     }

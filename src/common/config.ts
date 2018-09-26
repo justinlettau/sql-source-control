@@ -4,12 +4,12 @@ import { isString } from 'ts-util-is';
 import * as xml2js from 'xml2js';
 
 import Connection from './connection';
-import { IdempotencyConfig, OutputConfig } from './interfaces';
+import { ConfigObj, IdempotencyConfig, OutputConfig } from './interfaces';
 
 /**
  * Configuration options.
  */
-export default class Config {
+export default class Config implements ConfigObj {
 
   /**
    * Default connections JSON file.
@@ -32,7 +32,7 @@ export default class Config {
    * @param config Configuration object to write.
    * @param file Configuration file to write to.
    */
-  public static write(config: object, file?: string): void {
+  public static write(config: ConfigObj, file?: string): void {
     const configFile: string = path.join(process.cwd(), file || Config.defaultConfigFile);
     const content: string = JSON.stringify(config, null, 2);
 

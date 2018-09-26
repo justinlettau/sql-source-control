@@ -1,4 +1,28 @@
+import Connection from './connection';
 import { IdempotencyOption } from './types';
+
+/**
+ * Configuration object properties.
+ */
+export interface ConfigObj {
+  connections: string | Connection[];
+  files: string[];
+  data: string[];
+  output: OutputConfig;
+  idempotency: IdempotencyConfig;
+}
+
+/**
+ * Connection object properties.
+ */
+export interface ConnectionObj {
+  name: string;
+  server: string;
+  database: string;
+  port: number;
+  user: string;
+  password: string;
+}
 
 /**
  * Supported idempotency configuration.
