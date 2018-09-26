@@ -1,8 +1,7 @@
 import * as filenamify from 'filenamify';
 import * as glob from 'glob';
 
-import { Config } from '../common/config';
-import { isString } from 'ts-util-is';
+import Config from '../common/config';
 
 /**
  * Helper methods.

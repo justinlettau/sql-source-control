@@ -1,22 +1,6 @@
 import * as sql from 'mssql';
 
 /**
- * CLI arguments for `init` command.
- */
-export interface InitOptions {
-  webconfig?: string;
-  force?: boolean;
-  skip?: boolean;
-}
-
-/**
- * CLI arguments for `pull` command.
- */
-export interface PullOptions {
-  config?: string;
-}
-
-/**
  * Base SQL object.
  */
 export interface AbstractSqlObject {

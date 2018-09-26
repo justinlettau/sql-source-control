@@ -1,9 +1,8 @@
 import * as mock from 'mock-fs';
 
-import { Config } from './config';
-import { Connection } from './connection';
-import { IdempotencyConfig } from './idempotency';
-import { OutputConfig } from './output';
+import Config from './config';
+import Connection from './connection';
+import { IdempotencyConfig, OutputConfig } from './interfaces';
 
 describe('Config class', () => {
   const name: string = 'dev';

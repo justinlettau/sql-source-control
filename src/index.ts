@@ -2,11 +2,11 @@ import * as program from 'commander';
 import * as updateNotifier from 'update-notifier';
 
 import pkg = require('../package.json');
-import { Cat } from './commands/cat';
-import { Conns } from './commands/conns';
-import { Init } from './commands/init';
-import { Pull } from './commands/pull';
-import { Push } from './commands/push';
+import Cat from './commands/cat';
+import Conns from './commands/conns';
+import Init from './commands/init';
+import Pull from './commands/pull';
+import Push from './commands/push';
 
 // check for updates
 updateNotifier({ pkg }).notify();

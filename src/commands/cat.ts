@@ -2,10 +2,10 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import { EOL } from 'os';
 
-import { Config } from '../common/config';
+import Config from '../common/config';
 import Utility from '../common/utility';
 
-export class Cat {
+export default class Cat {
 
   /**
    * Invoke action.

@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 import { isBoolean, isDate, isString } from 'ts-util-is';
 
-import { IdempotencyOption } from '../common/idempotency';
+import { IdempotencyOption } from '../common/types';
 import {
   AbstractSqlObject,
   SqlColumn,
@@ -11,7 +11,7 @@ import {
   SqlPrimaryKey,
   SqlSchema,
   SqlTable
-} from '../interfaces';
+} from './interfaces';
 
 /**
  * Get idempotency script prefix.

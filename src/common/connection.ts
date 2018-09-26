@@ -1,7 +1,7 @@
 /**
  * Connection configuration.
  */
-export class Connection {
+export default class Connection {
   constructor(conn?: object) {
     this.loadFromObject(conn);
   }

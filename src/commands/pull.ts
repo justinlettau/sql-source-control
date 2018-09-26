@@ -6,12 +6,11 @@ import * as multimatch from 'multimatch';
 import * as path from 'path';
 import { isArray } from 'ts-util-is';
 
-import { Config } from '../common/config';
-import { Connection } from '../common/connection';
-import { IdempotencyOption } from '../common/idempotency';
+import Config from '../common/config';
+import Connection from '../common/connection';
+import { IdempotencyOption } from '../common/types';
 import Utility from '../common/utility';
 import {
-  PullOptions,
   SqlColumn,
   SqlDataResult,
   SqlForeignKey,
@@ -21,11 +20,12 @@ import {
   SqlSchema,
   SqlTable,
   SqlTableValuedParameter
-} from '../interfaces';
+} from '../sql/interfaces';
 import * as script from '../sql/script';
 import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, tvpRead } from '../sql/sys';
+import { PullOptions } from './interfaces';
 
-export class Pull {
+export default class Pull {
 
   /**
    * Invoke action.

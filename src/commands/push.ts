@@ -3,11 +3,11 @@ import * as fs from 'fs-extra';
 import * as sql from 'mssql';
 import { EOL } from 'os';
 
-import { Config } from '../common/config';
-import { Connection } from '../common/connection';
+import Config from '../common/config';
+import Connection from '../common/connection';
 import Utility from '../common/utility';
 
-export class Push {
+export default class Push {
 
   /**
    * Invoke actions.

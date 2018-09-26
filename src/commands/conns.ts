@@ -1,9 +1,9 @@
 import * as Table from 'cli-table';
 
-import { Config } from '../common/config';
-import { Connection } from '../common/connection';
+import Config from '../common/config';
+import Connection from '../common/connection';
 
-export class Conns {
+export default class Conns {
 
   /**
    * Invoke action.

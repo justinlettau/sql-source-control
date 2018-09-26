@@ -1,4 +1,4 @@
-import { Connection } from './connection';
+import Connection from './connection';
 
 describe('Connection class', () => {
   const name: string = 'dev';

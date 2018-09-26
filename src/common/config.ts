@@ -3,14 +3,13 @@ import * as path from 'path';
 import { isString } from 'ts-util-is';
 import * as xml2js from 'xml2js';
 
-import { Connection } from './connection';
-import { IdempotencyConfig } from './idempotency';
-import { OutputConfig } from './output';
+import Connection from './connection';
+import { IdempotencyConfig, OutputConfig } from './interfaces';
 
 /**
  * Configuration options.
  */
-export class Config {
+export default class Config {
 
   /**
    * Default connections JSON file.

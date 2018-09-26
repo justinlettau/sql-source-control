@@ -1,11 +1,11 @@
 import * as inquirer from 'inquirer';
 
-import { Config } from '../common/config';
-import { Connection } from '../common/connection';
-import { PathChoices } from '../eums';
-import { InitOptions } from '../interfaces';
+import Config from '../common/config';
+import Connection from '../common/connection';
+import { PathChoices } from './eums';
+import { InitOptions } from './interfaces';
 
-export class Init {
+export default class Init {
 
   /**
    * Invoke action.
