@@ -1,10 +1,10 @@
-import { ConnectionObj } from './interfaces';
+import { IConnection } from './interfaces';
 
 /**
  * Connection configuration.
  */
-export default class Connection implements ConnectionObj {
-  constructor(conn?: ConnectionObj) {
+export default class Connection implements IConnection {
+  constructor(conn?: IConnection) {
     this.loadFromObject(conn);
   }
 
@@ -84,7 +84,7 @@ export default class Connection implements ConnectionObj {
    *
    * @param conn Connection object to load.
    */
-  public loadFromObject(conn: ConnectionObj): void {
+  public loadFromObject(conn: IConnection): void {
     if (!conn) {
       return;
     }

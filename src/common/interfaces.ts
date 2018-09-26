@@ -4,22 +4,24 @@ import { IdempotencyOption } from './types';
 /**
  * Configuration object properties.
  */
-export interface ConfigObj {
-  connections: string | Connection[];
-  files: string[];
-  data: string[];
-  output: OutputConfig;
-  idempotency: IdempotencyConfig;
+// tslint:disable-next-line:interface-name
+export interface IConfig {
+  connections: string | IConnection[];
+  files?: string[];
+  data?: string[];
+  output?: OutputConfig;
+  idempotency?: IdempotencyConfig;
 }
 
 /**
  * Connection object properties.
  */
-export interface ConnectionObj {
+// tslint:disable-next-line:interface-name
+export interface IConnection {
   name: string;
   server: string;
   database: string;
-  port: number;
+  port?: number;
   user: string;
   password: string;
 }

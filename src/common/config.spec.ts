@@ -1,8 +1,7 @@
 import * as mock from 'mock-fs';
-
 import Config from './config';
 import Connection from './connection';
-import { IdempotencyConfig, OutputConfig } from './interfaces';
+import { IConnection, IdempotencyConfig, OutputConfig } from './interfaces';
 
 describe('Config class', () => {
   const name: string = 'dev';
@@ -11,7 +10,7 @@ describe('Config class', () => {
   const database: string = 'awesome-db';
   const user: string = 'example';
   const password: string = 'qwerty';
-  const connection: object = { name, server, port, database, user, password };
+  const connection: IConnection = { name, server, port, database, user, password };
   const files: string[] = ['dbo.*'];
   const data: string[] = ['dbo.LookupTable'];
   const output: OutputConfig = { root: './my-database' };

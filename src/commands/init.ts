@@ -2,6 +2,7 @@ import * as inquirer from 'inquirer';
 
 import Config from '../common/config';
 import Connection from '../common/connection';
+import { IConnection } from '../common/interfaces';
 import { PathChoices } from './eums';
 import { InitOptions } from './interfaces';
 
@@ -115,7 +116,7 @@ export default class Init {
    * @param answers Answers from questions.
    */
   private writeFiles(answers: inquirer.Answers): void {
-    const conn: object = {
+    const conn: IConnection = {
       name: answers.name,
       server: answers.server,
       port: answers.port,
