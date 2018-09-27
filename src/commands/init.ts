@@ -48,27 +48,7 @@ export default class Init {
         name: 'path',
         message: 'Where would you like to store connections?',
         type: 'list',
-        choices: () => {
-          const choices: object[] = [
-            {
-              name: 'Main configuration file.',
-              value: PathChoices.SscConfig
-            },
-            {
-              name: 'Separate connections configuration file.',
-              value: PathChoices.ConnsConfig
-            }
-          ];
-
-          if (showWebConfig) {
-            choices.push({
-              name: 'Web.config file with connection strings.',
-              value: PathChoices.WebConfig
-            });
-          }
-
-          return choices;
-        }
+        choices: () => this.getPathChoices(showWebConfig)
       },
       {
         name: 'server',
@@ -108,6 +88,33 @@ export default class Init {
         when: answers => (answers.path !== PathChoices.WebConfig)
       }
     ];
+  }
+
+  /**
+   * Get all available configuration file path choices.
+   *
+   * @param showWebConfig Indicates if Web.config choice should be available.
+   */
+  private getPathChoices(showWebConfig: boolean): inquirer.ChoiceType[] {
+    const choices: inquirer.ChoiceType[] = [
+      {
+        name: 'Main configuration file.',
+        value: PathChoices.SscConfig
+      },
+      {
+        name: 'Separate connections configuration file.',
+        value: PathChoices.ConnsConfig
+      }
+    ];
+
+    if (showWebConfig) {
+      choices.push({
+        name: 'Web.config file with connection strings.',
+        value: PathChoices.WebConfig
+      });
+    }
+
+    return choices;
   }
 
   /**
