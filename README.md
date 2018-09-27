@@ -56,7 +56,7 @@ Options:
 | `--skip`      | `-s`  | `boolean` | Use defaults and not prompt you for any options | n/a     |
 | `--webconfig` | `-w`  | `string`  | Relative path to a `Web.config` file.           | n/a     |
 
-### `ssc conns`
+### `ssc list`
 List all available connections specified in the configuration file.
 
 ### `ssc pull [conn]`

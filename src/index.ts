@@ -2,8 +2,8 @@ import * as program from 'commander';
 import * as updateNotifier from 'update-notifier';
 
 import pkg = require('../package.json');
-import Conns from './commands/conns';
 import Init from './commands/init';
+import List from './commands/list';
 import Pull from './commands/pull';
 import Push from './commands/push';
 
@@ -22,10 +22,11 @@ program
   });
 
 program
-  .command('conns')
+  .command('list')
+  .alias('ls')
   .description('List all available connections.')
   .action(() => {
-    const action: Conns = new Conns();
+    const action: List = new List();
     action.invoke();
   });
 

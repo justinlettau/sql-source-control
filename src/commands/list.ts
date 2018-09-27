@@ -3,7 +3,7 @@ import * as Table from 'cli-table';
 import Config from '../common/config';
 import Connection from '../common/connection';
 
-export default class Conns {
+export default class List {
 
   /**
    * Invoke action.
