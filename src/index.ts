@@ -2,7 +2,6 @@ import * as program from 'commander';
 import * as updateNotifier from 'update-notifier';
 
 import pkg = require('../package.json');
-import Cat from './commands/cat';
 import Conns from './commands/conns';
 import Init from './commands/init';
 import Pull from './commands/pull';
@@ -45,14 +44,6 @@ program
   .action(name => {
     const action: Push = new Push();
     action.invoke(name);
-  });
-
-program
-  .command('cat')
-  .description('Concatenate all SQL files into a single file.')
-  .action(() => {
-    const action: Cat = new Cat();
-    action.invoke();
   });
 
 program

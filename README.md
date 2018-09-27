@@ -116,9 +116,6 @@ Arguments:
 |----------|-----------------------------------------|-----------------------------------------|
 | `conn`   | Optional name of the connection to use. | First available connection from config. |
 
-### `ssc cat`
-Concatenate all SQL files into a single file. Outputs to `./_sql-database/cat.sql`.
-
 # Configuration
 Configuration options are stored in a `ssc.json` file. The following properties are supported:
 
