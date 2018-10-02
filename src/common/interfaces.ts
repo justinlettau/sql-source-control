@@ -1,5 +1,4 @@
-import Connection from './connection';
-import { IdempotencyOption } from './types';
+import { IdempotencyData, IdempotencyObject } from './types';
 
 /**
  * Configuration object properties.
@@ -30,13 +29,14 @@ export interface IConnection {
  * Supported idempotency configuration.
  */
 export interface IdempotencyConfig {
-  'procs'?: IdempotencyOption;
-  'scalar-valued'?: IdempotencyOption;
-  'table-valued'?: IdempotencyOption;
-  'table-valued-parameters'?: IdempotencyOption;
-  'tables'?: IdempotencyOption;
-  'triggers'?: IdempotencyOption;
-  'views'?: IdempotencyOption;
+  'data'?: IdempotencyData;
+  'procs'?: IdempotencyObject;
+  'scalar-valued'?: IdempotencyObject;
+  'table-valued'?: IdempotencyObject;
+  'table-valued-parameters'?: IdempotencyObject;
+  'tables'?: IdempotencyObject;
+  'triggers'?: IdempotencyObject;
+  'views'?: IdempotencyObject;
 }
 
 /**

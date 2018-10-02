@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 import { isBoolean, isDate, isString } from 'ts-util-is';
 
-import { IdempotencyOption } from '../common/types';
+import { IdempotencyData, IdempotencyObject } from '../common/types';
 import {
   AbstractSqlObject,
   SqlColumn,
@@ -19,7 +19,7 @@ import {
  * @param item Row from query.
  * @param type Idempotency prefix type.
  */
-export function idempotency(item: AbstractSqlObject, type: IdempotencyOption): string {
+export function idempotency(item: AbstractSqlObject, type: IdempotencyObject): string {
   let obj: string;
   const objectId: string = `${item.schema}].[${item.name}`;
 
@@ -154,11 +154,11 @@ export function table(
 
   // foreign keys
   foreignKeys
-  .filter(x => x.object_id === item.object_id)
-  .forEach(fk => {
-    output += foreignKey(fk);
-    output += EOL;
-  });
+    .filter(x => x.object_id === item.object_id)
+    .forEach(fk => {
+      output += foreignKey(fk);
+      output += EOL;
+    });
 
   output += EOL;
   output += EOL;
@@ -215,11 +215,25 @@ export function tvp(
  *
  * @param item Results from data query.
  */
-export function data(item: SqlDataResult): string {
+export function data(item: SqlDataResult, idempotency: IdempotencyData): string {
   let output: string = '';
 
-  // idempotency
-  output += `truncate table ${item.name}`;
+  if (idempotency === 'truncate') {
+    output += `truncate table ${item.name}`;
+    output += EOL;
+  } else if (idempotency === 'delete') {
+    output += `delete from ${item.name}`;
+    output += EOL;
+  } else {
+    output += `delete from ${item.name}`;
+    output += EOL;
+    output += `dbcc checkident ('${item.name}', reseed, 0)`;
+    output += EOL;
+  }
+
+  output += EOL;
+  output += `set identity_insert ${item.name} on`;
+  output += EOL;
   output += EOL;
 
   item.result.recordset.forEach(row => {
@@ -231,6 +245,10 @@ export function data(item: SqlDataResult): string {
     output += EOL;
   });
 
+  output += EOL;
+  output += `set identity_insert ${item.name} off`;
+
+  output += EOL;
   output += EOL;
   return output;
 }

@@ -8,7 +8,7 @@ import { isArray } from 'ts-util-is';
 
 import Config from '../common/config';
 import Connection from '../common/connection';
-import { IdempotencyOption } from '../common/types';
+import { IdempotencyObject } from '../common/types';
 import Utility from '../common/utility';
 import {
   SqlColumn,
@@ -154,7 +154,7 @@ export default class Pull {
         return;
       }
 
-      const content: string = script.data(item);
+      const content: string = script.data(item, config.idempotency.data);
       const dir: string = this.createFile(config, item, file, content);
       this.exclude(config, existing, dir);
     });
@@ -174,7 +174,7 @@ export default class Pull {
   private createFile(config: Config, item: any, file: string, content: string): string {
     let dir: string;
     let output: string | false;
-    let type: IdempotencyOption;
+    let type: IdempotencyObject;
 
     switch (item.type.trim()) {
       case 'SCHEMA': // not a real object type

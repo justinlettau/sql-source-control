@@ -1,4 +1,9 @@
 /**
- * Supported idempotency types.
+ * Idempotency options for objects.
  */
-export type IdempotencyOption = 'if-exists-drop' | 'if-not-exists' | false;
+export type IdempotencyObject = 'if-exists-drop' | 'if-not-exists' | false;
+
+/**
+ * Idempotency options for data files.
+ */
+export type IdempotencyData = 'delete-and-reseed' | 'delete' | 'truncate' | false;

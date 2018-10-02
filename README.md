@@ -155,15 +155,19 @@ properties are supported:
 **idempotency** (`object`): Optional. Defines what type of idempotency will scripted during the `pull` command. The
 following properties are supported. Each property supports `if-exists-drop`, `if-not-exists`, or `false` as an option.
 
-| Property                  | Type     | Description                                        | Default          |
-|---------------------------|----------|----------------------------------------------------|------------------|
-| `procs`                   | `string` | Idempotency for stored procedure files.            | `if-exists-drop` |
-| `scalar-valued`           | `string` | Idempotency for scalar function files.             | `if-exists-drop` |
-| `table-valued-parameters` | `string` | Idempotency for ser defined table parameter files. | `if-not-exists`  |
-| `table-valued`            | `string` | Idempotency for table-valued files.                | `if-exists-drop` |
-| `tables`                  | `string` | Idempotency for table files.                       | `if-not-exists`  |
-| `triggers`                | `string` | Idempotency for triggers files.                    | `if-exists-drop` |
-| `views`                   | `string` | Idempotency for views files.                       | `if-exists-drop` |
+| Property                  | Type         | Description                                         | Default             |
+|---------------------------|--------------|-----------------------------------------------------|---------------------|
+| `data`                    | `string` (2) | Idempotency for data files.                         | `truncate` |
+| `procs`                   | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop`    |
+| `scalar-valued`           | `string` (1) | Idempotency for scalar function files.              | `if-exists-drop`    |
+| `table-valued-parameters` | `string` (1) | Idempotency for user defined table parameter files. | `if-not-exists`     |
+| `table-valued`            | `string` (1) | Idempotency for table-valued files.                 | `if-exists-drop`    |
+| `tables`                  | `string` (1) | Idempotency for table files.                        | `if-not-exists`     |
+| `triggers`                | `string` (1) | Idempotency for triggers files.                     | `if-exists-drop`    |
+| `views`                   | `string` (1) | Idempotency for views files.                        | `if-exists-drop`    |
+
+1. `if-exists-drop`, `if-not-exists`, or `false`.
+2. `delete-and-ressed`, `delete`, `truncate`, or `false`.
 
 # Examples
 

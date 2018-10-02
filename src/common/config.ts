@@ -132,6 +132,7 @@ export default class Config implements IConfig {
    * Defines what type of idempotency will scripted during the `pull` command.
    */
   public idempotency: IdempotencyConfig = {
+    'data': 'truncate',
     'procs': 'if-exists-drop',
     'scalar-valued': 'if-exists-drop',
     'table-valued': 'if-exists-drop',
