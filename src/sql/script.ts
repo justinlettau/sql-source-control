@@ -175,12 +175,12 @@ export function table(
 }
 
 /**
- * Get script for user-defined table-valued parameter's column.
+ * Get script for user defined types.
  *
  * @param item Row from `sys.columns` query.
  * @param columns Array of records from `sys.columns` query.
  */
-export function tvp(
+export function type(
   item: SqlTable,
   columns: SqlColumn[]
 ): string {
@@ -214,6 +214,7 @@ export function tvp(
  * Get script for for table data.
  *
  * @param item Results from data query.
+ * @param idempotency Idempotency option to use.
  */
 export function data(item: SqlDataResult, idempotency: IdempotencyData): string {
   let output: string = '';

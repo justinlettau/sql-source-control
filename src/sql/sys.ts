@@ -122,15 +122,16 @@ export const indexRead: string = `
 `;
 
 /**
- * Get SQL information for table-valued parameters.
+ * Get SQL information for user defined types.
  */
-export const tvpRead: string = `
+export const typeRead: string = `
   select
     o.object_id,
     o.type,
     s.name as [schema],
     t.name
-  from sys.table_types t
+  from
+    sys.table_types t
     inner join sys.objects o on o.object_id = t.type_table_object_id
     join sys.schemas s on t.schema_id = s.schema_id
   where

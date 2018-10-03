@@ -81,10 +81,8 @@ Example output:
   ./data
     dbo.easy-lookup.sql
     ...
-  ./functions/scalar-valued
+  ./functions
     dbo.complex-math.sql
-    ...
-  ./functions/table-valued
     dbo.awesome-table-function.sql
     ...
   ./schemas
@@ -96,8 +94,8 @@ Example output:
   ./tables
     dbo.people.sql
     ...
-  ./user-defined-types/table-valued-parameters
-    dbo.insert-people-params.sql
+  ./types
+    dbo.people-type.sql
     ...
   ./views
     dbo.super-cool-view.sql
@@ -139,32 +137,30 @@ includes none.
 **output** (`object`): Optional. Defines paths where files will be scripted during the `pull` command. The following
 properties are supported:
 
-| Property                  | Type     | Description                                            | Default                                        |
-|---------------------------|----------|--------------------------------------------------------|------------------------------------------------|
-| `root`                    | `string` | Directory for scripted files, relative to config file. | `./_sql-database`                              |
-| `data`                    | `string` | Subdirectory for data files.                           | `./data`                                       |
-| `procs`                   | `string` | Subdirectory for stored procedure files.               | `./stored-procedures`                          |
-| `scalar-valued`           | `string` | Subdirectory for scalar function files.                | `./functions/scalar-valued`                    |
-| `schemas`                 | `string` | Subdirectory for schema files.                         | `./schemas`                                    |
-| `table-valued-parameters` | `string` | Subdirectory for table valued parameter files.         | `./user-defined-types/table-valued-parameters` |
-| `table-valued`            | `string` | Subdirectory for table functions.                      | `./functions/table-valued`                     |
-| `tables`                  | `string` | Subdirectory for table files.                          | `./tables`                                     |
-| `triggers`                | `string` | Subdirectory for trigger files.                        | `./triggers`                                   |
-| `views`                   | `string` | Subdirectory for view files.                           | `./views`                                      |
+| Property   | Type     | Description                                            | Default               |
+|------------|----------|--------------------------------------------------------|-----------------------|
+| `root`     | `string` | Directory for scripted files, relative to config file. | `./_sql-database`     |
+| `data`     | `string` | Subdirectory for data files.                           | `./data`              |
+| `functions` | `string` | Subdirectory for function files.                       | `./functions`         |
+| `procs`    | `string` | Subdirectory for stored procedure files.               | `./stored-procedures` |
+| `schemas`  | `string` | Subdirectory for schema files.                         | `./schemas`           |
+| `tables`   | `string` | Subdirectory for table files.                          | `./tables`            |
+| `triggers` | `string` | Subdirectory for trigger files.                        | `./triggers`          |
+| `types`    | `string` | Subdirectory for table valued parameter files.         | `./types`             |
+| `views`    | `string` | Subdirectory for view files.                           | `./views`             |
 
 **idempotency** (`object`): Optional. Defines what type of idempotency will scripted during the `pull` command. The
 following properties are supported. Each property supports `if-exists-drop`, `if-not-exists`, or `false` as an option.
 
-| Property                  | Type         | Description                                         | Default             |
-|---------------------------|--------------|-----------------------------------------------------|---------------------|
-| `data`                    | `string` (2) | Idempotency for data files.                         | `truncate` |
-| `procs`                   | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop`    |
-| `scalar-valued`           | `string` (1) | Idempotency for scalar function files.              | `if-exists-drop`    |
-| `table-valued-parameters` | `string` (1) | Idempotency for user defined table parameter files. | `if-not-exists`     |
-| `table-valued`            | `string` (1) | Idempotency for table-valued files.                 | `if-exists-drop`    |
-| `tables`                  | `string` (1) | Idempotency for table files.                        | `if-not-exists`     |
-| `triggers`                | `string` (1) | Idempotency for triggers files.                     | `if-exists-drop`    |
-| `views`                   | `string` (1) | Idempotency for views files.                        | `if-exists-drop`    |
+| Property   | Type         | Description                                         | Default          |
+|------------|--------------|-----------------------------------------------------|------------------|
+| `data`     | `string` (2) | Idempotency for data files.                         | `truncate`       |
+| `functions` | `string` (1) | Idempotency for function files.                     | `if-exists-drop` |
+| `procs`    | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop` |
+| `tables`   | `string` (1) | Idempotency for table files.                        | `if-not-exists`  |
+| `triggers` | `string` (1) | Idempotency for triggers files.                     | `if-exists-drop` |
+| `types`    | `string` (1) | Idempotency for user defined table parameter files. | `if-not-exists`  |
+| `views`    | `string` (1) | Idempotency for views files.                        | `if-exists-drop` |
 
 1. `if-exists-drop`, `if-not-exists`, or `false`.
 2. `delete-and-ressed`, `delete`, `truncate`, or `false`.
@@ -264,22 +260,21 @@ Default configuration values.
   "output": {
     "root": "./_sql-database",
     "data": "./data",
+    "functions": "./functions",
     "procs": "./stored-procedures",
-    "scalar-valued": "./functions/scalar-valued",
     "schemas": "./schemas",
-    "table-valued": "./functions/table-valued",
-    "table-valued-parameters": "./user-defined-types/table-valued-parameters",
     "tables": "./tables",
     "triggers": "./triggers",
+    "types": "./types",
     "views": "./views"
   },
   "idempotency": {
+    "data": "truncate",
+    "functions": "if-exists-drop",
     "procs": "if-exists-drop",
-    "scalar-valued": "if-exists-drop",
-    "table-valued": "if-exists-drop",
-    "table-valued-parameters": "if-not-exists",
     "tables": "if-not-exists",
     "triggers": "if-exists-drop",
+    "types": "if-not-exists",
     "views": "if-exists-drop"
   }
 }

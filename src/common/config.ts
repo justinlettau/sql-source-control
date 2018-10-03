@@ -116,30 +116,28 @@ export default class Config implements IConfig {
    * Defines paths where files will be scripted during the `pull` command.
    */
   public output: OutputConfig = {
-    'root': './_sql-database',
-    'data': './data',
-    'procs': './stored-procedures',
-    'scalar-valued': './functions/scalar-valued',
-    'schemas': './schemas',
-    'table-valued': './functions/table-valued',
-    'table-valued-parameters': './user-defined-types/table-valued-parameters',
-    'tables': './tables',
-    'triggers': './triggers',
-    'views': './views'
+    root: './_sql-database',
+    data: './data',
+    functions: './functions',
+    procs: './stored-procedures',
+    schemas: './schemas',
+    tables: './tables',
+    triggers: './triggers',
+    types: './types',
+    views: './views'
   };
 
   /**
    * Defines what type of idempotency will scripted during the `pull` command.
    */
   public idempotency: IdempotencyConfig = {
-    'data': 'truncate',
-    'procs': 'if-exists-drop',
-    'scalar-valued': 'if-exists-drop',
-    'table-valued': 'if-exists-drop',
-    'table-valued-parameters': 'if-not-exists',
-    'tables': 'if-not-exists',
-    'triggers': 'if-exists-drop',
-    'views': 'if-exists-drop'
+    data: 'truncate',
+    functions: 'if-exists-drop',
+    procs: 'if-exists-drop',
+    tables: 'if-not-exists',
+    triggers: 'if-exists-drop',
+    types: 'if-not-exists',
+    views: 'if-exists-drop'
   };
 
   /**

@@ -22,7 +22,7 @@ import {
   SqlTableValuedParameter
 } from '../sql/interfaces';
 import * as script from '../sql/script';
-import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, tvpRead } from '../sql/sys';
+import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, typeRead } from '../sql/sys';
 import { PullOptions } from './interfaces';
 
 export default class Pull {
@@ -51,7 +51,7 @@ export default class Pull {
           pool.request().query(primaryKeyRead),
           pool.request().query(foreignKeyRead),
           pool.request().query(indexRead),
-          pool.request().query(tvpRead),
+          pool.request().query(typeRead),
           ...config.data.map(table => {
             return pool.request()
               .query(`select * from ${table}`)
@@ -86,7 +86,7 @@ export default class Pull {
     const primaryKeys: SqlPrimaryKey[] = results[3].recordset;
     const foreignKeys: SqlForeignKey[] = results[4].recordset;
     const indexes: SqlIndex[] = results[5].recordset;
-    const tvps: SqlTableValuedParameter[] = results[6].recordset;
+    const types: SqlTableValuedParameter[] = results[6].recordset;
     const data: SqlDataResult[] = results.slice(7);
 
     // get unique schema names
@@ -133,15 +133,15 @@ export default class Pull {
       this.exclude(config, existing, dir);
     });
 
-    // write files for user-defined table-valued parameter
-    tvps.forEach(item => {
+    // write files for types
+    types.forEach(item => {
       const file: string = Utility.safeFile(`${item.schema}.${item.name}.sql`);
 
       if (!this.include(config.files, file)) {
         return;
       }
 
-      const content: string = script.tvp(item, columns);
+      const content: string = script.type(item, columns);
       const dir: string = this.createFile(config, item, file, content);
       this.exclude(config, existing, dir);
     });
@@ -199,20 +199,17 @@ export default class Pull {
         break;
       case 'TF':
       case 'IF':
-        output = config.output['table-valued'];
-        type = config.idempotency['table-valued'];
-        break;
       case 'FN':
-        output = config.output['scalar-valued'];
-        type = config.idempotency['scalar-valued'];
+        output = config.output.functions;
+        type = config.idempotency.functions;
         break;
       case 'TR':
         output = config.output.triggers;
         type = config.idempotency.triggers;
         break;
       case 'TT':
-        output = config.output['table-valued-parameters'];
-        type = config.idempotency['table-valued-parameters'];
+        output = config.output.types;
+        type = config.idempotency.types;
         break;
       default:
         output = 'unknown';

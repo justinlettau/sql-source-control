@@ -29,28 +29,26 @@ export interface IConnection {
  * Supported idempotency configuration.
  */
 export interface IdempotencyConfig {
-  'data'?: IdempotencyData;
-  'procs'?: IdempotencyObject;
-  'scalar-valued'?: IdempotencyObject;
-  'table-valued'?: IdempotencyObject;
-  'table-valued-parameters'?: IdempotencyObject;
-  'tables'?: IdempotencyObject;
-  'triggers'?: IdempotencyObject;
-  'views'?: IdempotencyObject;
+  data?: IdempotencyData;
+  functions?: IdempotencyObject;
+  procs?: IdempotencyObject;
+  tables?: IdempotencyObject;
+  triggers?: IdempotencyObject;
+  types?: IdempotencyObject;
+  views?: IdempotencyObject;
 }
 
 /**
  * Supported output configuration.
  */
 export interface OutputConfig {
-  'root'?: string;
-  'data'?: string | false;
-  'procs'?: string | false;
-  'scalar-valued'?: string | false;
-  'schemas'?: string | false;
-  'table-valued'?: string | false;
-  'table-valued-parameters'?: string | false;
-  'tables'?: string | false;
-  'triggers'?: string | false;
-  'views'?: string | false;
+  root?: string;
+  data?: string | false;
+  functions?: string | false;
+  procs?: string | false;
+  schemas?: string | false;
+  tables?: string | false;
+  triggers?: string | false;
+  types?: string | false;
+  views?: string | false;
 }

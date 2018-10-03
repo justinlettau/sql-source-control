@@ -27,12 +27,11 @@ export default class Utility {
     const directories: string[] = [
       config.output.schemas,
       config.output.tables,
+      config.output.types,
       config.output.views,
-      config.output['scalar-valued'],
-      config.output['table-valued'],
+      config.output.functions,
       config.output.procs,
       config.output.triggers,
-      config.output['table-valued-parameters'],
       config.output.data
     ] as string[];
 
