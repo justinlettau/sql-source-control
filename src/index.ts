@@ -42,9 +42,10 @@ program
 program
   .command('push [name]')
   .description('Execute all scripts against the requested database.')
-  .action(name => {
+  .option('-s, --skip', 'Skip user warning prompt.')
+  .action((name, options) => {
     const action: Push = new Push();
-    action.invoke(name);
+    action.invoke(name, options);
   });
 
 program

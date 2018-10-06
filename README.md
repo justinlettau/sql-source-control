@@ -105,14 +105,17 @@ Example output:
 ### `ssc push [conn]`
 Execute all local scripts against the requested database.
 
-**WARNING**: All scripts are directly executed against the requested connection. This can not be undone! Be sure
-to backup your database before running the `push` command.
-
 Arguments:
 
 | Argument | Description                             | Default                                 |
 |----------|-----------------------------------------|-----------------------------------------|
 | `conn`   | Optional name of the connection to use. | First available connection from config. |
+
+Options:
+
+| Option   | Alias | Type      | Description               | Default |
+|----------|-------|-----------|---------------------------|---------|
+| `--skip` | `-s`  | `boolean` | Skip user warning prompt. | n/a     |
 
 # Configuration
 Configuration options are stored in a `ssc.json` file. The following properties are supported:
@@ -137,30 +140,30 @@ includes none.
 **output** (`object`): Optional. Defines paths where files will be scripted during the `pull` command. The following
 properties are supported:
 
-| Property   | Type     | Description                                            | Default               |
-|------------|----------|--------------------------------------------------------|-----------------------|
-| `root`     | `string` | Directory for scripted files, relative to config file. | `./_sql-database`     |
-| `data`     | `string` | Subdirectory for data files.                           | `./data`              |
+| Property    | Type     | Description                                            | Default               |
+|-------------|----------|--------------------------------------------------------|-----------------------|
+| `root`      | `string` | Directory for scripted files, relative to config file. | `./_sql-database`     |
+| `data`      | `string` | Subdirectory for data files.                           | `./data`              |
 | `functions` | `string` | Subdirectory for function files.                       | `./functions`         |
-| `procs`    | `string` | Subdirectory for stored procedure files.               | `./stored-procedures` |
-| `schemas`  | `string` | Subdirectory for schema files.                         | `./schemas`           |
-| `tables`   | `string` | Subdirectory for table files.                          | `./tables`            |
-| `triggers` | `string` | Subdirectory for trigger files.                        | `./triggers`          |
-| `types`    | `string` | Subdirectory for table valued parameter files.         | `./types`             |
-| `views`    | `string` | Subdirectory for view files.                           | `./views`             |
+| `procs`     | `string` | Subdirectory for stored procedure files.               | `./stored-procedures` |
+| `schemas`   | `string` | Subdirectory for schema files.                         | `./schemas`           |
+| `tables`    | `string` | Subdirectory for table files.                          | `./tables`            |
+| `triggers`  | `string` | Subdirectory for trigger files.                        | `./triggers`          |
+| `types`     | `string` | Subdirectory for table valued parameter files.         | `./types`             |
+| `views`     | `string` | Subdirectory for view files.                           | `./views`             |
 
 **idempotency** (`object`): Optional. Defines what type of idempotency will scripted during the `pull` command. The
 following properties are supported. Each property supports `if-exists-drop`, `if-not-exists`, or `false` as an option.
 
-| Property   | Type         | Description                                         | Default          |
-|------------|--------------|-----------------------------------------------------|------------------|
-| `data`     | `string` (2) | Idempotency for data files.                         | `truncate`       |
+| Property    | Type         | Description                                         | Default          |
+|-------------|--------------|-----------------------------------------------------|------------------|
+| `data`      | `string` (2) | Idempotency for data files.                         | `truncate`       |
 | `functions` | `string` (1) | Idempotency for function files.                     | `if-exists-drop` |
-| `procs`    | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop` |
-| `tables`   | `string` (1) | Idempotency for table files.                        | `if-not-exists`  |
-| `triggers` | `string` (1) | Idempotency for triggers files.                     | `if-exists-drop` |
-| `types`    | `string` (1) | Idempotency for user defined table parameter files. | `if-not-exists`  |
-| `views`    | `string` (1) | Idempotency for views files.                        | `if-exists-drop` |
+| `procs`     | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop` |
+| `tables`    | `string` (1) | Idempotency for table files.                        | `if-not-exists`  |
+| `triggers`  | `string` (1) | Idempotency for triggers files.                     | `if-exists-drop` |
+| `types`     | `string` (1) | Idempotency for user defined table parameter files. | `if-not-exists`  |
+| `views`     | `string` (1) | Idempotency for views files.                        | `if-exists-drop` |
 
 1. `if-exists-drop`, `if-not-exists`, or `false`.
 2. `delete-and-ressed`, `delete`, `truncate`, or `false`.

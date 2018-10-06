@@ -13,3 +13,10 @@ export interface InitOptions {
 export interface PullOptions {
   config?: string;
 }
+
+/**
+ * CLI arguments for `push` command.
+ */
+export interface PushOptions {
+  skip?: boolean;
+}
