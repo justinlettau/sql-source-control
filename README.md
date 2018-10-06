@@ -131,7 +131,7 @@ Configuration options are stored in a `ssc.json` file. The following properties 
 
 **files** (`string[]`): Optional. Glob of files to include/exclude during the `pull` command. Default includes all files.
 
-**data** (`string[]`): Optional. List of table names to include for data scripting during the `pull` command. Default
+**data** (`string[]`): Optional. Glob of table names to include for data scripting during the `pull` command. Default
 includes none.
 
 **output** (`object`): Optional. Defines paths where files will be scripted during the `pull` command. The following
@@ -217,11 +217,19 @@ Exclude certain files.
 ```
 
 ### Data
-Include data scripting for certain tables.
+Only include certain tales.
 ```js
 {
   // ...
-  "data": ["dbo.LookupTable"]
+  "data": ["dbo.*"]
+}
+```
+
+Exclude certain tables.
+```js
+{
+  // ...
+  "data": ["*", "!dbo.*"]
 }
 ```
 

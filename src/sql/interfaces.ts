@@ -15,7 +15,6 @@ export interface AbstractSqlObject {
  */
 export interface SqlSchema {
   name: string;
-  type: string;
 }
 
 /**
@@ -23,7 +22,6 @@ export interface SqlSchema {
  */
 export interface SqlDataResult {
   name: string;
-  type: string;
   result: sql.IResult<any>;
 }
 
@@ -34,10 +32,10 @@ export interface SqlDataResult {
 export interface SqlTable extends AbstractSqlObject { }
 
 /**
- * SQL Table valued parameter.
+ * SQL type.
  */
 // tslint:disable-next-line:no-empty-interface
-export interface SqlTableValuedParameter extends AbstractSqlObject { }
+export interface SqlType extends AbstractSqlObject { }
 
 /**
  * SQL column object.

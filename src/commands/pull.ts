@@ -1,15 +1,11 @@
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import * as glob from 'glob';
 import * as sql from 'mssql';
 import * as multimatch from 'multimatch';
-import * as path from 'path';
-import { isArray } from 'ts-util-is';
 
 import Config from '../common/config';
 import Connection from '../common/connection';
-import { IdempotencyObject } from '../common/types';
-import Utility from '../common/utility';
+import FileUtility from '../common/file-utility';
+import MSSQLGenerator from '../generators/mssql';
 import {
   SqlColumn,
   SqlDataResult,
@@ -17,11 +13,9 @@ import {
   SqlIndex,
   SqlObject,
   SqlPrimaryKey,
-  SqlSchema,
   SqlTable,
-  SqlTableValuedParameter
+  SqlType
 } from '../sql/interfaces';
-import * as script from '../sql/script';
 import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, typeRead } from '../sql/sys';
 import { PullOptions } from './interfaces';
 
@@ -31,7 +25,7 @@ export default class Pull {
    * Invoke action.
    *
    * @param name Optional connection name to use.
-   * @param options. CLI options.
+   * @param options CLI options.
    */
   public invoke(name: string, options: PullOptions): void {
     const start: [number, number] = process.hrtime();
@@ -44,25 +38,40 @@ export default class Pull {
     new sql.ConnectionPool(conn)
       .connect()
       .then(pool => {
-        return Promise.all<any>([
+        return Promise.all<sql.IResult<any>>([
           pool.request().query(objectRead),
           pool.request().query(tableRead),
           pool.request().query(columnRead),
           pool.request().query(primaryKeyRead),
           pool.request().query(foreignKeyRead),
           pool.request().query(indexRead),
-          pool.request().query(typeRead),
-          ...config.data.map(table => {
-            return pool.request()
-              .query(`select * from ${table}`)
-              .then(result => ({ name: table, type: 'DATA', result }));
+          pool.request().query(typeRead)
+        ])
+          .then(results => {
+            const tables: string[] = results[1].recordset
+              .map(item => `${item.schema}.${item.name}`);
+
+            const matched: string[] = multimatch(tables, config.data);
+
+            if (!matched.length) {
+              return results;
+            }
+
+            return Promise.all<any>(
+              matched.map(item => {
+                return pool.request()
+                  .query(`select * from ${item}`)
+                  .then(result => ({ name: item, result }));
+              })
+            )
+              .then(data => [...results, ...data]);
           })
-        ]).then(results => {
-          pool.close();
-          return results;
-        });
+          .then(results => {
+            pool.close();
+            return results;
+          });
       })
-      .then(results => this.scriptFiles(config, results))
+      .then(results => this.writeFiles(config, results))
       .then(() => {
         const time: [number, number] = process.hrtime(start);
         console.log(chalk.green(`Finished after ${time[0]}s!`));
@@ -71,13 +80,12 @@ export default class Pull {
   }
 
   /**
-   * Write all requested files to the file system based on `results`.
+   * Write all files to the file system based on `results`.
    *
    * @param config Current configuration to use.
    * @param results Array of data sets from SQL queries.
    */
-  private scriptFiles(config: Config, results: any[]): void {
-    const existing: string[] = glob.sync(`${config.output.root}/**/*.sql`);
+  private writeFiles(config: Config, results: any[]): void {
 
     // note: array order MUST match query promise array
     const objects: SqlObject[] = results[0].recordset;
@@ -86,202 +94,88 @@ export default class Pull {
     const primaryKeys: SqlPrimaryKey[] = results[3].recordset;
     const foreignKeys: SqlForeignKey[] = results[4].recordset;
     const indexes: SqlIndex[] = results[5].recordset;
-    const types: SqlTableValuedParameter[] = results[6].recordset;
+    const types: SqlType[] = results[6].recordset;
     const data: SqlDataResult[] = results.slice(7);
 
-    // get unique schema names
-    const schemas: SqlSchema[] = tables
+    const generator: MSSQLGenerator = new MSSQLGenerator(config);
+    const file: FileUtility = new FileUtility(config);
+
+    // schemas
+    tables
       .map(item => item.schema)
       .filter((value, index, array) => array.indexOf(value) === index)
-      .map(value => ({ name: value, type: 'SCHEMA' }));
+      .map(value => ({ name: value }))
+      .forEach(item => {
+        const name: string = `${item.name}.sql`;
+        const content: string = generator.schema(item);
 
-    // write files for schemas
-    schemas.forEach(item => {
-      const file: string = Utility.safeFile(`${item.name}.sql`);
+        file.write(config.output.schemas, name, content);
+      });
 
-      if (!this.include(config.files, file)) {
-        return;
-      }
+    // stored procedures
+    objects
+      .filter(item => item.type.trim() === 'P')
+      .forEach(item => {
+        const name: string = `${item.schema}.${item.name}.sql`;
+        const content: string = generator.storedProcedure(item);
 
-      const content: string = script.schema(item);
-      const dir: string = this.createFile(config, item, file, content);
-      this.exclude(config, existing, dir);
-    });
+        file.write(config.output.procs, name, content);
+      });
 
-    // write files for stored procedures, functions, ect.
-    objects.forEach(item => {
-      const file: string = Utility.safeFile(`${item.schema}.${item.name}.sql`);
+    // views
+    objects
+      .filter(item => item.type.trim() === 'V')
+      .forEach(item => {
+        const name: string = `${item.schema}.${item.name}.sql`;
+        const content: string = generator.view(item);
 
-      if (!this.include(config.files, file)) {
-        return;
-      }
+        file.write(config.output.views, name, content);
+      });
 
-      const dir: string = this.createFile(config, item, file, item.text);
-      this.exclude(config, existing, dir);
-    });
+    // functions
+    objects
+      .filter(item => ['TF', 'IF', 'FN'].indexOf(item.type.trim()) !== -1)
+      .forEach(item => {
+        const name: string = `${item.schema}.${item.name}.sql`;
+        const content: string = generator.function(item);
 
-    // write files for tables
+        file.write(config.output.functions, name, content);
+      });
+
+    // triggers
+    objects
+      .filter(item => item.type.trim() === 'TR')
+      .forEach(item => {
+        const name: string = `${item.schema}.${item.name}.sql`;
+        const content: string = generator.trigger(item);
+
+        file.write(config.output.triggers, name, content);
+      });
+
+    // tables
     tables.forEach(item => {
-      const file: string = Utility.safeFile(`${item.schema}.${item.name}.sql`);
+      const name: string = `${item.schema}.${item.name}.sql`;
+      const content: string = generator.table(item, columns, primaryKeys, foreignKeys, indexes);
 
-      if (!this.include(config.files, file)) {
-        return;
-      }
-
-      const content: string = script.table(item, columns, primaryKeys, foreignKeys, indexes);
-      const dir: string = this.createFile(config, item, file, content);
-      this.exclude(config, existing, dir);
+      file.write(config.output.tables, name, content);
     });
 
-    // write files for types
+    // types
     types.forEach(item => {
-      const file: string = Utility.safeFile(`${item.schema}.${item.name}.sql`);
+      const name: string = `${item.schema}.${item.name}.sql`;
+      const content: string = generator.type(item, columns);
 
-      if (!this.include(config.files, file)) {
-        return;
-      }
-
-      const content: string = script.type(item, columns);
-      const dir: string = this.createFile(config, item, file, content);
-      this.exclude(config, existing, dir);
+      file.write(config.output.types, name, content);
     });
 
-    // write files for data
+    // data
     data.forEach(item => {
-      const file: string = Utility.safeFile(`${item.name}.sql`);
+      const name: string = `${item.name}.sql`;
+      const content: string = generator.data(item);
 
-      if (!this.include(config.data, item.name)) {
-        return;
-      }
-
-      const content: string = script.data(item, config.idempotency.data);
-      const dir: string = this.createFile(config, item, file, content);
-      this.exclude(config, existing, dir);
+      file.write(config.output.data, name, content);
     });
 
-    // all remaining files in `existing` need deleted
-    this.removeFiles(existing);
-  }
-
-  /**
-   * Write SQL file script to the file system with correct options.
-   *
-   * @param config Current configuration to use.
-   * @param item Row from query.
-   * @param file Name of file to create.
-   * @param content Script file contents.
-   */
-  private createFile(config: Config, item: any, file: string, content: string): string {
-    let dir: string;
-    let output: string | false;
-    let type: IdempotencyObject;
-
-    switch (item.type.trim()) {
-      case 'SCHEMA': // not a real object type
-        output = config.output.schemas;
-        type = null;
-        break;
-      case 'DATA': // not a real object type
-        output = config.output.data;
-        type = null;
-        break;
-      case 'U':
-        output = config.output.tables;
-        type = config.idempotency.tables;
-        break;
-      case 'P':
-        output = config.output.procs;
-        type = config.idempotency.procs;
-        break;
-      case 'V':
-        output = config.output.views;
-        type = config.idempotency.views;
-        break;
-      case 'TF':
-      case 'IF':
-      case 'FN':
-        output = config.output.functions;
-        type = config.idempotency.functions;
-        break;
-      case 'TR':
-        output = config.output.triggers;
-        type = config.idempotency.triggers;
-        break;
-      case 'TT':
-        output = config.output.types;
-        type = config.idempotency.types;
-        break;
-      default:
-        output = 'unknown';
-    }
-
-    if (output) {
-
-      // get full output path
-      dir = path.join(config.output.root, output, file);
-
-      // idempotent prefix
-      content = script.idempotency(item, type) + content;
-
-      // create file
-      console.log(`Creating ${chalk.cyan(dir)} ...`);
-      fs.outputFileSync(dir, content.trim());
-    }
-
-    return dir;
-  }
-
-  /**
-   * Check if a file passes the glob pattern.
-   *
-   * @param files Glob pattern to check against.
-   * @param file File path to check.
-   */
-  private include(files: string[], file: string | string[]): boolean {
-    if (!files || !files.length) {
-      return true;
-    }
-
-    if (!isArray(file)) {
-      file = [file];
-    }
-
-    const results: string[] = multimatch(file, files);
-    return !!results.length;
-  }
-
-  /**
-   * Remove `dir` from `existing` if it exists.
-   *
-   * @param config Current configuration to use.
-   * @param existing Collection of file paths to check against.
-   * @param dir File path to check.
-   */
-  private exclude(config: Config, existing: string[], dir: string): void {
-    if (!dir) {
-      return;
-    }
-
-    if (config.output.root.startsWith('./') && !dir.startsWith('./')) {
-      dir = `./${dir}`;
-    }
-
-    const index: number = existing.indexOf(dir.replace(/\\/g, '/'));
-
-    if (index !== -1) {
-      existing.splice(index, 1);
-    }
-  }
-
-  /**
-   * Delete all paths in `files`.
-   *
-   * @param files Array of file paths to delete.
-   */
-  private removeFiles(files: string[]): void {
-    files.forEach(file => {
-      console.log(`Removing ${chalk.cyan(file)} ...`);
-      fs.removeSync(file);
-    });
+    file.removeRemaining();
   }
 }

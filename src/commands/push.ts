@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
+import * as glob from 'glob';
 import * as sql from 'mssql';
 import { EOL } from 'os';
 
 import Config from '../common/config';
 import Connection from '../common/connection';
-import Utility from '../common/utility';
 
 export default class Push {
 
@@ -21,7 +21,7 @@ export default class Push {
 
     console.log(`Pushing to ${chalk.magenta(conn.database)} on ${chalk.magenta(conn.server)} ...`);
 
-    const files: string[] = Utility.getFilesOrdered(config);
+    const files: string[] = this.getFilesOrdered(config);
     let promise: Promise<sql.ConnectionPool> = new sql.ConnectionPool(conn).connect();
 
     files.forEach(file => {
@@ -43,5 +43,33 @@ export default class Push {
         console.log(chalk.green(`Finished after ${time[0]}s!`));
       })
       .catch(err => console.error(err));
+  }
+
+  /**
+   * Get all SQL files in correct execution order.
+   *
+   * @param config Config object used to search for connection.
+   */
+  public getFilesOrdered(config: Config): string[] {
+    const output: string[] = [];
+    const directories: string[] = [
+      config.output.schemas,
+      config.output.tables,
+      config.output.types,
+      config.output.views,
+      config.output.functions,
+      config.output.procs,
+      config.output.triggers,
+      config.output.data
+    ] as string[];
+
+    directories.forEach(dir => {
+      if (dir) {
+        const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
+        output.push(...files);
+      }
+    });
+
+    return output;
   }
 }
