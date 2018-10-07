@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as inquirer from 'inquirer';
 import * as sql from 'mssql';
+import * as ora from 'ora';
 import { EOL } from 'os';
 
 import Config from '../common/config';
@@ -12,13 +13,18 @@ import { PushOptions } from './interfaces';
 export default class Push {
 
   /**
+   * Spinner instance.
+   */
+  // tslint:disable-next-line:typedef
+  private spinner = ora();
+
+  /**
    * Invoke actions.
    *
    * @param name Optional connection name to use.
    * @param options CLI options.
    */
   public invoke(name: string, options: PushOptions): void {
-    const start: [number, number] = process.hrtime();
     const config: Config = new Config();
     const conn: Connection = config.getConnection(name);
 
@@ -38,15 +44,12 @@ export default class Push {
     ])
       .then(answers => {
         if (answers.continue === false) {
-          throw 'Command aborted!';
+          throw new Error('Command aborted!');
         }
       })
       .then(() => this.batch(config, conn))
-      .then(() => {
-        const time: [number, number] = process.hrtime(start);
-        console.log(chalk.green(`Finished after ${time[0]}s!`));
-      })
-      .catch(err => console.error(err));
+      .then(() => this.spinner.succeed('Sucessfully pushed!'))
+      .catch(error => this.spinner.fail(error));
   }
 
   /**
@@ -59,11 +62,9 @@ export default class Push {
     const files: string[] = this.getFilesOrdered(config);
     let promise: Promise<sql.ConnectionPool> = new sql.ConnectionPool(conn).connect();
 
-    console.log(`Pushing to ${chalk.magenta(conn.database)} on ${chalk.magenta(conn.server)} ...`);
+    this.spinner.start(`Pushing to ${chalk.blue(conn.server)} ...`);
 
     files.forEach(file => {
-      console.log(`Executing ${chalk.cyan(file)} ...`);
-
       const content: string = fs.readFileSync(file, 'utf8');
       const statements: string[] = content.split('go' + EOL);
 

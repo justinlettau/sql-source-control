@@ -1,4 +1,3 @@
-
 /* tslint:disable:max-line-length */
 import { EOL } from 'os';
 import { isBoolean, isDate, isString } from 'ts-util-is';
@@ -14,7 +13,7 @@ import {
   SqlSchema,
   SqlTable,
   SqlType
-} from '../sql/interfaces';
+} from '../queries/interfaces';
 
 /**
  * MSSQL generator.

@@ -4,7 +4,6 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as multimatch from 'multimatch';
 import * as path from 'path';
-import { isArray } from 'ts-util-is';
 
 import Config from './config';
 
@@ -28,6 +27,15 @@ export default class FileUtility {
   private existing: string[];
 
   /**
+   * Statistics about files written / removed.
+   */
+  private stats: { added: number; updated: number; removed: number; } = {
+    added: 0,
+    updated: 0,
+    removed: 0
+  };
+
+  /**
    * Write file to the file system.
    *
    * @param file Directory to write, relative to root.
@@ -48,20 +56,30 @@ export default class FileUtility {
 
     file = path.join(this.config.output.root, dir, file);
 
-    console.log(`Creating ${chalk.cyan(file)} ...`);
-    fs.outputFileSync(file, content.trim());
+    if (this.doesExist(file)) {
+      this.stats.updated++;
+    } else {
+      this.stats.added++;
+    }
 
+    fs.outputFileSync(file, content.trim());
     this.markAsWritten(file);
   }
 
   /**
    * Delete all paths remaining in `existing`.
    */
-  public removeRemaining(): void {
+  public finalize(): string {
     this.existing.forEach(file => {
-      console.log(`Removing ${chalk.cyan(file)} ...`);
+      this.stats.removed++;
       fs.removeSync(file);
     });
+
+    const added: string = chalk.green(this.stats.added.toString());
+    const updated: string = chalk.cyan(this.stats.updated.toString());
+    const removed: string = chalk.red(this.stats.removed.toString());
+
+    return `Successfully added ${added}, updated ${updated}, and removed ${removed} files.`;
   }
 
   /**
@@ -69,17 +87,29 @@ export default class FileUtility {
    *
    * @param file File path to check.
    */
-  private shouldWrite(file: string | string[]): boolean {
+  private shouldWrite(file: string): boolean {
     if (!this.config.files || !this.config.files.length) {
       return true;
     }
 
-    if (!isArray(file)) {
-      file = [file];
+    const results: string[] = multimatch([file], this.config.files);
+    return !!results.length;
+  }
+
+  /**
+   * Check if a file existed.
+   *
+   * @param file File path to check.
+   */
+  private doesExist(file: string): boolean {
+    if (!this.existing || !this.existing.length) {
+      return false;
     }
 
-    const results: string[] = multimatch(file, this.config.files);
-    return !!results.length;
+    file = this.normalize(file);
+
+    const index: number = this.existing.indexOf(file);
+    return index !== -1;
   }
 
   /**
@@ -92,15 +122,26 @@ export default class FileUtility {
       return;
     }
 
-    if (this.config.output.root.startsWith('./') && !file.startsWith('./')) {
-      file = `./${file}`;
-    }
+    file = this.normalize(file);
 
-    const index: number = this.existing.indexOf(file.replace(/\\/g, '/'));
+    const index: number = this.existing.indexOf(file);
 
     if (index !== -1) {
       this.existing.splice(index, 1);
     }
+  }
+
+  /**
+   * Normalize file path for comparison.
+   *
+   * @param file File path to normalize.
+   */
+  private normalize(file: string): string {
+    if (this.config.output.root.startsWith('./') && !file.startsWith('./')) {
+      file = `./${file}`;
+    }
+
+    return file.replace(/\\/g, '/');
   }
 
   /**

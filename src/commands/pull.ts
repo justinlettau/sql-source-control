@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import * as sql from 'mssql';
 import * as multimatch from 'multimatch';
+import * as ora from 'ora';
 
 import Config from '../common/config';
 import Connection from '../common/connection';
@@ -15,11 +16,25 @@ import {
   SqlPrimaryKey,
   SqlTable,
   SqlType
-} from '../sql/interfaces';
-import { columnRead, foreignKeyRead, indexRead, objectRead, primaryKeyRead, tableRead, typeRead } from '../sql/sys';
+} from '../queries/interfaces';
+import {
+  columnsRead,
+  foreignKeysRead,
+  indexesRead,
+  objectsRead,
+  primaryKeysRead,
+  tablesRead,
+  typesRead
+} from '../queries/mssql';
 import { PullOptions } from './interfaces';
 
 export default class Pull {
+
+  /**
+   * Spinner instance.
+   */
+  // tslint:disable-next-line:typedef
+  private spinner = ora();
 
   /**
    * Invoke action.
@@ -28,24 +43,23 @@ export default class Pull {
    * @param options CLI options.
    */
   public invoke(name: string, options: PullOptions): void {
-    const start: [number, number] = process.hrtime();
     const config: Config = new Config(options.config);
     const conn: Connection = config.getConnection(name);
 
-    console.log(`Pulling ${chalk.magenta(conn.database)} from ${chalk.magenta(conn.server)} ...`);
+    this.spinner.start(`Pulling from ${chalk.blue(conn.server)} ...`);
 
     // connect to db
     new sql.ConnectionPool(conn)
       .connect()
       .then(pool => {
         return Promise.all<sql.IResult<any>>([
-          pool.request().query(objectRead),
-          pool.request().query(tableRead),
-          pool.request().query(columnRead),
-          pool.request().query(primaryKeyRead),
-          pool.request().query(foreignKeyRead),
-          pool.request().query(indexRead),
-          pool.request().query(typeRead)
+          pool.request().query(objectsRead),
+          pool.request().query(tablesRead),
+          pool.request().query(columnsRead),
+          pool.request().query(primaryKeysRead),
+          pool.request().query(foreignKeysRead),
+          pool.request().query(indexesRead),
+          pool.request().query(typesRead)
         ])
           .then(results => {
             const tables: string[] = results[1].recordset
@@ -72,11 +86,7 @@ export default class Pull {
           });
       })
       .then(results => this.writeFiles(config, results))
-      .then(() => {
-        const time: [number, number] = process.hrtime(start);
-        console.log(chalk.green(`Finished after ${time[0]}s!`));
-      })
-      .catch(err => console.error(err));
+      .catch(error => this.spinner.fail(error));
   }
 
   /**
@@ -176,6 +186,7 @@ export default class Pull {
       file.write(config.output.data, name, content);
     });
 
-    file.removeRemaining();
+    const msg: string = file.finalize();
+    this.spinner.succeed(msg);
   }
 }
