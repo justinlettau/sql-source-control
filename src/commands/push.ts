@@ -64,7 +64,7 @@ export default class Push {
 
     files.forEach(file => {
       const content: string = fs.readFileSync(file, 'utf8');
-      const statements: string[] = content.split('go' + EOL);
+      const statements: string[] = content.split('GO' + EOL);
 
       statements.forEach(statement => {
         promise = promise.then(pool => {

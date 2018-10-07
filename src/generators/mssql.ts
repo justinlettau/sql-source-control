@@ -38,23 +38,23 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.data) {
       case 'delete':
-        output += `delete from ${item.name}` + EOL;
+        output += `DELETE FROM ${item.name}` + EOL;
         output += EOL;
         break;
       case 'delete-and-reseed':
-        output += `delete from ${item.name}`;
+        output += `DELETE FROM ${item.name}`;
         output += EOL;
-        output += `dbcc checkident ('${item.name}', reseed, 0)`;
+        output += `DBCC CHECKIDENT ('${item.name}', RESEED, 0)`;
         output += EOL;
         break;
       case 'truncate':
-        output += `truncate table ${item.name}`;
+        output += `TRUNCATE TABLE ${item.name}`;
         output += EOL;
         break;
     }
 
     output += EOL;
-    output += `set identity_insert ${item.name} on`;
+    output += `SET IDENTITY_INSERT ${item.name} ON`;
     output += EOL;
     output += EOL;
 
@@ -63,14 +63,12 @@ export default class MSSQLGenerator {
       const columns: string = keys.join(', ');
       const values: string = keys.map(key => this.safeValue(row[key])).join(', ');
 
-      output += `insert into ${item.name} (${columns}) values (${values})`;
+      output += `INSERT INTO ${item.name} (${columns}) VALUES (${values})`;
       output += EOL;
     });
 
     output += EOL;
-    output += `set identity_insert ${item.name} off`;
-    output += EOL;
-    output += EOL;
+    output += `SET IDENTITY_INSERT ${item.name} OFF`;
 
     return output;
   }
@@ -87,20 +85,19 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.functions) {
       case 'if-exists-drop':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
-        output += `drop function ${objectId}`;
+        output += `DROP FUNCTION ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if not exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += EOL;
     output += item.text;
 
     return output;
@@ -118,20 +115,19 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.procs) {
       case 'if-exists-drop':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
-        output += `drop procedure ${objectId}`;
+        output += `DROP PROCEDURE ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if not exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += EOL;
     output += item.text;
 
     return output;
@@ -145,9 +141,9 @@ export default class MSSQLGenerator {
   public schema(item: SqlSchema): string {
     let output: string = '';
 
-    output += `if not exists (select * from sys.schemas where name = '${item.name}')`;
+    output += `IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = '${item.name}')`;
     output += EOL;
-    output += `exec('create schema ${item.name}')`;
+    output += `EXEC('CREATE SCHEMA ${item.name}')`;
 
     return output;
   }
@@ -174,20 +170,20 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.tables) {
       case 'if-exists-drop':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
-        output += `drop table ${objectId}`;
+        output += `DROP TABLE ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if not exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += `create table ${objectId}`;
+    output += `CREATE TABLE ${objectId}`;
     output += EOL;
     output += '(';
     output += EOL;
@@ -207,25 +203,28 @@ export default class MSSQLGenerator {
       });
 
     output += ')';
-    output += EOL;
-    output += EOL;
 
-    foreignKeys
-      .filter(x => x.object_id === item.object_id)
-      .forEach(fk => {
-        output += this.foreignKey(fk);
-        output += EOL;
-      });
+    foreignKeys = foreignKeys.filter(x => x.object_id === item.object_id);
+    indexes = indexes.filter(x => x.object_id === item.object_id);
 
-    output += EOL;
-    output += EOL;
+    if (foreignKeys.length || indexes.length) {
+      output += EOL;
+      output += EOL;
+    }
 
-    indexes
-      .filter(x => x.object_id === item.object_id)
-      .forEach(index => {
-        output += this.index(index);
-        output += EOL;
-      });
+    foreignKeys.forEach(fk => {
+      output += this.foreignKey(fk);
+      output += EOL;
+    });
+
+    if (foreignKeys.length && indexes.length) {
+      output += EOL;
+    }
+
+    indexes.forEach(index => {
+      output += this.index(index);
+      output += EOL;
+    });
 
     return output;
   }
@@ -242,20 +241,19 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.triggers) {
       case 'if-exists-drop':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
-        output += `drop trigger ${objectId}`;
+        output += `DROP TRIGGER ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if not exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += EOL;
     output += item.text;
 
     return output;
@@ -274,32 +272,28 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.types) {
       case 'if-exists-drop':
-        output += 'if exists (';
+        output += 'IF EXISTS (';
         output += EOL;
-        output += '    select * from sys.table_types as t';
+        output += '    SELECT 1 FROM sys.table_types AS t';
         output += EOL;
-        output += '    join sys.schemas s on t.schema_id = s.schema_id';
+        output += '    JOIN sys.schemas s ON t.schema_id = s.schema_id';
         output += EOL;
-        output += `    where t.name = '${item.name}' and s.name = '${item.schema}'`;
+        output += `    WHERE t.name = '${item.name}' AND s.name = '${item.schema}'`;
         output += EOL;
         output += ')';
         output += EOL;
-        output += `drop type ${objectId}`;
+        output += `DROP TYPE ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
-        output += EOL;
-        output += `drop type ${objectId}`;
-        output += EOL;
-        output += 'go';
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += `create type ${objectId} as table`;
+    output += `CREATE TYPE ${objectId} AS TABLE`;
     output += EOL;
     output += '(';
     output += EOL;
@@ -318,8 +312,6 @@ export default class MSSQLGenerator {
       });
 
     output += ')';
-    output += EOL;
-    output += EOL;
 
     return output;
   }
@@ -336,20 +328,19 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.views) {
       case 'if-exists-drop':
-        output += `if exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
-        output += `drop view ${objectId}`;
+        output += `DROP VIEW ${objectId}`;
         output += EOL;
-        output += 'go';
+        output += 'GO';
         output += EOL;
         break;
       case 'if-not-exists':
-        output += `if not exists (select * from sys.objects where object_id = object_id('${objectId}') and type = '${type}')`;
+        output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
         break;
     }
 
-    output += EOL;
     output += item.text;
 
     return output;
@@ -388,7 +379,7 @@ export default class MSSQLGenerator {
     let size: string | number;
 
     if (item.is_computed) {
-      output += ` as ${item.formula}`;
+      output += ` AS ${item.formula}`;
       return output;
     }
 
@@ -420,17 +411,17 @@ export default class MSSQLGenerator {
     }
 
     if (item.collation_name) {
-      output += ` collate ${item.collation_name}`;
+      output += ` COLLATE ${item.collation_name}`;
     }
 
-    output += item.is_nullable ? ' null' : ' not null';
+    output += item.is_nullable ? ' NULL' : ' NOT NULL';
 
     if (item.definition) {
-      output += ` default${item.definition}`;
+      output += ` DEFAULT${item.definition}`;
     }
 
     if (item.is_identity) {
-      output += ` identity(${item.seed_value || 0}, ${item.increment_value || 1})`;
+      output += ` IDENTITY(${item.seed_value || 0}, ${item.increment_value || 1})`;
     }
 
     return output;
@@ -442,9 +433,9 @@ export default class MSSQLGenerator {
    * @param item Row from query.
    */
   private primaryKey(item: SqlPrimaryKey): string {
-    const direction: string = item.is_descending_key ? 'desc' : 'asc';
+    const direction: string = item.is_descending_key ? 'DESC' : 'ASC';
 
-    return `constraint [${item.name}] primary key ([${item.column}] ${direction})`;
+    return `CONSTRAINT [${item.name}] PRIMARY KEY ([${item.column}] ${direction})`;
   }
 
   /**
@@ -457,35 +448,36 @@ export default class MSSQLGenerator {
     const parentObjectId: string = `[${item.parent_schema}].[${item.parent_table}]`;
     let output: string = '';
 
-    output += `alter table ${objectId} with ${item.is_not_trusted ? 'nocheck' : 'check'}`;
-    output += ` add constraint [${item.name}] foreign key([${item.column}])`;
-    output += ` references ${parentObjectId} ([${item.reference}])`;
+    output += `ALTER TABLE ${objectId} WITH ${item.is_not_trusted ? 'NOCHECK' : 'CHECK'}`;
+    output += ` ADD CONSTRAINT [${item.name}] FOREIGN KEY ([${item.column}])`;
+    output += ` REFERENCES ${parentObjectId} ([${item.reference}])`;
 
     switch (item.delete_referential_action) {
       case 1:
-        output += ' on delete cascade';
+        output += ' ON DELETE CASCADE';
         break;
       case 2:
-        output += ' on delete set null';
+        output += ' ON DELETE SET NULL';
         break;
       case 3:
-        output += ' on delete set default';
+        output += ' ON DELETE SET DEFAULT';
         break;
     }
 
     switch (item.update_referential_action) {
       case 1:
-        output += ' on update cascade';
+        output += ' ON UPDATE CASCADE';
         break;
       case 2:
-        output += ' on update set null';
+        output += ' ON UPDATE SET NULL';
         break;
       case 3:
-        output += ' on update set default';
+        output += ' ON UPDATE SET DEFAULT';
         break;
     }
 
-    output += ` alter table ${objectId} check constraint [${item.name}]`;
+    output += EOL;
+    output += `ALTER TABLE ${objectId} CHECK CONSTRAINT [${item.name}]`;
 
     return output;
   }
@@ -499,16 +491,16 @@ export default class MSSQLGenerator {
     const objectId: string = `[${item.schema}].[${item.table}]`;
     let output: string = '';
 
-    output += `if not exists (select * from sys.indexes where object_id = object_id('${objectId}') and name = '${item.name}')`;
+    output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${item.name}')`;
     output += EOL;
-    output += 'create';
+    output += 'CREATE';
 
     if (item.is_unique) {
-      output += ' unique';
+      output += ' UNIQUE';
     }
 
-    output += ` nonclustered index [${item.name}] on ${objectId}`;
-    output += `([${item.column}] ${item.is_descending_key ? 'desc' : 'asc'})`;
+    output += ` NONCLUSTERED INDEX [${item.name}] ON ${objectId}`;
+    output += `([${item.column}] ${item.is_descending_key ? 'DESC' : 'ASC'})`;
 
     // todo (jbl): includes
 

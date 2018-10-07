@@ -72,7 +72,7 @@ export default class Pull {
             return Promise.all<any>(
               matched.map(item => {
                 return pool.request()
-                  .query(`select * from ${item}`)
+                  .query(`SELECT * FROM ${item}`)
                   .then(result => ({ name: item, result }));
               })
             )

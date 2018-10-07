@@ -2,18 +2,18 @@
  * Get SQL table information.
  */
 export const tablesRead: string = `
-  select
+  SELECT
     o.object_id,
     o.type,
-    s.name as [schema],
+    s.name AS [schema],
     o.name
-  from
+  FROM
     sys.objects o
-    join sys.schemas s on o.schema_id = s.schema_id
+    JOIN sys.schemas s ON o.schema_id = s.schema_id
   where
     o.type = 'U'
-    and o.is_ms_shipped = 0
-  order by
+    AND o.is_ms_shipped = 0
+  ORDER BY
     s.name,
     o.name
 `;
@@ -22,100 +22,103 @@ export const tablesRead: string = `
  * Get SQL column information.
  */
 export const columnsRead: string = `
-  select
+  SELECT
     c.object_id,
     c.name,
-    tp.name as [datatype],
+    tp.name AS [datatype],
     c.max_length,
     c.is_computed,
     c.precision,
-    c.scale as scale,
+    c.scale AS [scale],
     c.collation_name,
     c.is_nullable,
     dc.definition,
     ic.is_identity,
     ic.seed_value,
     ic.increment_value,
-    cc.definition as formula
-  from
+    cc.definition AS [formula]
+  FROM
     sys.columns c
-    join sys.types tp on c.user_type_id = tp.user_type_id
-    left join sys.computed_columns cc on c.object_id = cc.object_id and c.column_id = cc.column_id
-    left join sys.default_constraints dc on
+    JOIN sys.types tp ON c.user_type_id = tp.user_type_id
+    LEFT JOIN sys.computed_columns cc ON c.object_id = cc.object_id AND c.column_id = cc.column_id
+    LEFT JOIN sys.default_constraints dc ON
       c.default_object_id != 0
-      and c.object_id = dc.parent_object_id
-      and c.column_id = dc.parent_column_id
-    left join sys.identity_columns ic on c.is_identity = 1 and c.object_id = ic.object_id and c.column_id = ic.column_id
+      AND c.object_id = dc.parent_object_id
+      AND c.column_id = dc.parent_column_id
+    LEFT JOIN sys.identity_columns ic ON
+      c.is_identity = 1
+      AND c.object_id = ic.object_id
+      AND c.column_id = ic.column_id
 `;
 
 /**
  * Get SQL primary key information.
  */
 export const primaryKeysRead: string = `
-  select
+  SELECT
     c.object_id,
     ic.is_descending_key,
     k.name,
-    c.name as [column]
-  from
+    c.name AS [column]
+  FROM
     sys.index_columns ic
-    join sys.columns c on c.object_id = ic.object_id and c.column_id = ic.column_id
-    left join sys.key_constraints k on k.parent_object_id = ic.object_id
-  where
+    JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+    LEFT JOIN sys.key_constraints k ON k.parent_object_id = ic.object_id
+  WHERE
     ic.is_included_column = 0
-    and ic.index_id = k.unique_index_id
-    and k.type = 'PK'
+    AND ic.index_id = k.unique_index_id
+    AND k.type = 'PK'
 `;
 
 /**
  * Get SQL foreign key information.
  */
 export const foreignKeysRead: string = `
-  select
+  SELECT
     po.object_id,
     k.constraint_object_id,
     fk.is_not_trusted,
-    c.name as [column],
-    rc.name as [reference],
+    c.name AS [column],
+    rc.name AS [reference],
     fk.name,
-    schema_name(ro.schema_id) as [schema],
-    po.name as [table],
-    schema_name(ro.schema_id) as [parent_schema],
-    ro.name as [parent_table],
+    SCHEMA_NAME(ro.schema_id) AS [schema],
+    po.name AS [table],
+    SCHEMA_NAME(ro.schema_id) AS [parent_schema],
+    ro.name AS [parent_table],
     fk.delete_referential_action,
     fk.update_referential_action
-  from
+  FROM
     sys.foreign_key_columns k
-    join sys.columns rc on rc.object_id = k.referenced_object_id and rc.column_id = k.referenced_column_id
-    join sys.columns c on c.object_id = k.parent_object_id and c.column_id = k.parent_column_id
-    join sys.foreign_keys fk on fk.object_id = k.constraint_object_id
-    join sys.objects ro on ro.object_id = fk.referenced_object_id
-    join sys.objects po on po.object_id = fk.parent_object_id
+    JOIN sys.columns rc ON rc.object_id = k.referenced_object_id AND rc.column_id = k.referenced_column_id
+    JOIN sys.columns c ON c.object_id = k.parent_object_id AND c.column_id = k.parent_column_id
+    JOIN sys.foreign_keys fk ON fk.object_id = k.constraint_object_id
+    JOIN sys.objects ro ON ro.object_id = fk.referenced_object_id
+    JOIN sys.objects po ON po.object_id = fk.parent_object_id
 `;
 
 /**
  * Get SQL index information.
  */
 export const indexesRead: string = `
-  select
+  SELECT
     ic.object_id,
     ic.index_id,
     ic.is_descending_key,
     ic.is_included_column,
     i.is_unique,
     i.name,
-    c.name as [column],
-    schema_name(ro.schema_id) as [schema],
-    ro.name as [table]
-  from
+    c.name AS [column],
+    SCHEMA_NAME(ro.schema_id) AS [schema],
+    ro.name AS [table]
+  FROM
     sys.index_columns ic
-    join sys.columns c on ic.object_id = c.object_id and ic.column_id = c.column_id
-    join sys.indexes i on i.object_id = c.object_id and i.index_id = ic.index_id and i.is_primary_key = 0 and i.type = 2
-    inner join sys.objects ro on ro.object_id = c.object_id
+    JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+    JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type = 2
+    INNER JOIN sys.objects ro ON ro.object_id = c.object_id
   where
     ro.is_ms_shipped = 0
-    and ic.is_included_column = 0
-  order by
+    AND ic.is_included_column = 0
+  ORDER BY
     ro.schema_id,
     ro.name,
     c.object_id
@@ -125,19 +128,19 @@ export const indexesRead: string = `
  * Get SQL information for user defined types.
  */
 export const typesRead: string = `
-  select
+  SELECT
     o.object_id,
     o.type,
-    s.name as [schema],
+    s.name AS [schema],
     t.name
-  from
+  FROM
     sys.table_types t
-    inner join sys.objects o on o.object_id = t.type_table_object_id
-    join sys.schemas s on t.schema_id = s.schema_id
+    INNER JOIN sys.objects o ON o.object_id = t.type_table_object_id
+    JOIN sys.schemas s ON t.schema_id = s.schema_id
   where
     o.type = 'TT'
-    and t.is_user_defined = 1
-  order by
+    AND t.is_user_defined = 1
+  ORDER BY
     s.name,
     o.name
 `;
@@ -146,33 +149,33 @@ export const typesRead: string = `
  * Get SQL information for procs, triggers, functions, etc.
  */
 export const objectsRead: string = `
-  select
+  SELECT
     so.name,
-    s.name as [schema],
-    so.type as [type],
-    stuff
+    s.name AS [schema],
+    so.type AS [type],
+    STUFF
     (
       (
-        select
-          cast(sc_inner.text as varchar(max))
-        from
+        SELECT
+          CAST(sc_inner.text AS varchar(max))
+        FROM
           sys.objects so_inner
-          inner join syscomments sc_inner on sc_inner.id = so_inner.object_id
-          inner join sys.schemas s_inner on s_inner.schema_id = so_inner.schema_id
-        where
+          INNER JOIN syscomments sc_inner ON sc_inner.id = so_inner.object_id
+          INNER JOIN sys.schemas s_inner ON s_inner.schema_id = so_inner.schema_id
+        WHERE
           so_inner.name = so.name
-          and s_inner.name = s.name
-        for xml path(''), type
+          AND s_inner.name = s.name
+        FOR XML PATH(''), TYPE
       ).value('(./text())[1]', 'varchar(max)')
       ,1
       ,0
       ,''
-    ) as [text]
-  from
+    ) AS [text]
+  FROM
     sys.objects so
-    inner join syscomments sc on sc.id = so.object_id and so.type in ('P', 'V', 'TF', 'IF', 'FN', 'TR')
-    inner join sys.schemas s on s.schema_id = so.schema_id
-  group by
+    INNER JOIN syscomments sc ON sc.id = so.object_id AND so.type in ('P', 'V', 'TF', 'IF', 'FN', 'TR')
+    INNER JOIN sys.schemas s ON s.schema_id = so.schema_id
+  GROUP BY
     so.name
     ,s.name
     ,so.type
