@@ -128,7 +128,6 @@
     "./_sql-database/tables/Sales.SpecialOffer.sql": "b2919faee8db5a9ca256353c58102ced056f670b",
     "./_sql-database/tables/Sales.SpecialOfferProduct.sql": "875cd7e5e87c8b0cdcd0b02a3cd4fd72b264cbb1",
     "./_sql-database/tables/Sales.Store.sql": "32506fe0025ba0c47665a50050a7ec59c17db86c",
-    "./_sql-database/types/dbo.LocationTableType.sql": "6bafa10c56c747f557f0012c92a8cd682506429c",
     "./_sql-database/data/Person.ContactType.sql": "587c5aaa9720bd5021d062dfaf6ee58c703223b5",
     "./_sql-database/data/Person.PhoneNumberType.sql": "c41191322adf4b7112ff1e24110c2aa26b1b53f6",
     "./_sql-database/data/Purchasing.ShipMethod.sql": "841ebe71b65a10f466075f9761c21b05159daf0f"
