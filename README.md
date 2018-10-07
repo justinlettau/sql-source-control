@@ -59,6 +59,12 @@ Options:
 ### `ssc list`
 List all available connections specified in the configuration file.
 
+Options:
+
+| Option     | Alias | Type     | Description                   | Default    |
+|------------|-------|----------|-------------------------------|------------|
+| `--config` | `-c`  | `string` | Relative path to config file. | `ssc.json` |
+
 ### `ssc pull [conn]`
 Generate SQL files for all tables, stored procedures, functions, etc. All scripts will be put in
 the `output.root` directory and SQL scripts will be organized into subdirectories (based on config
@@ -76,6 +82,12 @@ Arguments:
 | Argument | Description                             | Default                                 |
 |----------|-----------------------------------------|-----------------------------------------|
 | `conn`   | Optional name of the connection to use. | First available connection from config. |
+
+Options:
+
+| Option     | Alias | Type     | Description                   | Default    |
+|------------|-------|----------|-------------------------------|------------|
+| `--config` | `-c`  | `string` | Relative path to config file. | `ssc.json` |
 
 Example output (see [here](https://github.com/justinlettau/sql-source-control-example) for full example):
 
@@ -116,9 +128,10 @@ Arguments:
 
 Options:
 
-| Option   | Alias | Type      | Description               | Default |
-|----------|-------|-----------|---------------------------|---------|
-| `--skip` | `-s`  | `boolean` | Skip user warning prompt. | n/a     |
+| Option     | Alias | Type      | Description                   | Default    |
+|------------|-------|-----------|-------------------------------|------------|
+| `--config` | `-c`  | `string`  | Relative path to config file. | `ssc.json` |
+| `--skip`   | `-s`  | `boolean` | Skip user warning prompt.     | `false`    |
 
 # Configuration
 Configuration options are stored in a `ssc.json` file. The following properties are supported:

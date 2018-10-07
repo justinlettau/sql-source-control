@@ -23,7 +23,7 @@ export default class Push {
    * Invoke actions.
    */
   public invoke(): void {
-    const config: Config = new Config();
+    const config: Config = new Config(this.options.config);
     const conn: Connection = config.getConnection(this.name);
 
     inquirer.prompt<inquirer.Answers>([

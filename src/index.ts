@@ -25,8 +25,9 @@ program
   .command('list')
   .alias('ls')
   .description('List all available connections.')
-  .action(() => {
-    const action: List = new List();
+  .option('-c, --config [value]', 'Relative path to config file.')
+  .action(options => {
+    const action: List = new List(options);
     action.invoke();
   });
 
@@ -42,6 +43,7 @@ program
 program
   .command('push [name]')
   .description('Execute all scripts against the requested database.')
+  .option('-c, --config [value]', 'Relative path to config file.')
   .option('-s, --skip', 'Skip user warning prompt.')
   .action((name, options) => {
     const action: Push = new Push(name, options);

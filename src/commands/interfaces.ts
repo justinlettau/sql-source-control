@@ -8,6 +8,13 @@ export interface InitOptions {
 }
 
 /**
+ * CLI arguments for `list` command.
+ */
+export interface ListOptions {
+  config?: string;
+}
+
+/**
  * CLI arguments for `pull` command.
  */
 export interface PullOptions {
@@ -18,5 +25,6 @@ export interface PullOptions {
  * CLI arguments for `push` command.
  */
 export interface PushOptions {
+  config?: string;
   skip?: boolean;
 }
