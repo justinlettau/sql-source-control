@@ -7,17 +7,16 @@ import { PathChoices } from './eums';
 import { InitOptions } from './interfaces';
 
 export default class Init {
+  constructor(private options: InitOptions) { }
 
   /**
    * Invoke action.
-   *
-   * @param options CLI options.
    */
-  public invoke(options: InitOptions): void {
-    const webConfigConns: Connection[] = Config.getConnectionsFromWebConfig(options.webconfig);
+  public invoke(): void {
+    const webConfigConns: Connection[] = Config.getConnectionsFromWebConfig(this.options.webconfig);
     const conn: Connection = new Connection();
 
-    if (!options.force && Config.doesDefaultExist()) {
+    if (!this.options.force && Config.doesDefaultExist()) {
       // don't overwrite existing config file
       return console.error('Config file already exists!');
     }
@@ -27,9 +26,9 @@ export default class Init {
       conn.loadFromObject(webConfigConns[0]);
     }
 
-    if (options.skip) {
+    if (this.options.skip) {
       // skip prompts and create with defaults
-      Config.write({ connections: options.webconfig || [conn] });
+      Config.write({ connections: this.options.webconfig || [conn] });
       return;
     }
 

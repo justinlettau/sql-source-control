@@ -1,6 +1,22 @@
 import { IdempotencyData, IdempotencyObject } from './types';
 
 /**
+ * Cache object properties.
+ */
+export interface ICache {
+  files: { [key: string]: string; };
+}
+
+/**
+ * File utility operation counts.
+ */
+export interface OperationCounts {
+  added: number;
+  updated: number;
+  removed: number;
+}
+
+/**
  * Configuration object properties.
  */
 // tslint:disable-next-line:interface-name

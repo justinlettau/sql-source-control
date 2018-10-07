@@ -1,11 +1,14 @@
 import chalk from 'chalk';
+import * as checksum from 'checksum';
 import * as filenamify from 'filenamify';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as multimatch from 'multimatch';
 import * as path from 'path';
 
+import Cache from './cache';
 import Config from './config';
+import { OperationCounts } from './interfaces';
 
 /**
  * File system interaction and tracking.
@@ -13,7 +16,10 @@ import Config from './config';
 export default class FileUtility {
   constructor(config: Config) {
     this.config = config;
-    this.loadExisting();
+    this.existingCache = new Cache(config);
+    this.newCache = new Cache(config);
+
+    this.load();
   }
 
   /**
@@ -24,12 +30,22 @@ export default class FileUtility {
   /**
    * Existing files.
    */
-  private existing: string[];
+  private existingFiles: string[];
 
   /**
-   * Statistics about files written / removed.
+   * Existing cache.
    */
-  private stats: { added: number; updated: number; removed: number; } = {
+  private existingCache: Cache;
+
+  /**
+   * Cache generated during file writing.
+   */
+  private newCache: Cache;
+
+  /**
+   * Counts about files written / removed.
+   */
+  private stats: OperationCounts = {
     added: 0,
     updated: 0,
     removed: 0
@@ -55,14 +71,19 @@ export default class FileUtility {
     }
 
     file = path.join(this.config.output.root, dir, file);
+    content = content.trim();
 
-    if (this.doesExist(file)) {
-      this.stats.updated++;
-    } else {
+    const cacheKey: string = this.normalize(file);
+    const cacheValue: string = checksum(content);
+    this.newCache.add(cacheKey, cacheValue);
+
+    if (!this.doesExist(file)) {
       this.stats.added++;
+    } else if (this.existingCache.didChange(cacheKey, cacheValue)) {
+      this.stats.updated++;
     }
 
-    fs.outputFileSync(file, content.trim());
+    fs.outputFileSync(file, content);
     this.markAsWritten(file);
   }
 
@@ -70,10 +91,12 @@ export default class FileUtility {
    * Delete all paths remaining in `existing`.
    */
   public finalize(): string {
-    this.existing.forEach(file => {
+    this.existingFiles.forEach(file => {
       this.stats.removed++;
       fs.removeSync(file);
     });
+
+    this.newCache.write();
 
     const added: string = chalk.green(this.stats.added.toString());
     const updated: string = chalk.cyan(this.stats.updated.toString());
@@ -102,13 +125,13 @@ export default class FileUtility {
    * @param file File path to check.
    */
   private doesExist(file: string): boolean {
-    if (!this.existing || !this.existing.length) {
+    if (!this.existingFiles || !this.existingFiles.length) {
       return false;
     }
 
     file = this.normalize(file);
 
-    const index: number = this.existing.indexOf(file);
+    const index: number = this.existingFiles.indexOf(file);
     return index !== -1;
   }
 
@@ -124,10 +147,10 @@ export default class FileUtility {
 
     file = this.normalize(file);
 
-    const index: number = this.existing.indexOf(file);
+    const index: number = this.existingFiles.indexOf(file);
 
     if (index !== -1) {
-      this.existing.splice(index, 1);
+      this.existingFiles.splice(index, 1);
     }
   }
 
@@ -145,9 +168,10 @@ export default class FileUtility {
   }
 
   /**
-   * Load existing files array for comparison.
+   * Load existing files and cache for comparison.
    */
-  private loadExisting(): void {
-    this.existing = glob.sync(`${this.config.output.root}/**/*.sql`);
+  private load(): void {
+    this.existingFiles = glob.sync(`${this.config.output.root}/**/*.sql`);
+    this.existingCache.load();
   }
 }

@@ -64,6 +64,9 @@ Generate SQL files for all tables, stored procedures, functions, etc. All script
 the `output.root` directory and SQL scripts will be organized into subdirectories (based on config
 file).
 
+Within the `output.root` directory, `cache.json` is automatically generated and is intended to be committed into source
+repositories. This file stores checksums of each file for comparison, to reduce disk I/O.
+
 Data can be included in the via the `data` option in the configuration file. All tables included in the `data` option
 will result in a file that truncates the table and inserts all rows. Because a truncate is issued, it is recommended to
 only include static data tables, like lookup tables, in the `data` configuration.
@@ -74,7 +77,7 @@ Arguments:
 |----------|-----------------------------------------|-----------------------------------------|
 | `conn`   | Optional name of the connection to use. | First available connection from config. |
 
-Example output:
+Example output (see [here](https://github.com/justinlettau/sql-source-control-example) for full example):
 
 ```
 ./_sql-database

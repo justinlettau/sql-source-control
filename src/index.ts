@@ -17,8 +17,8 @@ program
   .option('-s, --skip', 'Use defaults only and skip the option prompts.')
   .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
   .action(options => {
-    const action: Init = new Init();
-    action.invoke(options);
+    const action: Init = new Init(options);
+    action.invoke();
   });
 
 program
@@ -35,8 +35,8 @@ program
   .description('Generate SQL files for all tables, stored procedures, functions, etc.')
   .option('-c, --config [value]', 'Relative path to config file.')
   .action((name, options) => {
-    const action: Pull = new Pull();
-    action.invoke(name, options);
+    const action: Pull = new Pull(name, options);
+    action.invoke();
   });
 
 program
@@ -44,8 +44,8 @@ program
   .description('Execute all scripts against the requested database.')
   .option('-s, --skip', 'Skip user warning prompt.')
   .action((name, options) => {
-    const action: Push = new Push();
-    action.invoke(name, options);
+    const action: Push = new Push(name, options);
+    action.invoke();
   });
 
 program

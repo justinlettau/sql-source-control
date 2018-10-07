@@ -11,6 +11,7 @@ import Connection from '../common/connection';
 import { PushOptions } from './interfaces';
 
 export default class Push {
+  constructor(private name: string, private options: PushOptions) { }
 
   /**
    * Spinner instance.
@@ -20,13 +21,10 @@ export default class Push {
 
   /**
    * Invoke actions.
-   *
-   * @param name Optional connection name to use.
-   * @param options CLI options.
    */
-  public invoke(name: string, options: PushOptions): void {
+  public invoke(): void {
     const config: Config = new Config();
-    const conn: Connection = config.getConnection(name);
+    const conn: Connection = config.getConnection(this.name);
 
     inquirer.prompt<inquirer.Answers>([
       {
@@ -39,7 +37,7 @@ export default class Push {
           'Are you sure you want to continue?'
         ].join(' '),
         type: 'confirm',
-        when: !options.skip
+        when: !this.options.skip
       }
     ])
       .then(answers => {
@@ -48,7 +46,7 @@ export default class Push {
         }
       })
       .then(() => this.batch(config, conn))
-      .then(() => this.spinner.succeed('Sucessfully pushed!'))
+      .then(() => this.spinner.succeed('Successfully pushed!'))
       .catch(error => this.spinner.fail(error));
   }
 
