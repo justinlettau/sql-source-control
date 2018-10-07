@@ -8,5 +8,11 @@
       "user": "sa",
       "password": "Password12!"
     }
+  ],
+  "data": [
+    "Person.AdressType",
+    "Person.ContactType",
+    "Person.PhoneNumberType",
+    "Purchasing.ShipMethod"
   ]
 }
