@@ -2,7 +2,7 @@
 [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
 
 $name = $env:COMPUTERNAME
-$root = "$($env:appveyor_build_folder)\tools"
+$root = "$($env:appveyor_build_folder)\test"
 $instance = "SQL2017"
 $server = "(local)\$instance"
 $db = "AdventureWorks2017"

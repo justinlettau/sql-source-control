@@ -1,5 +1,5 @@
 const oldCache = require('./appveyor-cache.json');
-const newCache = require('./_sql-database/cache.json');
+const newCache = require('../_sql-database/cache.json');
 
 (function () {
   if (!oldCache || !newCache) {
