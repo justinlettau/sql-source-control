@@ -3,6 +3,7 @@ import { IdempotencyData, IdempotencyObject } from './types';
 /**
  * Cache object properties.
  */
+// tslint:disable-next-line:interface-name
 export interface ICache {
   files: { [key: string]: string; };
 }
