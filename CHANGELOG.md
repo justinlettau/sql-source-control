@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/justinlettau/sql-source-control/compare/v1.9.1...v2.0.0) (2018-10-08)
+
+
+### Bug Fixes
+
+* convert objects to a valid safe filenames ([2890512](https://github.com/justinlettau/sql-source-control/commit/2890512)), closes [#41](https://github.com/justinlettau/sql-source-control/issues/41)
+* **deps:** update dependency tedious to v3 ([#44](https://github.com/justinlettau/sql-source-control/issues/44)) ([1f697b0](https://github.com/justinlettau/sql-source-control/commit/1f697b0))
+
+
+### Chores
+
+* remove cat command ([903f411](https://github.com/justinlettau/sql-source-control/commit/903f411))
+* upgrade to classes ([c4f0279](https://github.com/justinlettau/sql-source-control/commit/c4f0279))
+
+
+### Features
+
+* add config option for commands ([45c60ac](https://github.com/justinlettau/sql-source-control/commit/45c60ac))
+* add data idempotency options ([ad14985](https://github.com/justinlettau/sql-source-control/commit/ad14985)), closes [#46](https://github.com/justinlettau/sql-source-control/issues/46) [#47](https://github.com/justinlettau/sql-source-control/issues/47)
+* add file checksum comparison to reduce disk i/o ([5946370](https://github.com/justinlettau/sql-source-control/commit/5946370))
+* add prompt to push command ([2573dc2](https://github.com/justinlettau/sql-source-control/commit/2573dc2))
+* add support for data glob patterns ([15cda32](https://github.com/justinlettau/sql-source-control/commit/15cda32)), closes [#45](https://github.com/justinlettau/sql-source-control/issues/45)
+* consolidate output/idempotency options ([81029fc](https://github.com/justinlettau/sql-source-control/commit/81029fc))
+* improve CLI output ([5d36353](https://github.com/justinlettau/sql-source-control/commit/5d36353))
+* unify output formatting ([69ac919](https://github.com/justinlettau/sql-source-control/commit/69ac919))
+
+
+### BREAKING CHANGES
+
+* Before:
+```
+"output": {
+  "scalar-valued": "./functions/scalar-valued",
+  "table-valued": "./functions/table-valued",
+  "table-valued-parameters": "./user-defined-types/table-valued-parameters"
+}
+```
+
+```
+"idempotency": {
+  "scalar-valued": "if-exists-drop",
+  "table-valued": "if-exists-drop",
+  "table-valued-parameters": "if-not-exists"
+}
+```
+
+After:
+```
+"output": {
+  "functions": "./functions",
+  "types": "./types"
+}
+```
+
+```
+"idempotency": {
+  "functions": "if-exists-drop",
+  "types": "if-not-exists"
+}
+```
+* remove `cat` command
+* remove deprecated `connection` configuration option
+
+
+
 <a name="1.9.1"></a>
 ## [1.9.1](https://github.com/justinlettau/sql-source-control/compare/v1.9.0...v1.9.1) (2018-09-14)
 
