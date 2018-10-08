@@ -169,7 +169,7 @@ properties are supported:
 | `views`     | `string` | Subdirectory for view files.                           | `./views`             |
 
 **idempotency** (`object`): Optional. Defines what type of idempotency will scripted during the `pull` command. The
-following properties are supported. Each property supports `if-exists-drop`, `if-not-exists`, or `false` as an option.
+following properties are supported.
 
 | Property    | Type         | Description                                         | Default          |
 |-------------|--------------|-----------------------------------------------------|------------------|
