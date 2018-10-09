@@ -355,7 +355,7 @@ export default class MSSQLGenerator {
     if (isNull(value)) {
       return 'NULL';
     }
-    
+
     if (isString(value)) {
       value = value.replace("'", "''");
       return `'${value}'`;
