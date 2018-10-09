@@ -1,6 +1,6 @@
 /* tslint:disable:max-line-length */
 import { EOL } from 'os';
-import { isBoolean, isDate, isString } from 'ts-util-is';
+import { isBoolean, isDate, isNull, isString } from 'ts-util-is';
 
 import Config from '../common/config';
 import {
@@ -352,6 +352,10 @@ export default class MSSQLGenerator {
    * @param value SQL data value.
    */
   private safeValue(value: any): any {
+    if (isNull(value)) {
+      return 'NULL';
+    }
+
     if (isString(value)) {
       value = value.replace("'", "''");
       return `'${value}'`;
