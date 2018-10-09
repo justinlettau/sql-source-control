@@ -352,6 +352,11 @@ export default class MSSQLGenerator {
    * @param value SQL data value.
    */
   private safeValue(value: any): any {
+    if(value === null)
+    {
+        return `NULL`;
+    }
+    
     if (isString(value)) {
       value = value.replace("'", "''");
       return `'${value}'`;
