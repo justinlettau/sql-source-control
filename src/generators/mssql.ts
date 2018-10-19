@@ -328,22 +328,18 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.views) {
       case 'if-exists-drop':
-        output += `IF EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
-        output += EOL;
-        output += `DROP VIEW ${objectId}`;
-        output += EOL;
-        output += 'GO';
-        output += EOL;
+        var re = /^CREATE VIEW /; 
+        return item.text.replace(re, "CREATE OR ALTER VIEW ");
         break;
       case 'if-not-exists':
         output += `IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('${objectId}') AND type = '${type}')`;
         output += EOL;
+        output += item.text;
+        return output;
         break;
     }
 
-    output += item.text;
-
-    return output;
+    
   }
 
   /**
