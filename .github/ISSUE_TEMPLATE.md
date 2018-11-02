@@ -7,16 +7,12 @@ What kind of issue is this?
 [ ] Feature request.
 ```
 
-## Current Behavior
-<!-- describe how the issue manifests -->
-Todo
-
-## Expected behavior
-<!-- describe what the desired behavior would be -->
+## Description the Issue
+<!-- describe what the issue is about -->
 Todo
 
 ## Steps to Reproduce
-<!-- for bug reports please provides the steps to reproduce or, if possible, a minimal demo of the problem -->
+<!-- steps to reproduce or, if possible, a minimal demo of the issue / scenario -->
 n/a
 
 ## Other Information
