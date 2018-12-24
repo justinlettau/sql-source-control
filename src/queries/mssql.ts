@@ -6,10 +6,20 @@ export const tablesRead: string = `
     o.object_id,
     o.type,
     s.name AS [schema],
-    o.name
+    o.name,
+    isnull(c.identity_count, 0) AS [identity_count]
   FROM
     sys.objects o
     JOIN sys.schemas s ON o.schema_id = s.schema_id
+    LEFT JOIN (
+      SELECT
+        i.object_id,
+        count(1) AS [identity_count]
+      FROM
+        sys.identity_columns i
+      GROUP BY
+        i.object_id
+    ) c on c.object_id = o.object_id
   where
     o.type = 'U'
     AND o.is_ms_shipped = 0

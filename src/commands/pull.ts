@@ -60,10 +60,10 @@ export default class Pull {
           pool.request().query(typesRead)
         ])
           .then(results => {
-            const tables: string[] = results[1].recordset
-              .map(item => `${item.schema}.${item.name}`);
+            const tables: sql.IRecordSet<SqlTable> = results[1].recordset;
+            const names: string[] = tables.map(item => `${item.schema}.${item.name}`);
 
-            const matched: string[] = multimatch(tables, config.data);
+            const matched: string[] = multimatch(names, config.data);
 
             if (!matched.length) {
               return results;
@@ -71,9 +71,11 @@ export default class Pull {
 
             return Promise.all<any>(
               matched.map(item => {
+                const match: SqlTable = tables.find(table => item === `${table.schema}.${table.name}`);
+
                 return pool.request()
                   .query(`SELECT * FROM ${item}`)
-                  .then(result => ({ name: item, result }));
+                  .then(result => ({ name: item, hasIdentity: match.identity_count > 0, result }));
               })
             )
               .then(data => [...results, ...data]);

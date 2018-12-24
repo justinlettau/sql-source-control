@@ -54,9 +54,12 @@ export default class MSSQLGenerator {
     }
 
     output += EOL;
-    output += `SET IDENTITY_INSERT ${item.name} ON`;
-    output += EOL;
-    output += EOL;
+
+    if (item.hasIdentity) {
+      output += `SET IDENTITY_INSERT ${item.name} ON`;
+      output += EOL;
+      output += EOL;
+    }
 
     item.result.recordset.forEach(row => {
       const keys: string[] = Object.keys(row);
@@ -67,9 +70,13 @@ export default class MSSQLGenerator {
       output += EOL;
     });
 
-    output += EOL;
-    output += `SET IDENTITY_INSERT ${item.name} OFF`;
+    if (item.hasIdentity) {
+      output += EOL;
+      output += `SET IDENTITY_INSERT ${item.name} OFF`;
+      output += EOL;
+    }
 
+    output += EOL;
     return output;
   }
 

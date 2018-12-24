@@ -22,14 +22,16 @@ export interface SqlSchema {
  */
 export interface SqlDataResult {
   name: string;
+  hasIdentity: number;
   result: sql.IResult<any>;
 }
 
 /**
  * SQL table object.
  */
-// tslint:disable-next-line:no-empty-interface
-export interface SqlTable extends AbstractSqlObject { }
+export interface SqlTable extends AbstractSqlObject {
+  identity_count: number;
+}
 
 /**
  * SQL type.
