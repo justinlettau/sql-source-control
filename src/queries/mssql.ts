@@ -69,7 +69,8 @@ export const primaryKeysRead = `
     c.object_id,
     ic.is_descending_key,
     k.name,
-    c.name AS [column]
+    c.name AS [column],
+    ic.index_id
   FROM
     sys.index_columns ic
     JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id

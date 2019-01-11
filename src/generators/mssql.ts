@@ -14,6 +14,7 @@ import {
   SqlTable,
   SqlType
 } from '../queries/interfaces';
+import { GroupedIndexes } from './interfaces';
 
 /**
  * MSSQL generator.
@@ -202,12 +203,18 @@ export default class MSSQLGenerator {
         output += EOL;
       });
 
-    primaryKeys
+    const grouped = primaryKeys
       .filter(x => x.object_id === item.object_id)
-      .forEach(pk => {
-        output += '    ' + this.primaryKey(pk);
-        output += EOL;
-      });
+      .reduce<GroupedIndexes>((prev, cur) => {
+        const group = (prev[cur.object_id] = prev[cur.object_id] || []);
+        group.push(cur);
+        return prev;
+      }, {});
+
+    Object.keys(grouped).forEach(pk => {
+      output += '    ' + this.primaryKey(grouped[pk]);
+      output += EOL;
+    });
 
     output += ')';
 
@@ -441,12 +448,47 @@ export default class MSSQLGenerator {
   /**
    * Get script for table's primary key.
    *
+   * @param items Rows from query.
+   */
+  private primaryKey(items: SqlPrimaryKey[]) {
+    const first = items[0];
+    let output = '';
+
+    output += `CONSTRAINT [${first.name}] PRIMARY KEY `;
+
+    if (first.index_id === 1) {
+      output += 'CLUSTERED ';
+    } else if (first.index_id > 1) {
+      output += 'NONCLUSTERED ';
+    }
+
+    output += '(';
+    output += EOL;
+
+    items.forEach((item, idx, array) => {
+      output += `        ` + this.primaryKeyColumn(item);
+
+      if (idx !== array.length - 1) {
+        // not the last column
+        output += ',';
+      }
+
+      output += EOL;
+    });
+
+    output += '    )';
+
+    return output;
+  }
+
+  /**
+   * Get script for an individual primary key column.
+   *
    * @param item Row from query.
    */
-  private primaryKey(item: SqlPrimaryKey) {
+  private primaryKeyColumn(item: SqlPrimaryKey) {
     const direction = item.is_descending_key ? 'DESC' : 'ASC';
-
-    return `CONSTRAINT [${item.name}] PRIMARY KEY ([${item.column}] ${direction})`;
+    return `[${item.column}] ${direction}`;
   }
 
   /**
