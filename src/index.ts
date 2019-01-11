@@ -8,7 +8,7 @@ import Pull from './commands/pull';
 import Push from './commands/push';
 
 // check for updates
-updateNotifier({ pkg }).notify();
+updateNotifier({ pkg } as any).notify();
 
 program
   .command('init')
@@ -17,7 +17,7 @@ program
   .option('-s, --skip', 'Use defaults only and skip the option prompts.')
   .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
   .action(options => {
-    const action: Init = new Init(options);
+    const action = new Init(options);
     action.invoke();
   });
 
@@ -27,7 +27,7 @@ program
   .description('List all available connections.')
   .option('-c, --config [value]', 'Relative path to config file.')
   .action(options => {
-    const action: List = new List(options);
+    const action = new List(options);
     action.invoke();
   });
 
@@ -36,7 +36,7 @@ program
   .description('Generate SQL files for all tables, stored procedures, functions, etc.')
   .option('-c, --config [value]', 'Relative path to config file.')
   .action((name, options) => {
-    const action: Pull = new Pull(name, options);
+    const action = new Pull(name, options);
     action.invoke();
   });
 
@@ -46,10 +46,8 @@ program
   .option('-c, --config [value]', 'Relative path to config file.')
   .option('-s, --skip', 'Skip user warning prompt.')
   .action((name, options) => {
-    const action: Push = new Push(name, options);
+    const action = new Push(name, options);
     action.invoke();
   });
 
-program
-  .version((pkg as any).version)
-  .parse(process.argv);
+program.version((pkg as any).version).parse(process.argv);

@@ -37,7 +37,7 @@ export interface SqlTable extends AbstractSqlObject {
  * SQL type.
  */
 // tslint:disable-next-line:no-empty-interface
-export interface SqlType extends AbstractSqlObject { }
+export interface SqlType extends AbstractSqlObject {}
 
 /**
  * SQL column object.

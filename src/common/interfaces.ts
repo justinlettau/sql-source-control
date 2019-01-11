@@ -5,7 +5,7 @@ import { IdempotencyData, IdempotencyObject } from './types';
  */
 // tslint:disable-next-line:interface-name
 export interface ICache {
-  files: { [key: string]: string; };
+  files: { [key: string]: string };
 }
 
 /**

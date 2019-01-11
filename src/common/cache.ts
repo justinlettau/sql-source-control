@@ -8,11 +8,10 @@ import { ICache } from './interfaces';
  * File checksum cache.
  */
 export default class Cache implements ICache {
-
   /**
    * Default cache file.
    */
-  public static readonly defaultCacheFile: string = 'cache.json';
+  static readonly defaultCacheFile = 'cache.json';
 
   constructor(config: Config) {
     this.config = config;
@@ -21,7 +20,7 @@ export default class Cache implements ICache {
   /**
    * File checksums.
    */
-  public files: { [key: string]: string } = {};
+  files: { [key: string]: string } = {};
 
   /**
    * Current configuration.
@@ -31,13 +30,13 @@ export default class Cache implements ICache {
   /**
    * Load configuration options from file.
    */
-  public load(): void {
+  load() {
     if (!this.doesDefaultExist()) {
       return;
     }
 
     try {
-      const file: string = path.join(this.config.output.root, Cache.defaultCacheFile);
+      const file = path.join(this.config.output.root, Cache.defaultCacheFile);
       const cache: ICache = fs.readJsonSync(file);
 
       this.files = cache.files;
@@ -53,12 +52,12 @@ export default class Cache implements ICache {
    * @param file File to check.
    * @param newSum New checksum value.
    */
-  public didChange(file: string, newSum: string): boolean {
+  didChange(file: string, newSum: string) {
     if (!this.files) {
       return true;
     }
 
-    const oldSum: string = this.files[file];
+    const oldSum = this.files[file];
 
     if (!oldSum) {
       return true;
@@ -73,7 +72,7 @@ export default class Cache implements ICache {
    * @param file File to check.
    * @param newSum New checksum value.
    */
-  public add(file: string, newSum: string): void {
+  add(file: string, newSum: string) {
     if (!file || !newSum) {
       return;
     }
@@ -84,8 +83,8 @@ export default class Cache implements ICache {
   /**
    * Write a config file with provided configuration.
    */
-  public write(): void {
-    const file: string = path.join(this.config.output.root, Cache.defaultCacheFile);
+  write() {
+    const file = path.join(this.config.output.root, Cache.defaultCacheFile);
     const content: ICache = { files: this.files };
 
     fs.writeJson(file, content, { spaces: 2 });
@@ -94,8 +93,8 @@ export default class Cache implements ICache {
   /**
    * Check if default cache file exists.
    */
-  private doesDefaultExist(): boolean {
-    const file: string = path.join(this.config.output.root, Cache.defaultCacheFile);
+  private doesDefaultExist() {
+    const file = path.join(this.config.output.root, Cache.defaultCacheFile);
 
     return fs.existsSync(file);
   }

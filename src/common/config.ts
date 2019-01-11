@@ -10,21 +10,20 @@ import { IConfig, IdempotencyConfig, OutputConfig } from './interfaces';
  * Configuration options.
  */
 export default class Config implements IConfig {
-
   /**
    * Default connections JSON file.
    */
-  public static readonly defaultConnectionsJsonFile: string = 'ssc-connections.json';
+  static readonly defaultConnectionsJsonFile = 'ssc-connections.json';
 
   /**
    * Default Web.config file.
    */
-  public static readonly defaultWebConfigFile: string = 'Web.config';
+  static readonly defaultWebConfigFile = 'Web.config';
 
   /**
    * Default configuration file.
    */
-  public static readonly defaultConfigFile: string = 'ssc.json';
+  static readonly defaultConfigFile = 'ssc.json';
 
   /**
    * Write a config file with provided configuration.
@@ -32,11 +31,11 @@ export default class Config implements IConfig {
    * @param config Configuration object to write.
    * @param file Configuration file to write to.
    */
-  public static write(config: IConfig, file?: string): void {
-    const configFile: string = path.join(process.cwd(), file || Config.defaultConfigFile);
-    const content: string = JSON.stringify(config, null, 2);
+  static write(config: IConfig, file?: string) {
+    const configFile = path.join(process.cwd(), file || Config.defaultConfigFile);
+    const content = JSON.stringify(config, null, 2);
 
-    fs.outputFile(configFile, content, (error: Error) => {
+    fs.outputFile(configFile, content, error => {
       if (error) {
         return console.error(error);
       }
@@ -48,7 +47,7 @@ export default class Config implements IConfig {
   /**
    * Check if default configuration file exists.
    */
-  public static doesDefaultExist(): boolean {
+  static doesDefaultExist() {
     return fs.existsSync(Config.defaultConfigFile);
   }
 
@@ -57,9 +56,9 @@ export default class Config implements IConfig {
    *
    * @param file Relative path to Web.config file.
    */
-  public static getConnectionsFromWebConfig(file?: string): Connection[] {
-    const configFile: string = path.join(process.cwd(), file || Config.defaultWebConfigFile);
-    const parser: xml2js.Parser = new xml2js.Parser();
+  static getConnectionsFromWebConfig(file?: string) {
+    const configFile = path.join(process.cwd(), file || Config.defaultWebConfigFile);
+    const parser = new xml2js.Parser();
     const conns: Connection[] = [];
     let content: string;
 
@@ -70,27 +69,30 @@ export default class Config implements IConfig {
 
     content = fs.readFileSync(configFile, 'utf-8');
 
-    parser.parseString(content, (err, result): void => {
-      if (err) {
-        console.error(err);
-        process.exit();
+    parser.parseString(
+      content,
+      (err: Error, result: any): void => {
+        if (err) {
+          console.error(err);
+          process.exit();
+        }
+
+        try {
+          const connectionStrings: any[] = result.configuration.connectionStrings[0].add;
+
+          connectionStrings.forEach(item => {
+            const conn = new Connection();
+            conn.loadFromString(item.$.name, item.$.connectionString);
+            conns.push(conn);
+          });
+        } catch (err) {
+          console.error('Could not parse connection strings from Web.config file!');
+          process.exit();
+        }
       }
+    );
 
-      try {
-        const connectionStrings: any[] = result.configuration.connectionStrings[0].add;
-
-        connectionStrings.forEach(item => {
-          const conn: Connection = new Connection();
-          conn.loadFromString(item.$.name, item.$.connectionString);
-          conns.push(conn);
-        });
-      } catch (err) {
-        console.error('Could not parse connection strings from Web.config file!');
-        process.exit();
-      }
-    });
-
-    return (conns.length ? conns : undefined);
+    return conns.length ? conns : undefined;
   }
 
   constructor(file?: string) {
@@ -100,26 +102,26 @@ export default class Config implements IConfig {
   /**
    * Relative path to a `Web.config`, a file with an array of connections, or an array of connections
    */
-  public connections: string | Connection[] = [];
+  connections: string | Connection[] = [];
 
   /**
    * Glob of files to include/exclude during the `pull` command.
    */
-  public files: string[] = [];
+  files: string[] = [];
 
   /**
    * List of table names to include for data scripting during the `pull` command.
    */
-  public data: string[] = [];
+  data: string[] = [];
 
   /**
    * Defines paths where files will be scripted during the `pull` command.
    */
-  public output: OutputConfig = {
-    root: './_sql-database',
+  output: OutputConfig = {
     data: './data',
     functions: './functions',
     procs: './stored-procedures',
+    root: './_sql-database',
     schemas: './schemas',
     tables: './tables',
     triggers: './triggers',
@@ -130,7 +132,7 @@ export default class Config implements IConfig {
   /**
    * Defines what type of idempotency will scripted during the `pull` command.
    */
-  public idempotency: IdempotencyConfig = {
+  idempotency: IdempotencyConfig = {
     data: 'truncate',
     functions: 'if-exists-drop',
     procs: 'if-exists-drop',
@@ -145,7 +147,7 @@ export default class Config implements IConfig {
    *
    * @param name Optional connection `name` to get.
    */
-  public getConnection(name?: string): Connection {
+  getConnection(name?: string): Connection {
     const conns: Connection[] = this.getConnections();
     let conn: Connection;
     let error: string;
@@ -173,12 +175,12 @@ export default class Config implements IConfig {
   /**
    * Safely get all connections.
    */
-  public getConnections(): Connection[] {
+  getConnections() {
     if (!isString(this.connections)) {
       return this.connections;
     }
 
-    const configFile: RegExp = /\.config$/;
+    const configFile = /\.config$/;
 
     if (configFile.test(this.connections)) {
       return Config.getConnectionsFromWebConfig(this.connections);
@@ -192,8 +194,8 @@ export default class Config implements IConfig {
    *
    * @param file Configuration file to load.
    */
-  private load(file?: string): void {
-    const configFile: string = path.join(process.cwd(), file || Config.defaultConfigFile);
+  private load(file?: string) {
+    const configFile = path.join(process.cwd(), file || Config.defaultConfigFile);
 
     try {
       const config: Config = fs.readJsonSync(configFile);
@@ -214,8 +216,8 @@ export default class Config implements IConfig {
    *
    * @param file Relative path to connections JSON file.
    */
-  private getConnectionsFromJson(file: string): Connection[] {
-    const jsonFile: string = path.join(process.cwd(), file);
+  private getConnectionsFromJson(file: string) {
+    const jsonFile = path.join(process.cwd(), file);
 
     try {
       const config: Config = fs.readJsonSync(jsonFile);

@@ -33,8 +33,8 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public data(item: SqlDataResult): string {
-    let output: string = '';
+  data(item: SqlDataResult) {
+    let output = '';
 
     switch (this.config.idempotency.data) {
       case 'delete':
@@ -62,9 +62,9 @@ export default class MSSQLGenerator {
     }
 
     item.result.recordset.forEach(row => {
-      const keys: string[] = Object.keys(row);
-      const columns: string = keys.join(', ');
-      const values: string = keys.map(key => this.safeValue(row[key])).join(', ');
+      const keys = Object.keys(row);
+      const columns = keys.join(', ');
+      const values = keys.map(key => this.safeValue(row[key])).join(', ');
 
       output += `INSERT INTO ${item.name} (${columns}) VALUES (${values})`;
       output += EOL;
@@ -85,10 +85,10 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public function(item: SqlObject): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  function(item: SqlObject) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.functions) {
       case 'if-exists-drop':
@@ -115,10 +115,10 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public storedProcedure(item: SqlObject): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  storedProcedure(item: SqlObject) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.procs) {
       case 'if-exists-drop':
@@ -145,8 +145,8 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public schema(item: SqlSchema): string {
-    let output: string = '';
+  schema(item: SqlSchema) {
+    let output = '';
 
     output += `IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = '${item.name}')`;
     output += EOL;
@@ -164,16 +164,16 @@ export default class MSSQLGenerator {
    * @param foreignKeys Foreign keys from query.
    * @param indexes Indexes from query.
    */
-  public table(
+  table(
     item: SqlTable,
     columns: SqlColumn[],
     primaryKeys: SqlPrimaryKey[],
     foreignKeys: SqlForeignKey[],
     indexes: SqlIndex[]
-  ): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  ) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.tables) {
       case 'if-exists-drop':
@@ -241,10 +241,10 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public trigger(item: SqlObject): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  trigger(item: SqlObject) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.triggers) {
       case 'if-exists-drop':
@@ -272,10 +272,10 @@ export default class MSSQLGenerator {
    * @param item Row from query.
    * @param columns Columns from query.
    */
-  public type(item: SqlType, columns: SqlColumn[]): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  type(item: SqlType, columns: SqlColumn[]) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.types) {
       case 'if-exists-drop':
@@ -328,10 +328,10 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  public view(item: SqlObject): string {
-    const objectId: string = `[${item.schema}].[${item.name}]`;
-    const type: string = item.type.trim();
-    let output: string = '';
+  view(item: SqlObject) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    const type = item.type.trim();
+    let output = '';
 
     switch (this.config.idempotency.views) {
       case 'if-exists-drop':
@@ -385,8 +385,8 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  private column(item: SqlColumn): string {
-    let output: string = `[${item.name}]`;
+  private column(item: SqlColumn) {
+    let output = `[${item.name}]`;
     let size: string | number;
 
     if (item.is_computed) {
@@ -402,13 +402,13 @@ export default class MSSQLGenerator {
       case 'varbinary':
       case 'binary':
       case 'text':
-        size = (item.max_length === -1 ? 'max' : item.max_length);
+        size = item.max_length === -1 ? 'max' : item.max_length;
         output += `(${size})`;
         break;
       case 'nvarchar':
       case 'nchar':
       case 'ntext':
-        size = (item.max_length === -1 ? 'max' : item.max_length / 2);
+        size = item.max_length === -1 ? 'max' : item.max_length / 2;
         output += `(${size})`;
         break;
       case 'datetime2':
@@ -443,8 +443,8 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  private primaryKey(item: SqlPrimaryKey): string {
-    const direction: string = item.is_descending_key ? 'DESC' : 'ASC';
+  private primaryKey(item: SqlPrimaryKey) {
+    const direction = item.is_descending_key ? 'DESC' : 'ASC';
 
     return `CONSTRAINT [${item.name}] PRIMARY KEY ([${item.column}] ${direction})`;
   }
@@ -455,9 +455,9 @@ export default class MSSQLGenerator {
    * @param item Row from foreignKeys query.
    */
   private foreignKey(item: SqlForeignKey): string {
-    const objectId: string = `[${item.schema}].[${item.table}]`;
-    const parentObjectId: string = `[${item.parent_schema}].[${item.parent_table}]`;
-    let output: string = '';
+    const objectId = `[${item.schema}].[${item.table}]`;
+    const parentObjectId = `[${item.parent_schema}].[${item.parent_table}]`;
+    let output = '';
 
     output += `ALTER TABLE ${objectId} WITH ${item.is_not_trusted ? 'NOCHECK' : 'CHECK'}`;
     output += ` ADD CONSTRAINT [${item.name}] FOREIGN KEY ([${item.column}])`;
@@ -498,11 +498,13 @@ export default class MSSQLGenerator {
    *
    * @param item Row from query.
    */
-  private index(item: SqlIndex): string {
-    const objectId: string = `[${item.schema}].[${item.table}]`;
-    let output: string = '';
+  private index(item: SqlIndex) {
+    const objectId = `[${item.schema}].[${item.table}]`;
+    let output = '';
 
-    output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${item.name}')`;
+    output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${
+      item.name
+    }')`;
     output += EOL;
     output += 'CREATE';
 

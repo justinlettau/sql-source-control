@@ -7,14 +7,14 @@ import { PathChoices } from './eums';
 import { InitOptions } from './interfaces';
 
 export default class Init {
-  constructor(private options: InitOptions) { }
+  constructor(private options: InitOptions) {}
 
   /**
    * Invoke action.
    */
-  public invoke(): void {
-    const webConfigConns: Connection[] = Config.getConnectionsFromWebConfig(this.options.webconfig);
-    const conn: Connection = new Connection();
+  invoke() {
+    const webConfigConns = Config.getConnectionsFromWebConfig(this.options.webconfig);
+    const conn = new Connection();
 
     if (!this.options.force && Config.doesDefaultExist()) {
       // don't overwrite existing config file
@@ -32,8 +32,7 @@ export default class Init {
       return;
     }
 
-    inquirer.prompt(this.getQuestions(conn, !!webConfigConns))
-      .then(answers => this.writeFiles(answers));
+    inquirer.prompt(this.getQuestions(conn, !!webConfigConns)).then(answers => this.writeFiles(answers));
   }
 
   /**
@@ -41,52 +40,54 @@ export default class Init {
    *
    * @param conn Connection object to use for default values.
    */
-  private getQuestions(conn: Connection, showWebConfig: boolean): inquirer.Questions {
-    return [
+  private getQuestions(conn: Connection, showWebConfig: boolean) {
+    const questions: inquirer.Questions = [
       {
-        name: 'path',
+        choices: () => this.getPathChoices(showWebConfig),
         message: 'Where would you like to store connections?',
-        type: 'list',
-        choices: () => this.getPathChoices(showWebConfig)
+        name: 'path',
+        type: 'list'
       },
       {
-        name: 'server',
+        default: conn.server || undefined,
         message: 'Server URL.',
-        default: (conn.server || undefined),
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        name: 'server',
+        when: answers => answers.path !== PathChoices.WebConfig
       },
       {
-        name: 'port',
+        default: conn.port || undefined,
         message: 'Server port.',
-        default: (conn.port || undefined),
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        name: 'port',
+        when: answers => answers.path !== PathChoices.WebConfig
       },
       {
-        name: 'database',
+        default: conn.database || undefined,
         message: 'Database name.',
-        default: (conn.database || undefined),
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        name: 'database',
+        when: answers => answers.path !== PathChoices.WebConfig
       },
       {
-        name: 'user',
+        default: conn.user || undefined,
         message: 'Login username.',
-        default: (conn.user || undefined),
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        name: 'user',
+        when: answers => answers.path !== PathChoices.WebConfig
       },
       {
-        name: 'password',
+        default: conn.password || undefined,
         message: 'Login password.',
+        name: 'password',
         type: 'password',
-        default: (conn.password || undefined),
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        when: answers => answers.path !== PathChoices.WebConfig
       },
       {
-        name: 'name',
-        message: 'Connection name.',
         default: 'dev',
-        when: answers => (answers.path !== PathChoices.WebConfig)
+        message: 'Connection name.',
+        name: 'name',
+        when: answers => answers.path !== PathChoices.WebConfig
       }
     ];
+
+    return questions;
   }
 
   /**
@@ -94,7 +95,7 @@ export default class Init {
    *
    * @param showWebConfig Indicates if Web.config choice should be available.
    */
-  private getPathChoices(showWebConfig: boolean): inquirer.ChoiceType[] {
+  private getPathChoices(showWebConfig: boolean) {
     const choices: inquirer.ChoiceType[] = [
       {
         name: 'Main configuration file.',
@@ -121,14 +122,14 @@ export default class Init {
    *
    * @param answers Answers from questions.
    */
-  private writeFiles(answers: inquirer.Answers): void {
+  private writeFiles(answers: inquirer.Answers) {
     const conn: IConnection = {
-      name: answers.name,
-      server: answers.server,
-      port: answers.port,
       database: answers.database,
-      user: answers.user,
-      password: answers.password
+      name: answers.name,
+      password: answers.password,
+      port: answers.port,
+      server: answers.server,
+      user: answers.user
     };
 
     if (answers.path === PathChoices.WebConfig) {

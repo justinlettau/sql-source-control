@@ -1,7 +1,7 @@
 /**
  * Get SQL table information.
  */
-export const tablesRead: string = `
+export const tablesRead = `
   SELECT
     o.object_id,
     o.type,
@@ -31,7 +31,7 @@ export const tablesRead: string = `
 /**
  * Get SQL column information.
  */
-export const columnsRead: string = `
+export const columnsRead = `
   SELECT
     c.object_id,
     c.name,
@@ -64,7 +64,7 @@ export const columnsRead: string = `
 /**
  * Get SQL primary key information.
  */
-export const primaryKeysRead: string = `
+export const primaryKeysRead = `
   SELECT
     c.object_id,
     ic.is_descending_key,
@@ -83,7 +83,7 @@ export const primaryKeysRead: string = `
 /**
  * Get SQL foreign key information.
  */
-export const foreignKeysRead: string = `
+export const foreignKeysRead = `
   SELECT
     po.object_id,
     k.constraint_object_id,
@@ -109,7 +109,7 @@ export const foreignKeysRead: string = `
 /**
  * Get SQL index information.
  */
-export const indexesRead: string = `
+export const indexesRead = `
   SELECT
     ic.object_id,
     ic.index_id,
@@ -137,7 +137,7 @@ export const indexesRead: string = `
 /**
  * Get SQL information for user defined types.
  */
-export const typesRead: string = `
+export const typesRead = `
   SELECT
     o.object_id,
     o.type,
@@ -158,7 +158,7 @@ export const typesRead: string = `
 /**
  * Get SQL information for procs, triggers, functions, etc.
  */
-export const objectsRead: string = `
+export const objectsRead = `
   SELECT
     so.name,
     s.name AS [schema],

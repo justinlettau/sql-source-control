@@ -47,8 +47,8 @@ export default class FileUtility {
    */
   private stats: OperationCounts = {
     added: 0,
-    updated: 0,
-    removed: 0
+    removed: 0,
+    updated: 0
   };
 
   /**
@@ -58,7 +58,7 @@ export default class FileUtility {
    * @param file File name to write to.
    * @param content File content to write.
    */
-  public write(dir: string | false, file: string, content: string): void {
+  write(dir: string | false, file: string, content: string) {
     if (dir === false) {
       return;
     }
@@ -73,8 +73,8 @@ export default class FileUtility {
     file = path.join(this.config.output.root, dir, file);
     content = content.trim();
 
-    const cacheKey: string = this.normalize(file);
-    const cacheValue: string = checksum(content);
+    const cacheKey = this.normalize(file);
+    const cacheValue = checksum(content);
     this.newCache.add(cacheKey, cacheValue);
 
     if (!this.doesExist(file)) {
@@ -90,7 +90,7 @@ export default class FileUtility {
   /**
    * Delete all paths remaining in `existing`.
    */
-  public finalize(): string {
+  finalize() {
     this.existingFiles.forEach(file => {
       this.stats.removed++;
       fs.removeSync(file);
@@ -98,9 +98,9 @@ export default class FileUtility {
 
     this.newCache.write();
 
-    const added: string = chalk.green(this.stats.added.toString());
-    const updated: string = chalk.cyan(this.stats.updated.toString());
-    const removed: string = chalk.red(this.stats.removed.toString());
+    const added = chalk.green(this.stats.added.toString());
+    const updated = chalk.cyan(this.stats.updated.toString());
+    const removed = chalk.red(this.stats.removed.toString());
 
     return `Successfully added ${added}, updated ${updated}, and removed ${removed} files.`;
   }
@@ -110,12 +110,12 @@ export default class FileUtility {
    *
    * @param file File path to check.
    */
-  private shouldWrite(file: string): boolean {
+  private shouldWrite(file: string) {
     if (!this.config.files || !this.config.files.length) {
       return true;
     }
 
-    const results: string[] = multimatch([file], this.config.files);
+    const results = multimatch([file], this.config.files);
     return !!results.length;
   }
 
@@ -124,14 +124,14 @@ export default class FileUtility {
    *
    * @param file File path to check.
    */
-  private doesExist(file: string): boolean {
+  private doesExist(file: string) {
     if (!this.existingFiles || !this.existingFiles.length) {
       return false;
     }
 
     file = this.normalize(file);
 
-    const index: number = this.existingFiles.indexOf(file);
+    const index = this.existingFiles.indexOf(file);
     return index !== -1;
   }
 
@@ -140,14 +140,14 @@ export default class FileUtility {
    *
    * @param file File path to check.
    */
-  private markAsWritten(file: string): void {
+  private markAsWritten(file: string) {
     if (!file) {
       return;
     }
 
     file = this.normalize(file);
 
-    const index: number = this.existingFiles.indexOf(file);
+    const index = this.existingFiles.indexOf(file);
 
     if (index !== -1) {
       this.existingFiles.splice(index, 1);
@@ -159,7 +159,7 @@ export default class FileUtility {
    *
    * @param file File path to normalize.
    */
-  private normalize(file: string): string {
+  private normalize(file: string) {
     if (this.config.output.root.startsWith('./') && !file.startsWith('./')) {
       file = `./${file}`;
     }
@@ -170,7 +170,7 @@ export default class FileUtility {
   /**
    * Load existing files and cache for comparison.
    */
-  private load(): void {
+  private load() {
     this.existingFiles = glob.sync(`${this.config.output.root}/**/*.sql`);
     this.existingCache.load();
   }

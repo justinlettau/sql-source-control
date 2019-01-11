@@ -1,7 +1,7 @@
 const oldCache = require('./appveyor-cache.json');
 const newCache = require('../_sql-database/cache.json');
 
-(function () {
+(function() {
   if (!oldCache || !newCache) {
     throw new Error('Cache files not found!');
   }

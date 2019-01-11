@@ -4,15 +4,22 @@ import Connection from './connection';
 import { IConnection, IdempotencyConfig, OutputConfig } from './interfaces';
 
 describe('Config class', () => {
-  const name: string = 'dev';
-  const server: string = 'localhost';
-  const port: number = 1433;
-  const database: string = 'awesome-db';
-  const user: string = 'example';
-  const password: string = 'qwerty';
-  const connection: IConnection = { name, server, port, database, user, password };
-  const files: string[] = ['dbo.*'];
-  const data: string[] = ['dbo.LookupTable'];
+  const name = 'dev';
+  const server = 'localhost';
+  const port = 1433;
+  const database = 'awesome-db';
+  const user = 'example';
+  const password = 'qwerty';
+  const connection: IConnection = {
+    database,
+    name,
+    password,
+    port,
+    server,
+    user
+  };
+  const files = ['dbo.*'];
+  const data = ['dbo.LookupTable'];
   const output: OutputConfig = { root: './my-database' };
   const idempotency: IdempotencyConfig = { triggers: false };
 
@@ -20,34 +27,30 @@ describe('Config class', () => {
     it('should write to default file', () => {
       // todo (jbl): error thrown with nyc
       // mock();
-
       // Config.write({
       //   connections: [connection]
       // });
-
-      // const config: Config = new Config();
-      // const conn: Connection = config.connections[0] as Connection;
-
+      // const config = new Config();
+      // const conn = config.connections[0] as Connection;
       // expect(conn.name).toEqual(name);
       // expect(conn.server).toEqual(server);
       // expect(conn.port).toEqual(port);
       // expect(conn.database).toEqual(database);
       // expect(conn.user).toEqual(user);
       // expect(conn.password).toEqual(password);
-
       // mock.restore();
     });
   });
 
   describe('doesDefaultExist method', () => {
     it('should return true if file exists', () => {
-      const file: string = Config.defaultConfigFile;
+      const file = Config.defaultConfigFile;
 
       mock({
         [file]: ''
       });
 
-      const value: boolean = Config.doesDefaultExist();
+      const value = Config.doesDefaultExist();
       expect(value).toEqual(true);
 
       mock.restore();
@@ -74,7 +77,7 @@ describe('Config class', () => {
 
   describe('getConnectionsFromWebConfig method', () => {
     it('should return connections if default web.config exists', () => {
-      const file: string = Config.defaultWebConfigFile;
+      const file = Config.defaultWebConfigFile;
 
       mock({
         [file]: `
@@ -89,8 +92,8 @@ describe('Config class', () => {
         `
       });
 
-      const conns: Connection[] = Config.getConnectionsFromWebConfig();
-      const conn: Connection = conns[0];
+      const conns = Config.getConnectionsFromWebConfig();
+      const conn = conns[0];
 
       expect(conn.name).toEqual(name);
       expect(conn.server).toEqual(server);
@@ -121,20 +124,20 @@ describe('Config class', () => {
 
   describe('constructor', () => {
     it('should load from default file', () => {
-      const file: string = Config.defaultConfigFile;
+      const file = Config.defaultConfigFile;
 
       mock({
         [file]: JSON.stringify({
           connections: [connection],
-          files,
           data,
-          output,
-          idempotency
+          files,
+          idempotency,
+          output
         })
       });
 
-      const config: Config = new Config();
-      const conn: Connection = config.connections[0] as Connection;
+      const config = new Config();
+      const conn = config.connections[0] as Connection;
 
       expect(conn.name).toEqual(name);
       expect(conn.server).toEqual(server);
@@ -151,20 +154,20 @@ describe('Config class', () => {
     });
 
     it('should load from specified file', () => {
-      const file: string = 'override-example.json';
+      const file = 'override-example.json';
 
       mock({
         [file]: JSON.stringify({
           connections: [connection],
-          files,
           data,
-          output,
-          idempotency
+          files,
+          idempotency,
+          output
         })
       });
 
-      const config: Config = new Config(file);
-      const conn: Connection = config.connections[0] as Connection;
+      const config = new Config(file);
+      const conn = config.connections[0] as Connection;
 
       expect(conn.name).toEqual(name);
       expect(conn.server).toEqual(server);
@@ -183,7 +186,7 @@ describe('Config class', () => {
 
   describe('getConnection method', () => {
     it('should return first connection', () => {
-      const file: string = Config.defaultConfigFile;
+      const file = Config.defaultConfigFile;
 
       mock({
         [file]: JSON.stringify({
@@ -191,8 +194,8 @@ describe('Config class', () => {
         })
       });
 
-      const config: Config = new Config();
-      const conn: Connection = config.getConnection();
+      const config = new Config();
+      const conn = config.getConnection();
 
       expect(conn.name).toEqual(name);
       expect(conn.server).toEqual(server);
@@ -205,7 +208,7 @@ describe('Config class', () => {
     });
 
     it('should return connection by name', () => {
-      const file: string = Config.defaultConfigFile;
+      const file = Config.defaultConfigFile;
 
       mock({
         [file]: JSON.stringify({
@@ -213,8 +216,8 @@ describe('Config class', () => {
         })
       });
 
-      const config: Config = new Config();
-      const conn: Connection = config.getConnection(name);
+      const config = new Config();
+      const conn = config.getConnection(name);
 
       expect(conn.name).toEqual(name);
       expect(conn.server).toEqual(server);
@@ -229,7 +232,7 @@ describe('Config class', () => {
 
   describe('getConnections method', () => {
     it('should return all conneections', () => {
-      const file: string = Config.defaultConfigFile;
+      const file = Config.defaultConfigFile;
 
       mock({
         [file]: JSON.stringify({
@@ -237,8 +240,8 @@ describe('Config class', () => {
         })
       });
 
-      const config: Config = new Config();
-      const conns: Connection[] = config.getConnections();
+      const config = new Config();
+      const conns = config.getConnections();
 
       expect(conns.length).toEqual(1);
 

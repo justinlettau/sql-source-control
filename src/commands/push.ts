@@ -11,7 +11,7 @@ import Connection from '../common/connection';
 import { PushOptions } from './interfaces';
 
 export default class Push {
-  constructor(private name: string, private options: PushOptions) { }
+  constructor(private name: string, private options: PushOptions) {}
 
   /**
    * Spinner instance.
@@ -22,24 +22,25 @@ export default class Push {
   /**
    * Invoke actions.
    */
-  public invoke(): void {
-    const config: Config = new Config(this.options.config);
-    const conn: Connection = config.getConnection(this.name);
+  invoke(): void {
+    const config = new Config(this.options.config);
+    const conn = config.getConnection(this.name);
 
-    inquirer.prompt<inquirer.Answers>([
-      {
-        name: 'continue',
-        message: [
-          'WARNING! All local SQL files will be executed against the requested database.',
-          'This can not be undone!',
-          'Make sure to backup your database first.',
-          EOL,
-          'Are you sure you want to continue?'
-        ].join(' '),
-        type: 'confirm',
-        when: !this.options.skip
-      }
-    ])
+    inquirer
+      .prompt<inquirer.Answers>([
+        {
+          message: [
+            'WARNING! All local SQL files will be executed against the requested database.',
+            'This can not be undone!',
+            'Make sure to backup your database first.',
+            EOL,
+            'Are you sure you want to continue?'
+          ].join(' '),
+          name: 'continue',
+          type: 'confirm',
+          when: !this.options.skip
+        }
+      ])
       .then(answers => {
         if (answers.continue === false) {
           throw new Error('Command aborted!');
@@ -57,18 +58,21 @@ export default class Push {
    * @param conn Connection used to execute commands.
    */
   private batch(config: Config, conn: Connection): Promise<any> {
-    const files: string[] = this.getFilesOrdered(config);
-    let promise: Promise<sql.ConnectionPool> = new sql.ConnectionPool(conn).connect();
+    const files = this.getFilesOrdered(config);
+    let promise = new sql.ConnectionPool(conn).connect();
 
     this.spinner.start(`Pushing to ${chalk.blue(conn.server)} ...`);
 
     files.forEach(file => {
-      const content: string = fs.readFileSync(file, 'utf8');
-      const statements: string[] = content.split('GO' + EOL);
+      const content = fs.readFileSync(file, 'utf8');
+      const statements = content.split('GO' + EOL);
 
       statements.forEach(statement => {
         promise = promise.then(pool => {
-          return pool.request().batch(statement).then(() => pool);
+          return pool
+            .request()
+            .batch(statement)
+            .then(() => pool);
         });
       });
     });
@@ -81,9 +85,9 @@ export default class Push {
    *
    * @param config Configuration used to search for connection.
    */
-  private getFilesOrdered(config: Config): string[] {
+  private getFilesOrdered(config: Config) {
     const output: string[] = [];
-    const directories: string[] = [
+    const directories = [
       config.output.schemas,
       config.output.tables,
       config.output.types,
@@ -92,11 +96,11 @@ export default class Push {
       config.output.procs,
       config.output.triggers,
       config.output.data
-    ] as string[];
+    ];
 
     directories.forEach(dir => {
       if (dir) {
-        const files: string[] = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
+        const files = glob.sync(`${config.output.root}/${dir}/**/*.sql`);
         output.push(...files);
       }
     });
