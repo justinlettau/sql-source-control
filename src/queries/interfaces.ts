@@ -67,7 +67,7 @@ export interface SqlPrimaryKey {
   is_descending_key: boolean;
   name: string;
   column: string;
-  index_id: number;
+  type: 'CLUSTERED' | 'NONCLUSTERED' | 'HEAP';
 }
 
 /**

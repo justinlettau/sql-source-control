@@ -14,7 +14,7 @@ import {
   SqlTable,
   SqlType
 } from '../queries/interfaces';
-import { GroupedIndexes } from './interfaces';
+import { GroupedObjects } from './interfaces';
 
 /**
  * MSSQL generator.
@@ -199,27 +199,21 @@ export default class MSSQLGenerator {
     columns
       .filter(x => x.object_id === item.object_id)
       .forEach(col => {
-        output += '    ' + this.column(col) + ',';
+        output += this.indent() + this.column(col) + ',';
         output += EOL;
       });
 
-    const grouped = primaryKeys
-      .filter(x => x.object_id === item.object_id)
-      .reduce<GroupedIndexes>((prev, cur) => {
-        const group = (prev[cur.object_id] = prev[cur.object_id] || []);
-        group.push(cur);
-        return prev;
-      }, {});
+    primaryKeys = primaryKeys.filter(x => x.object_id === item.object_id);
+    foreignKeys = foreignKeys.filter(x => x.object_id === item.object_id);
+    indexes = indexes.filter(x => x.object_id === item.object_id);
 
-    Object.keys(grouped).forEach(pk => {
-      output += '    ' + this.primaryKey(grouped[pk]);
+    const groupedKeys = this.groupByName(primaryKeys);
+    Object.keys(groupedKeys).forEach(name => {
+      output += this.primaryKey(groupedKeys[name]);
       output += EOL;
     });
 
     output += ')';
-
-    foreignKeys = foreignKeys.filter(x => x.object_id === item.object_id);
-    indexes = indexes.filter(x => x.object_id === item.object_id);
 
     if (foreignKeys.length || indexes.length) {
       output += EOL;
@@ -235,8 +229,9 @@ export default class MSSQLGenerator {
       output += EOL;
     }
 
-    indexes.forEach(index => {
-      output += this.index(index);
+    const groupedIndexes = this.groupByName(indexes);
+    Object.keys(groupedIndexes).forEach(name => {
+      output += this.index(groupedIndexes[name]);
       output += EOL;
     });
 
@@ -288,11 +283,11 @@ export default class MSSQLGenerator {
       case 'if-exists-drop':
         output += 'IF EXISTS (';
         output += EOL;
-        output += '    SELECT 1 FROM sys.table_types AS t';
+        output += this.indent() + 'SELECT 1 FROM sys.table_types AS t';
         output += EOL;
-        output += '    JOIN sys.schemas s ON t.schema_id = s.schema_id';
+        output += this.indent() + 'JOIN sys.schemas s ON t.schema_id = s.schema_id';
         output += EOL;
-        output += `    WHERE t.name = '${item.name}' AND s.name = '${item.schema}'`;
+        output += this.indent() + `WHERE t.name = '${item.name}' AND s.name = '${item.schema}'`;
         output += EOL;
         output += ')';
         output += EOL;
@@ -315,7 +310,7 @@ export default class MSSQLGenerator {
     columns
       .filter(x => x.object_id === item.object_id)
       .forEach((col, idx, array) => {
-        output += '    ' + this.column(col);
+        output += this.indent() + this.column(col);
 
         if (idx !== array.length - 1) {
           // not the last column
@@ -358,6 +353,23 @@ export default class MSSQLGenerator {
     output += item.text;
 
     return output;
+  }
+
+  /**
+   * Group a collection of items by name.
+   *
+   * @param items Collection of items to group.
+   */
+  private groupByName<T extends { name: string }>(items: T[]) {
+    return items.reduce(
+      (prev, cur) => {
+        const group = (prev[cur.name] = prev[cur.name] || []);
+        group.push(cur);
+
+        return prev;
+      },
+      {} as GroupedObjects<T>
+    );
   }
 
   /**
@@ -454,29 +466,37 @@ export default class MSSQLGenerator {
     const first = items[0];
     let output = '';
 
-    output += `CONSTRAINT [${first.name}] PRIMARY KEY `;
+    output += this.indent() + `CONSTRAINT [${first.name}] PRIMARY KEY `;
 
-    if (first.index_id === 1) {
-      output += 'CLUSTERED ';
-    } else if (first.index_id > 1) {
-      output += 'NONCLUSTERED ';
+    switch (first.type) {
+      case 'CLUSTERED':
+        output += 'CLUSTERED ';
+        break;
+      case 'NONCLUSTERED':
+        output += 'NONCLUSTERED ';
+        break;
     }
 
-    output += '(';
-    output += EOL;
-
-    items.forEach((item, idx, array) => {
-      output += `        ` + this.primaryKeyColumn(item);
-
-      if (idx !== array.length - 1) {
-        // not the last column
-        output += ',';
-      }
-
+    if (items.length > 1) {
       output += EOL;
-    });
+      output += this.indent() + '(';
+      output += EOL;
 
-    output += '    )';
+      items.forEach((item, idx, array) => {
+        output += this.indent(2) + this.primaryKeyColumn(item);
+
+        if (idx !== array.length - 1) {
+          // not the last column
+          output += ',';
+        }
+
+        output += EOL;
+      });
+
+      output += this.indent() + ')';
+    } else {
+      output += '(' + this.primaryKeyColumn(first) + ')';
+    }
 
     return output;
   }
@@ -536,31 +556,67 @@ export default class MSSQLGenerator {
   }
 
   /**
-   * Get script for table's indexes.
+   * Get script for table's index.
    *
-   * @param item Row from query.
+   * @param items Rows from query.
    */
-  private index(item: SqlIndex) {
-    const objectId = `[${item.schema}].[${item.table}]`;
+  private index(items: SqlIndex[]) {
+    const first = items[0];
+    const objectId = `[${first.schema}].[${first.table}]`;
     let output = '';
 
     output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${
-      item.name
+      first.name
     }')`;
     output += EOL;
     output += 'CREATE';
 
-    if (item.is_unique) {
+    if (first.is_unique) {
       output += ' UNIQUE';
     }
 
-    output += ` NONCLUSTERED INDEX [${item.name}] ON ${objectId}`;
-    output += `([${item.column}] ${item.is_descending_key ? 'DESC' : 'ASC'})`;
+    output += ` NONCLUSTERED INDEX [${first.name}] ON ${objectId}`;
+    output += '(';
 
-    // todo (jbl): includes
+    if (items.length > 1) {
+      output += EOL;
 
+      items.forEach((item, idx, array) => {
+        output += this.indent() + this.indexColumn(item);
+
+        if (idx !== array.length - 1) {
+          // not the last column
+          output += ',';
+        }
+
+        output += EOL;
+      });
+    } else {
+      output += this.indexColumn(first);
+    }
+
+    output += ')';
     output += EOL;
 
     return output;
+  }
+
+  /**
+   * Get script for an individual index column.
+   *
+   * @param item Row from query.
+   */
+  private indexColumn(item: SqlIndex) {
+    const direction = item.is_descending_key ? 'DESC' : 'ASC';
+    return `[${item.column}] ${direction}`;
+  }
+
+  /**
+   * Generate indentation spacing.
+   *
+   * @param count Number of levels to indent.
+   */
+  private indent(count = 1) {
+    return '    '.repeat(count);
   }
 }

@@ -7,7 +7,7 @@ export const tablesRead = `
     o.type,
     s.name AS [schema],
     o.name,
-    isnull(c.identity_count, 0) AS [identity_count]
+    ISNULL(c.identity_count, 0) AS [identity_count]
   FROM
     sys.objects o
     JOIN sys.schemas s ON o.schema_id = s.schema_id
@@ -70,7 +70,11 @@ export const primaryKeysRead = `
     ic.is_descending_key,
     k.name,
     c.name AS [column],
-    ic.index_id
+    CASE
+      WHEN ic.index_id = 1 THEN 'CLUSTERED'
+      WHEN ic.index_id > 1 THEN 'NONCLUSTERED'
+      ELSE 'HEAP'
+    END as [type]
   FROM
     sys.index_columns ic
     JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
@@ -126,7 +130,7 @@ export const indexesRead = `
     JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
     JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type = 2
     INNER JOIN sys.objects ro ON ro.object_id = c.object_id
-  where
+  WHERE
     ro.is_ms_shipped = 0
     AND ic.is_included_column = 0
   ORDER BY
@@ -148,7 +152,7 @@ export const typesRead = `
     sys.table_types t
     INNER JOIN sys.objects o ON o.object_id = t.type_table_object_id
     JOIN sys.schemas s ON t.schema_id = s.schema_id
-  where
+  WHERE
     o.type = 'TT'
     AND t.is_user_defined = 1
   ORDER BY

@@ -1,8 +1,6 @@
-import { SqlPrimaryKey } from '../queries/interfaces';
-
 /**
- * Primary key's grouped by name.
+ * Grouped sql objects.
  */
-export interface GroupedIndexes {
-  [key: string]: SqlPrimaryKey[];
+export interface GroupedObjects<T> {
+  [key: string]: T[];
 }
