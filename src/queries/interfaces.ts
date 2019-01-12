@@ -46,6 +46,7 @@ export interface SqlColumn {
   object_id: number;
   name: string;
   datatype: string;
+  is_user_defined: boolean;
   max_length: number;
   is_computed: boolean;
   precision: number;

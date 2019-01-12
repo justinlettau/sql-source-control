@@ -16,7 +16,6 @@ export default class Push {
   /**
    * Spinner instance.
    */
-  // tslint:disable-next-line:typedef
   private spinner = ora();
 
   /**

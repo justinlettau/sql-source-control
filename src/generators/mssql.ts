@@ -225,10 +225,6 @@ export default class MSSQLGenerator {
       output += EOL;
     });
 
-    if (foreignKeys.length && indexes.length) {
-      output += EOL;
-    }
-
     const groupedIndexes = this.groupByName(indexes);
     Object.keys(groupedIndexes).forEach(name => {
       output += this.index(groupedIndexes[name]);
@@ -440,7 +436,7 @@ export default class MSSQLGenerator {
         break;
     }
 
-    if (item.collation_name) {
+    if (item.collation_name && !item.is_user_defined) {
       output += ` COLLATE ${item.collation_name}`;
     }
 
@@ -518,10 +514,16 @@ export default class MSSQLGenerator {
    */
   private foreignKey(item: SqlForeignKey): string {
     const objectId = `[${item.schema}].[${item.table}]`;
+    const keyObjectId = `[${item.schema}].[${item.name}]`;
     const parentObjectId = `[${item.parent_schema}].[${item.parent_table}]`;
     let output = '';
 
-    output += `ALTER TABLE ${objectId} WITH ${item.is_not_trusted ? 'NOCHECK' : 'CHECK'}`;
+    output += `IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE object_id = OBJECT_ID('${keyObjectId}') AND parent_object_id = OBJECT_ID('${objectId}'))`;
+    output += EOL;
+    output += 'BEGIN';
+    output += EOL;
+
+    output += this.indent() + `ALTER TABLE ${objectId} WITH ${item.is_not_trusted ? 'NOCHECK' : 'CHECK'}`;
     output += ` ADD CONSTRAINT [${item.name}] FOREIGN KEY ([${item.column}])`;
     output += ` REFERENCES ${parentObjectId} ([${item.reference}])`;
 
@@ -550,7 +552,10 @@ export default class MSSQLGenerator {
     }
 
     output += EOL;
-    output += `ALTER TABLE ${objectId} CHECK CONSTRAINT [${item.name}]`;
+    output += this.indent() + `ALTER TABLE ${objectId} CHECK CONSTRAINT [${item.name}]`;
+    output += EOL;
+    output += 'END';
+    output += EOL;
 
     return output;
   }

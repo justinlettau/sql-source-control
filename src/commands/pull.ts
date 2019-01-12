@@ -34,7 +34,6 @@ export default class Pull {
   /**
    * Spinner instance.
    */
-  // tslint:disable-next-line:typedef
   private spinner = ora();
 
   /**
