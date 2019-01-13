@@ -148,14 +148,19 @@ export const typesRead = `
     o.object_id,
     o.type,
     s.name AS [schema],
-    t.name
+    t.name,
+    TYPE_NAME(t.system_type_id) as [system_type],
+    t.max_length,
+    t.precision,
+    t.scale,
+    t.is_nullable
   FROM
-    sys.table_types t
-    INNER JOIN sys.objects o ON o.object_id = t.type_table_object_id
+    sys.types t
+    LEFT JOIN sys.table_types tt ON tt.user_type_id = t.user_type_id
+    LEFT JOIN sys.objects o ON o.object_id = tt.type_table_object_id
     JOIN sys.schemas s ON t.schema_id = s.schema_id
   WHERE
-    o.type = 'TT'
-    AND t.is_user_defined = 1
+    t.is_user_defined = 1
   ORDER BY
     s.name,
     o.name

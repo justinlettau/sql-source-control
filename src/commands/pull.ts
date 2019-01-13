@@ -173,12 +173,24 @@ export default class Pull {
     });
 
     // types
-    types.forEach(item => {
-      const name = `${item.schema}.${item.name}.sql`;
-      const content = generator.type(item, columns);
+    types
+      .filter(item => !item.type)
+      .forEach(item => {
+        const name = `${item.schema}.${item.name}.sql`;
+        const content = generator.type(item);
 
-      file.write(config.output.types, name, content);
-    });
+        file.write(config.output.types, name, content);
+      });
+
+    // table types
+    types
+      .filter(item => item.type && item.type.trim() === 'TT')
+      .forEach(item => {
+        const name = `${item.schema}.${item.name}.sql`;
+        const content = generator.tableType(item, columns);
+
+        file.write(config.output.types, name, content);
+      });
 
     // data
     data.forEach(item => {

@@ -268,9 +268,70 @@ export default class MSSQLGenerator {
    * Get type file content.
    *
    * @param item Row from query.
+   */
+  type(item: SqlType) {
+    const objectId = `[${item.schema}].[${item.name}]`;
+    let output = '';
+
+    switch (this.config.idempotency.types) {
+      case 'if-exists-drop':
+        output += 'IF EXISTS (';
+        output += EOL;
+        output += this.indent() + 'SELECT 1 FROM sys.types AS t';
+        output += EOL;
+        output += this.indent() + 'JOIN sys.schemas s ON t.schema_id = s.schema_id';
+        output += EOL;
+        output += this.indent() + `WHERE t.name = '${item.name}' AND s.name = '${item.schema}'`;
+        output += EOL;
+        output += ')';
+        output += EOL;
+        output += `DROP TYPE ${item.name}`;
+        output += EOL;
+        output += 'GO';
+        output += EOL;
+        break;
+      case 'if-not-exists':
+        output += `IF NOT EXISTS (`;
+        output += EOL;
+        output += this.indent() + 'SELECT 1 FROM sys.types AS t';
+        output += EOL;
+        output += this.indent() + 'JOIN sys.schemas s ON t.schema_id = s.schema_id';
+        output += EOL;
+        output += this.indent() + `WHERE t.name = '${item.name}' AND s.name = '${item.schema}'`;
+        output += EOL;
+        output += ')';
+        output += EOL;
+        break;
+    }
+
+    output += `CREATE TYPE ${objectId}`;
+    output += EOL;
+    output += `FROM ${item.system_type.toUpperCase()}`;
+
+    switch (item.system_type) {
+      case 'char':
+      case 'nvarchar':
+      case 'varchar':
+        output += `(${item.max_length === -1 ? 'max' : item.max_length})`;
+        break;
+      case 'decimal':
+      case 'numeric':
+        output += `(${item.scale},${item.precision})`;
+        break;
+    }
+
+    output += item.is_nullable ? ' NULL' : ' NOT NULL';
+
+    return output;
+  }
+
+  /**
+   * Get table type file content.
+   *
+   * @param item Row from query.
    * @param columns Columns from query.
    */
-  type(item: SqlType, columns: SqlColumn[]) {
+  tableType(item: SqlType, columns: SqlColumn[]) {
     const objectId = `[${item.schema}].[${item.name}]`;
     const type = item.type.trim();
     let output = '';
