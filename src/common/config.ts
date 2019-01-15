@@ -120,6 +120,7 @@ export default class Config implements IConfig {
   output: OutputConfig = {
     data: './data',
     functions: './functions',
+    jobs: './jobs',
     procs: './stored-procedures',
     root: './_sql-database',
     schemas: './schemas',
@@ -135,6 +136,7 @@ export default class Config implements IConfig {
   idempotency: IdempotencyConfig = {
     data: 'truncate',
     functions: 'if-exists-drop',
+    jobs: 'if-exists-drop',
     procs: 'if-exists-drop',
     tables: 'if-not-exists',
     triggers: 'if-exists-drop',

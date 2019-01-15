@@ -3,18 +3,21 @@ import { EOL } from 'os';
 import { isBoolean, isDate, isNull, isString } from 'ts-util-is';
 
 import Config from '../common/config';
+import { Helpers } from '../common/helpers';
 import {
   SqlColumn,
   SqlDataResult,
   SqlForeignKey,
   SqlIndex,
+  SqlJob,
+  SqlJobSchedule,
+  SqlJobStep,
   SqlObject,
   SqlPrimaryKey,
   SqlSchema,
   SqlTable,
   SqlType
 } from '../queries/interfaces';
-import { GroupedObjects } from './interfaces';
 
 /**
  * MSSQL generator.
@@ -207,7 +210,7 @@ export default class MSSQLGenerator {
     foreignKeys = foreignKeys.filter(x => x.object_id === item.object_id);
     indexes = indexes.filter(x => x.object_id === item.object_id);
 
-    const groupedKeys = this.groupByName(primaryKeys);
+    const groupedKeys = Helpers.groupByName(primaryKeys, 'name');
     Object.keys(groupedKeys).forEach(name => {
       output += this.primaryKey(groupedKeys[name]);
       output += EOL;
@@ -225,7 +228,7 @@ export default class MSSQLGenerator {
       output += EOL;
     });
 
-    const groupedIndexes = this.groupByName(indexes);
+    const groupedIndexes = Helpers.groupByName(indexes, 'name');
     Object.keys(groupedIndexes).forEach(name => {
       output += this.index(groupedIndexes[name]);
       output += EOL;
@@ -413,20 +416,39 @@ export default class MSSQLGenerator {
   }
 
   /**
-   * Group a collection of items by name.
+   * Get job file content.
    *
-   * @param items Collection of items to group.
+   * @param steps Steps from query.
+   * @param schedules Schedules from query.
    */
-  private groupByName<T extends { name: string }>(items: T[]) {
-    return items.reduce(
-      (prev, cur) => {
-        const group = (prev[cur.name] = prev[cur.name] || []);
-        group.push(cur);
+  job(job: SqlJob, steps: SqlJobStep[], schedules: SqlJobSchedule[]) {
+    let output = '';
 
-        return prev;
-      },
-      {} as GroupedObjects<T>
-    );
+    switch (this.config.idempotency.views) {
+      case 'if-exists-drop':
+        output += `IF EXISTS (SELECT 1 FROM msdb.dbo.sysjobs WHERE name = '${job.name}')`;
+        output += EOL;
+        output += `EXEC msdb.dbo.sp_delete_job @job_name = '${job.name}'`;
+        output += EOL;
+        output += 'GO';
+        output += EOL;
+        output += EOL;
+        output += this.addJob(job, steps, schedules);
+        output += EOL;
+        break;
+      case 'if-not-exists':
+        output += `IF NOT EXISTS (SELECT 1 FROM msdb.dbo.sysjobs WHERE name = '${job.name}')`;
+        output += EOL;
+        output += 'BEGIN';
+        output += EOL;
+        output += this.addJob(job, steps, schedules);
+        output += EOL;
+        output += 'END';
+        output += EOL;
+        break;
+    }
+
+    return output;
   }
 
   /**
@@ -675,6 +697,148 @@ export default class MSSQLGenerator {
   private indexColumn(item: SqlIndex) {
     const direction = item.is_descending_key ? 'DESC' : 'ASC';
     return `[${item.column}] ${direction}`;
+  }
+
+  /**
+   * Get job file content.
+   *
+   * @param steps Steps from query.
+   * @param schedules Schedules from query.
+   */
+  private addJob(job: SqlJob, steps: SqlJobStep[], schedules: SqlJobSchedule[]) {
+    let output = '';
+
+    // job
+    output += 'EXEC msdb.dbo.sp_add_job ';
+    output += EOL;
+    output += this.indent() + `@job_name = N'${job.name}',`;
+    output += EOL;
+    output += this.indent() + `@enabled = ${job.enabled},`;
+    output += EOL;
+    output += this.indent() + `@description = N'${job.description}',`;
+    output += EOL;
+    output += this.indent() + `@notify_level_eventlog = ${job.notify_level_eventlog},`;
+    output += EOL;
+    output += this.indent() + `@notify_level_email = ${job.notify_level_email},`;
+    output += EOL;
+    output += this.indent() + `@notify_level_netsend = ${job.notify_level_netsend},`;
+    output += EOL;
+    output += this.indent() + `@notify_level_page = ${job.notify_level_page},`;
+    output += EOL;
+    output += this.indent() + `@delete_level = ${job.delete_level};`;
+    output += EOL;
+    output += 'GO';
+    output += EOL;
+    output += EOL;
+
+    // steps
+    steps.forEach(step => {
+      output += 'EXEC msdb.dbo.sp_add_jobstep';
+      output += EOL;
+      output += this.indent() + `@job_name = N'${step.job_name}',`;
+      output += EOL;
+      output += this.indent() + `@step_name = N'${step.step_name}',`;
+      output += EOL;
+      output += this.indent() + `@subsystem = N'${step.subsystem}',`;
+      output += EOL;
+      output += this.indent() + `@command = N'${step.command}',`;
+      output += EOL;
+
+      if (step.additional_parameters) {
+        output += this.indent() + `@additional_parameters = N'${step.additional_parameters}',`;
+        output += EOL;
+      }
+
+      output += this.indent() + `@cmdexec_success_code = ${step.cmdexec_success_code},`;
+      output += EOL;
+      output += this.indent() + `@on_success_action = ${step.on_success_action},`;
+      output += EOL;
+      output += this.indent() + `@on_success_step_id = ${step.on_success_step_id},`;
+      output += EOL;
+      output += this.indent() + `@on_fail_action = ${step.on_fail_action},`;
+      output += EOL;
+      output += this.indent() + `@on_fail_step_id = ${step.on_fail_step_id},`;
+      output += EOL;
+      output += this.indent() + `@database_name = N'${step.database_name}',`;
+      output += EOL;
+
+      if (step.database_user_name) {
+        output += this.indent() + `@database_user_name = N'${step.database_user_name}',`;
+        output += EOL;
+      }
+
+      output += this.indent() + `@retry_attempts = ${step.retry_attempts},`;
+      output += EOL;
+      output += this.indent() + `@retry_interval = ${step.retry_interval},`;
+      output += EOL;
+      output += this.indent() + `@os_run_priority = ${step.os_run_priority},`;
+      output += EOL;
+      output += this.indent() + `@flags = ${step.flags};`;
+      output += EOL;
+      output += 'GO';
+      output += EOL;
+      output += EOL;
+    });
+
+    // schedule
+    if (schedules.length) {
+      output += 'EXEC msdb.dbo.sp_add_schedule';
+      output += EOL;
+
+      schedules.forEach(schedule => {
+        output += this.indent() + `@schedule_name = N'${schedule.schedule_name}',`;
+        output += EOL;
+        output += this.indent() + `@enabled = ${schedule.enabled},`;
+        output += EOL;
+        output += this.indent() + `@freq_type = ${schedule.freq_type},`;
+        output += EOL;
+        output += this.indent() + `@freq_interval = ${schedule.freq_interval},`;
+        output += EOL;
+        output += this.indent() + `@freq_subday_type = ${schedule.freq_subday_type},`;
+        output += EOL;
+        output += this.indent() + `@freq_subday_interval = ${schedule.freq_subday_interval},`;
+        output += EOL;
+        output += this.indent() + `@freq_relative_interval = ${schedule.freq_relative_interval},`;
+        output += EOL;
+        output += this.indent() + `@freq_recurrence_factor = ${schedule.freq_recurrence_factor},`;
+        output += EOL;
+        output += this.indent() + `@active_start_date = ${schedule.active_start_date},`;
+        output += EOL;
+        output += this.indent() + `@active_end_date = ${schedule.active_end_date},`;
+        output += EOL;
+        output += this.indent() + `@active_start_time = ${schedule.active_start_time},`;
+        output += EOL;
+        output += this.indent() + `@active_end_time = ${schedule.active_end_time};`;
+        output += EOL;
+      });
+
+      output += 'GO';
+      output += EOL;
+      output += EOL;
+
+      // attach
+      const scheduleName = schedules[0].schedule_name;
+
+      output += 'EXEC msdb.dbo.sp_attach_schedule';
+      output += EOL;
+      output += this.indent() + `@job_name = N'${job.name}',`;
+      output += EOL;
+      output += this.indent() + `@schedule_name = N'${scheduleName}';`;
+      output += EOL;
+      output += 'GO';
+      output += EOL;
+      output += EOL;
+    }
+
+    // job server
+    output += 'EXEC msdb.dbo.sp_add_jobserver';
+    output += EOL;
+    output += this.indent() + `@job_name = N'${job.name}';`;
+    output += EOL;
+    output += 'GO';
+    output += EOL;
+
+    return output;
   }
 
   /**

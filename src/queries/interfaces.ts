@@ -115,3 +115,63 @@ export interface SqlIndex {
 export interface SqlObject extends AbstractSqlObject {
   text: string;
 }
+
+/**
+ * SQL job.
+ */
+export interface SqlJob {
+  job_id: string;
+  enabled: boolean;
+  name: string;
+  description: string;
+  notify_level_eventlog: number;
+  notify_level_email: number;
+  notify_level_netsend: number;
+  notify_level_page: number;
+  delete_level: number;
+}
+
+/**
+ * SQL job step.
+ */
+export interface SqlJobStep {
+  job_id: string;
+  job_name: string;
+  step_uid: string;
+  step_number: number;
+  step_name: string;
+  subsystem: string;
+  command: string;
+  additional_parameters: string;
+  cmdexec_success_code: number;
+  on_success_action: number;
+  on_success_step_id: number;
+  on_fail_action: number;
+  on_fail_step_id: number;
+  database_name: string;
+  database_user_name: string;
+  retry_attempts: number;
+  retry_interval: number;
+  os_run_priority: number;
+  flags: number;
+}
+
+/**
+ * SQL job schedule.
+ */
+export interface SqlJobSchedule {
+  job_id: string;
+  schedule_uid: string;
+  schedule_name: string;
+  enabled: boolean;
+  freq_type: number;
+  freq_interval: number;
+  freq_subday_type: number;
+  freq_subday_interval: number;
+  freq_relative_interval: number;
+  freq_recurrence_factor: number;
+  active_start_date: number;
+  active_end_date: number;
+  active_start_time: number;
+  active_end_time: number;
+}

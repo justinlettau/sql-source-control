@@ -4,7 +4,6 @@ import * as multimatch from 'multimatch';
 import * as ora from 'ora';
 
 import Config from '../common/config';
-import Connection from '../common/connection';
 import FileUtility from '../common/file-utility';
 import MSSQLGenerator from '../generators/mssql';
 import {
@@ -12,6 +11,9 @@ import {
   SqlDataResult,
   SqlForeignKey,
   SqlIndex,
+  SqlJob,
+  SqlJobSchedule,
+  SqlJobStep,
   SqlObject,
   SqlPrimaryKey,
   SqlTable,
@@ -21,6 +23,9 @@ import {
   columnsRead,
   foreignKeysRead,
   indexesRead,
+  jobSchedulesRead,
+  jobsRead,
+  jobStepsRead,
   objectsRead,
   primaryKeysRead,
   tablesRead,
@@ -39,7 +44,7 @@ export default class Pull {
   /**
    * Invoke action.
    */
-  invoke(): void {
+  invoke() {
     const config = new Config(this.options.config);
     const conn = config.getConnection(this.name);
 
@@ -56,7 +61,10 @@ export default class Pull {
           pool.request().query(primaryKeysRead),
           pool.request().query(foreignKeysRead),
           pool.request().query(indexesRead),
-          pool.request().query(typesRead)
+          pool.request().query(typesRead),
+          pool.request().query(jobsRead(conn.database)),
+          pool.request().query(jobStepsRead(conn.database)),
+          pool.request().query(jobSchedulesRead(conn.database))
         ])
           .then(results => {
             const tables: sql.IRecordSet<SqlTable> = results[1].recordset;
@@ -107,7 +115,10 @@ export default class Pull {
     const foreignKeys: SqlForeignKey[] = results[4].recordset;
     const indexes: SqlIndex[] = results[5].recordset;
     const types: SqlType[] = results[6].recordset;
-    const data: SqlDataResult[] = results.slice(7);
+    const jobs: SqlJob[] = results[7].recordset;
+    const jobSteps: SqlJobStep[] = results[8].recordset;
+    const jobSchedules: SqlJobSchedule[] = results[9].recordset;
+    const data: SqlDataResult[] = results.slice(10);
 
     const generator = new MSSQLGenerator(config);
     const file = new FileUtility(config);
@@ -198,6 +209,16 @@ export default class Pull {
       const content = generator.data(item);
 
       file.write(config.output.data, name, content);
+    });
+
+    // jobs
+    jobs.forEach(item => {
+      const steps = jobSteps.filter(x => x.job_id === item.job_id);
+      const schedules = jobSchedules.filter(x => x.job_id === item.job_id);
+      const name = `${item.name}.sql`;
+      const content = generator.job(item, steps, schedules);
+
+      file.write(config.output.jobs, name, content);
     });
 
     const msg = file.finalize();

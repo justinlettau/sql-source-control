@@ -197,7 +197,90 @@ export const objectsRead = `
     INNER JOIN syscomments sc ON sc.id = so.object_id AND so.type in ('P', 'V', 'TF', 'IF', 'FN', 'TR')
     INNER JOIN sys.schemas s ON s.schema_id = so.schema_id
   GROUP BY
-    so.name
-    ,s.name
-    ,so.type
+    so.name,
+    s.name,
+    so.type
+`;
+
+/**
+ * Get SQL information for jobs.
+ */
+export const jobsRead = (database: string) => `
+  SELECT DISTINCT
+    j.job_id,
+    j.name,
+    j.enabled,
+    j.description,
+    j.notify_level_eventlog,
+    j.notify_level_email,
+    j.notify_level_netsend,
+    j.notify_level_page,
+    j.delete_level
+  FROM
+    msdb.dbo.sysjobs j
+    LEFT JOIN msdb.dbo.sysjobsteps s ON s.job_id = j.job_id
+  WHERE
+    s.database_name = '${database}'
+  ORDER BY
+    j.name
+`;
+
+/**
+ * Get SQL information for jobs.
+ */
+export const jobStepsRead = (database: string) => `
+  SELECT
+    s.job_id,
+    j.name as [job_name],
+    s.step_uid,
+    s.step_id AS step_number,
+    s.step_name,
+    s.subsystem,
+    s.command,
+    s.additional_parameters,
+    s.cmdexec_success_code,
+    s.on_success_action,
+    s.on_success_step_id,
+    s.on_fail_action,
+    s.on_fail_step_id,
+    s.database_name,
+    s.database_user_name,
+    s.retry_attempts,
+    s.retry_interval,
+    s.os_run_priority,
+    s.flags
+  FROM
+    msdb.dbo.sysjobsteps s
+    INNER JOIN msdb.dbo.sysjobs j ON j.job_id = s.job_id
+  WHERE
+    s.database_name = '${database}'
+  ORDER BY
+    s.job_id,
+    s.step_id
+`;
+
+/**
+ * Get SQL information for job schedules.
+ */
+export const jobSchedulesRead = (database: string) => `
+  SELECT
+    s.schedule_uid,
+    s.name AS [schedule_name],
+    s.enabled,
+    s.freq_type,
+    s.freq_interval,
+    s.freq_subday_type,
+    s.freq_subday_interval,
+    s.freq_relative_interval,
+    s.freq_recurrence_factor,
+    s.active_start_date,
+    s.active_end_date,
+    s.active_start_time,
+    s.active_end_time,
+    js.job_id
+  FROM
+    msdb.dbo.sysschedules s
+    INNER JOIN msdb.dbo.sysjobschedules js ON js.schedule_id = s.schedule_id
+  ORDER BY
+    s.name
 `;

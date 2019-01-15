@@ -21,7 +21,7 @@ export default class Push {
   /**
    * Invoke actions.
    */
-  invoke(): void {
+  invoke() {
     const config = new Config(this.options.config);
     const conn = config.getConnection(this.name);
 
@@ -29,7 +29,7 @@ export default class Push {
       .prompt<inquirer.Answers>([
         {
           message: [
-            'WARNING! All local SQL files will be executed against the requested database.',
+            `${chalk.yellow('WARNING!')} All local SQL files will be executed against the requested database.`,
             'This can not be undone!',
             'Make sure to backup your database first.',
             EOL,
@@ -56,7 +56,7 @@ export default class Push {
    * @param config Configuration used to execute commands.
    * @param conn Connection used to execute commands.
    */
-  private batch(config: Config, conn: Connection): Promise<any> {
+  private batch(config: Config, conn: Connection) {
     const files = this.getFilesOrdered(config);
     let promise = new sql.ConnectionPool(conn).connect();
 
@@ -94,7 +94,8 @@ export default class Push {
       config.output.functions,
       config.output.procs,
       config.output.triggers,
-      config.output.data
+      config.output.data,
+      config.output.jobs
     ];
 
     directories.forEach(dir => {

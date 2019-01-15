@@ -48,6 +48,7 @@ export interface IConnection {
 export interface IdempotencyConfig {
   data?: IdempotencyData;
   functions?: IdempotencyObject;
+  jobs?: IdempotencyObject;
   procs?: IdempotencyObject;
   tables?: IdempotencyObject;
   triggers?: IdempotencyObject;
@@ -62,6 +63,7 @@ export interface OutputConfig {
   root?: string;
   data?: string | false;
   functions?: string | false;
+  jobs?: string | false;
   procs?: string | false;
   schemas?: string | false;
   tables?: string | false;
