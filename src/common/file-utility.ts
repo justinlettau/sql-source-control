@@ -70,7 +70,7 @@ export default class FileUtility {
       return;
     }
 
-    file = path.join(this.config.output.root, dir, file);
+    file = path.join(this.config.getRoot(), dir, file);
     content = content.trim();
 
     const cacheKey = this.normalize(file);
@@ -160,7 +160,9 @@ export default class FileUtility {
    * @param file File path to normalize.
    */
   private normalize(file: string) {
-    if (this.config.output.root.startsWith('./') && !file.startsWith('./')) {
+    const root = this.config.getRoot();
+
+    if (root.startsWith('./') && !file.startsWith('./')) {
       file = `./${file}`;
     }
 
@@ -171,7 +173,7 @@ export default class FileUtility {
    * Load existing files and cache for comparison.
    */
   private load() {
-    this.existingFiles = glob.sync(`${this.config.output.root}/**/*.sql`);
+    this.existingFiles = glob.sync(`${this.config.getRoot()}/**/*.sql`);
     this.existingCache.load();
   }
 }

@@ -145,6 +145,19 @@ export default class Config implements IConfig {
   };
 
   /**
+   * Get root output directory.
+   */
+  getRoot() {
+    let root = this.output.root;
+
+    if (!root || root === '.') {
+      root = './';
+    }
+
+    return root;
+  }
+
+  /**
    * Get a connection by name, or the first available if `name` is not provided.
    *
    * @param name Optional connection `name` to get.
