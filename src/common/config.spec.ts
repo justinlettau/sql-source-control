@@ -23,6 +23,78 @@ describe('Config class', () => {
   const output: OutputConfig = { root: './my-database' };
   const idempotency: IdempotencyConfig = { triggers: false };
 
+  beforeEach(() => {
+    mock.restore();
+  });
+
+  describe('getRoot method', () => {
+    it('should return default root path', () => {
+      const file = Config.defaultConfigFile;
+
+      mock({
+        [file]: JSON.stringify({
+          connections: [connection]
+        })
+      });
+
+      const config = new Config();
+      const root = config.getRoot();
+
+      expect(root).toEqual('./_sql-database');
+    });
+
+    it('should return override root path', () => {
+      const file = 'override-example.json';
+
+      mock({
+        [file]: JSON.stringify({
+          connections: [connection],
+          output
+        })
+      });
+
+      const config = new Config(file);
+      const root = config.getRoot();
+
+      expect(root).toEqual('./my-database');
+    });
+
+    it('should return relative path when no root provided', () => {
+      const file = 'override-example.json';
+
+      mock({
+        [file]: JSON.stringify({
+          connections: [connection],
+          output: {
+            root: ''
+          }
+        })
+      });
+
+      const config = new Config(file);
+      const root = config.getRoot();
+
+      expect(root).toEqual('./');
+    });
+
+    it('should return relative path when "." provided', () => {
+      const file = 'override-example.json';
+
+      mock({
+        [file]: JSON.stringify({
+          output: {
+            root: '.'
+          }
+        })
+      });
+
+      const config = new Config(file);
+      const root = config.getRoot();
+
+      expect(root).toEqual('./');
+    });
+  });
+
   describe('write method', () => {
     it('should write to default file', () => {
       // todo (jbl): error thrown with nyc
@@ -38,7 +110,6 @@ describe('Config class', () => {
       // expect(conn.database).toEqual(database);
       // expect(conn.user).toEqual(user);
       // expect(conn.password).toEqual(password);
-      // mock.restore();
     });
   });
 
@@ -52,8 +123,6 @@ describe('Config class', () => {
 
       const value = Config.doesDefaultExist();
       expect(value).toEqual(true);
-
-      mock.restore();
     });
   });
 
@@ -71,7 +140,6 @@ describe('Config class', () => {
       }
 
       expect(value).toEqual(false);
-      mock.restore();
     });
   });
 
@@ -101,8 +169,6 @@ describe('Config class', () => {
       expect(conn.database).toEqual(database);
       expect(conn.user).toEqual(user);
       expect(conn.password).toEqual(password);
-
-      mock.restore();
     });
 
     it('should return undefined if web.config not exists', () => {
@@ -118,7 +184,6 @@ describe('Config class', () => {
       }
 
       expect(conns).toBeUndefined();
-      mock.restore();
     });
   });
 
@@ -149,8 +214,6 @@ describe('Config class', () => {
       expect(config.data).toEqual(data);
       expect(config.output.root).toEqual(output.root);
       expect(config.idempotency.triggers).toEqual(idempotency.triggers);
-
-      mock.restore();
     });
 
     it('should load from specified file', () => {
@@ -179,8 +242,6 @@ describe('Config class', () => {
       expect(config.data).toEqual(data);
       expect(config.output.root).toEqual(output.root);
       expect(config.idempotency.triggers).toEqual(idempotency.triggers);
-
-      mock.restore();
     });
   });
 
@@ -203,8 +264,6 @@ describe('Config class', () => {
       expect(conn.database).toEqual(database);
       expect(conn.user).toEqual(user);
       expect(conn.password).toEqual(password);
-
-      mock.restore();
     });
 
     it('should return connection by name', () => {
@@ -225,8 +284,6 @@ describe('Config class', () => {
       expect(conn.database).toEqual(database);
       expect(conn.user).toEqual(user);
       expect(conn.password).toEqual(password);
-
-      mock.restore();
     });
   });
 
@@ -244,8 +301,6 @@ describe('Config class', () => {
       const conns = config.getConnections();
 
       expect(conns.length).toEqual(1);
-
-      mock.restore();
     });
   });
 });

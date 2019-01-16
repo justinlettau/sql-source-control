@@ -1,11 +1,7 @@
-[![NPM Version](https://badge.fury.io/js/sql-source-control.svg)](https://badge.fury.io/js/sql-source-control)
-
-[![Build Status](https://travis-ci.org/justinlettau/sql-source-control.svg?branch=master)](https://travis-ci.org/justinlettau/sql-source-control)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/a92idr95kkly8lgt/branch/master?svg=true)](https://ci.appveyor.com/project/justinlettau/sql-source-control/branch/master)
-
-[![Dependency Status](https://david-dm.org/justinlettau/sql-source-control.svg)](https://david-dm.org/justinlettau/sql-source-control)
-
+[![NPM Version](https://badge.fury.io/js/sql-source-control.svg)](https://badge.fury.io/js/sql-source-control)
+[![Build Status](https://travis-ci.org/justinlettau/sql-source-control.svg?branch=master)](https://travis-ci.org/justinlettau/sql-source-control)
+[![Build status](https://ci.appveyor.com/api/projects/status/a92idr95kkly8lgt/branch/master?svg=true)](https://ci.appveyor.com/project/justinlettau/sql-source-control/branch/master)
+[![Dependency Status](https://david-dm.org/justinlettau/sql-source-control.svg)](https://david-dm.org/justinlettau/sql-source-control)
 [![Dev Dependency Status](https://david-dm.org/justinlettau/sql-source-control/dev-status.svg)](https://david-dm.org/justinlettau/sql-source-control?type=dev)
 
 # SQL Source Control
@@ -193,7 +189,7 @@ following properties are supported.
 | ----------- | ------------ | --------------------------------------------------- | ---------------- |
 | `data`      | `string` (2) | Idempotency for data files.                         | `truncate`       |
 | `functions` | `string` (1) | Idempotency for function files.                     | `if-exists-drop` |
-| `jobs`      | `string` (1) | Idempotency for jobs files.                         | `if-exists-drop` |
+| `jobs`      | `string` (1) | Idempotency for job files.                          | `if-exists-drop` |
 | `procs`     | `string` (1) | Idempotency for stored procedure files.             | `if-exists-drop` |
 | `tables`    | `string` (1) | Idempotency for table files.                        | `if-not-exists`  |
 | `triggers`  | `string` (1) | Idempotency for trigger files.                      | `if-exists-drop` |
