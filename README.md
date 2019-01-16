@@ -220,12 +220,22 @@ Basic connections.
 }
 ```
 
-Connections stored in `Web.config` file.
+Connections stored in `Web.config` file. The `Web.config` should be an XML [.NET config file](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/connection-strings-and-configuration-files).
 
 ```json
 {
   "connections": "./Web.config"
 }
+```
+
+Connection strings can follow any of the following formats:
+
+```xml
+<connectionStrings>
+  <add name="Example1" connectionString="server=MySqlServer;database=MySqlDb;uid=MyUsername;password=MyPassword;" />
+  <add name="Example2" connectionString="server=MySqlServer;database=MySqlDb;uid=MyUsername;pwd=MyPassword;" />
+  <add name="Example3" connectionString="server=MySqlServer,1433;database=MySqlDb;uid=MyUsername;pwd=MyPassword;" />
+</connectionStrings>
 ```
 
 Connections stored in separate JSON file. Storing connections in a separate JSON can be used in conjunction with a
