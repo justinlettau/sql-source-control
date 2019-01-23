@@ -25,9 +25,9 @@ CLI for scripting SQL objects into a flat file structure for use with source con
 
 # Features
 
-- Works with **any source control system** like Git, SVN, Mercurial, etc.
-- Supports all recent version of **Microsoft SQL Server**.
-- **Free and open source**!
+- 😎 Works with **any source control system** like Git, SVN, Mercurial, etc.
+- ✨ Supports all recent version of **Microsoft SQL Server**.
+- 🎁 **Free and open source**!
 
 # Installation
 
