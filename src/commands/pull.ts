@@ -54,18 +54,27 @@ export default class Pull {
     new sql.ConnectionPool(conn)
       .connect()
       .then(pool => {
-        return Promise.all<sql.IResult<any>>([
+        const queries: any[] = [
           pool.request().query(objectsRead),
           pool.request().query(tablesRead),
           pool.request().query(columnsRead),
           pool.request().query(primaryKeysRead),
           pool.request().query(foreignKeysRead),
           pool.request().query(indexesRead),
-          pool.request().query(typesRead),
-          pool.request().query(jobsRead(conn.database)),
-          pool.request().query(jobStepsRead(conn.database)),
-          pool.request().query(jobSchedulesRead(conn.database))
-        ])
+          pool.request().query(typesRead)
+        ];
+
+        if (config.output.jobs) {
+          queries.push(
+            pool.request().query(jobsRead(conn.database)),
+            pool.request().query(jobStepsRead(conn.database)),
+            pool.request().query(jobSchedulesRead(conn.database))
+          );
+        } else {
+          queries.push(null, null, null);
+        }
+
+        return Promise.all<sql.IResult<any>>(queries)
           .then(results => {
             const tables: sql.IRecordSet<SqlTable> = results[1].recordset;
             const names = tables.map(item => `${item.schema}.${item.name}`);
@@ -115,9 +124,9 @@ export default class Pull {
     const foreignKeys: SqlForeignKey[] = results[4].recordset;
     const indexes: SqlIndex[] = results[5].recordset;
     const types: SqlType[] = results[6].recordset;
-    const jobs: SqlJob[] = results[7].recordset;
-    const jobSteps: SqlJobStep[] = results[8].recordset;
-    const jobSchedules: SqlJobSchedule[] = results[9].recordset;
+    const jobs: SqlJob[] = results[7] ? results[7].recordset : [];
+    const jobSteps: SqlJobStep[] = results[8] ? results[8].recordset : [];
+    const jobSchedules: SqlJobSchedule[] = results[9] ? results[9].recordset : [];
     const data: SqlDataResult[] = results.slice(10);
 
     const generator = new MSSQLGenerator(config);
