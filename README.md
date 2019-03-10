@@ -269,7 +269,7 @@ Exclude certain files.
 
 ### Data
 
-Only include certain tales.
+Only include certain tables.
 
 ```js
 {
