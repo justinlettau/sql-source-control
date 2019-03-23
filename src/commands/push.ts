@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as inquirer from 'inquirer';
 import * as sql from 'mssql';
-import * as ora from 'ora';
+import ora from 'ora';
 import { EOL } from 'os';
 
 import Config from '../common/config';

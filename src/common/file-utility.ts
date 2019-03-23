@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import * as checksum from 'checksum';
-import * as filenamify from 'filenamify';
+import filenamify from 'filenamify';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as multimatch from 'multimatch';

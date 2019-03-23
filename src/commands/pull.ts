@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import * as sql from 'mssql';
 import * as multimatch from 'multimatch';
-import * as ora from 'ora';
+import ora from 'ora';
 
 import Config from '../common/config';
 import FileUtility from '../common/file-utility';

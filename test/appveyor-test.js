@@ -1,7 +1,8 @@
 const oldCache = require('./appveyor-cache.json');
+// eslint-disable-next-line import/no-unresolved
 const newCache = require('../_sql-database/cache.json');
 
-(function() {
+(() => {
   if (!oldCache || !newCache) {
     throw new Error('Cache files not found!');
   }
