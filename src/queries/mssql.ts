@@ -47,7 +47,8 @@ export const columnsRead = `
     ic.is_identity,
     ic.seed_value,
     ic.increment_value,
-    cc.definition AS [formula]
+    cc.definition AS [formula],
+    dc.name as default_name
   FROM
     sys.columns c
     JOIN sys.types tp ON c.user_type_id = tp.user_type_id

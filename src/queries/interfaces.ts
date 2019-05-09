@@ -63,6 +63,7 @@ export interface SqlColumn {
   seed_value: number;
   increment_value: number;
   formula: string;
+  default_name: string;
 }
 
 /**
