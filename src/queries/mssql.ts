@@ -84,6 +84,8 @@ export const primaryKeysRead = `
     ic.is_included_column = 0
     AND ic.index_id = k.unique_index_id
     AND k.type = 'PK'
+  ORDER BY 
+    k.name
 `;
 
 /**
@@ -110,6 +112,8 @@ export const foreignKeysRead = `
     JOIN sys.foreign_keys fk ON fk.object_id = k.constraint_object_id
     JOIN sys.objects ro ON ro.object_id = fk.referenced_object_id
     JOIN sys.objects po ON po.object_id = fk.parent_object_id
+  ORDER BY 
+    fk.name
 `;
 
 /**
