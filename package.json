@@ -51,7 +51,7 @@
     "filenamify": "^3.0.0",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.3",
-    "inquirer": "^6.2.2",
+    "inquirer": "^7.0.0",
     "mssql": "^5.0.3",
     "multimatch": "^3.0.0",
     "ora": "^3.2.0",
