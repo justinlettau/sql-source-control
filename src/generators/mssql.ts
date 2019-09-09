@@ -526,6 +526,9 @@ export default class MSSQLGenerator {
     output += item.is_nullable ? ' NULL' : ' NOT NULL';
 
     if (item.definition) {
+      if (item.default_name) {
+          output += ` CONSTRAINT [${item.default_name}]`;
+      }
       output += ` DEFAULT${item.definition}`;
     }
 
