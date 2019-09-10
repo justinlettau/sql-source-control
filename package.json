@@ -48,7 +48,7 @@
     "checksum": "^0.1.1",
     "cli-table": "^0.3.1",
     "commander": "^3.0.1",
-    "filenamify": "^3.0.0",
+    "filenamify": "^4.0.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
     "inquirer": "^7.0.0",
