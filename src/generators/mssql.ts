@@ -527,7 +527,7 @@ export default class MSSQLGenerator {
 
     if (item.definition) {
       if (item.default_name) {
-          output += ` CONSTRAINT [${item.default_name}]`;
+        output += ` CONSTRAINT [${item.default_name}]`;
       }
       output += ` DEFAULT${item.definition}`;
     }
@@ -656,9 +656,7 @@ export default class MSSQLGenerator {
     const objectId = `[${first.schema}].[${first.table}]`;
     let output = '';
 
-    output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${
-      first.name
-    }')`;
+    output += `IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('${objectId}') AND name = '${first.name}')`;
     output += EOL;
     output += 'CREATE';
 

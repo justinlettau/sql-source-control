@@ -41,7 +41,7 @@ export default class Init {
    * @param conn Connection object to use for default values.
    */
   private getQuestions(conn: Connection, showWebConfig: boolean) {
-    const questions: inquirer.Questions = [
+    const questions: inquirer.QuestionCollection = [
       {
         choices: () => this.getPathChoices(showWebConfig),
         message: 'Where would you like to store connections?',
@@ -96,7 +96,7 @@ export default class Init {
    * @param showWebConfig Indicates if Web.config choice should be available.
    */
   private getPathChoices(showWebConfig: boolean) {
-    const choices: inquirer.ChoiceType[] = [
+    const choices: inquirer.ChoiceOptions[] = [
       {
         name: 'Main configuration file.',
         value: PathChoices.SscConfig

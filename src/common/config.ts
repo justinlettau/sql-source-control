@@ -69,28 +69,25 @@ export default class Config implements IConfig {
 
     content = fs.readFileSync(configFile, 'utf-8');
 
-    parser.parseString(
-      content,
-      (err: Error, result: any): void => {
-        if (err) {
-          console.error(err);
-          process.exit();
-        }
-
-        try {
-          const connectionStrings: any[] = result.configuration.connectionStrings[0].add;
-
-          connectionStrings.forEach(item => {
-            const conn = new Connection();
-            conn.loadFromString(item.$.name, item.$.connectionString);
-            conns.push(conn);
-          });
-        } catch (err) {
-          console.error('Could not parse connection strings from Web.config file!');
-          process.exit();
-        }
+    parser.parseString(content, (err: Error, result: any): void => {
+      if (err) {
+        console.error(err);
+        process.exit();
       }
-    );
+
+      try {
+        const connectionStrings: any[] = result.configuration.connectionStrings[0].add;
+
+        connectionStrings.forEach(item => {
+          const conn = new Connection();
+          conn.loadFromString(item.$.name, item.$.connectionString);
+          conns.push(conn);
+        });
+      } catch (err) {
+        console.error('Could not parse connection strings from Web.config file!');
+        process.exit();
+      }
+    });
 
     return conns.length ? conns : undefined;
   }
