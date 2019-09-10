@@ -142,6 +142,11 @@ export default class Config implements IConfig {
   };
 
   /**
+   * Indicates if constraint names should be scripted.
+   */
+  includeConstraintName = false;
+
+  /**
    * Get root output directory.
    */
   getRoot() {
@@ -217,6 +222,7 @@ export default class Config implements IConfig {
       this.files = config.files || this.files;
       Object.assign(this.output, config.output);
       Object.assign(this.idempotency, config.idempotency);
+      this.includeConstraintName = config.includeConstraintName || this.includeConstraintName;
     } catch (error) {
       console.error('Could not find or parse config file. You can use the `init` command to create one!');
       process.exit();

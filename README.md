@@ -199,6 +199,8 @@ following properties are supported.
 1. `if-exists-drop`, `if-not-exists`, or `false`.
 2. `delete-and-reseed`, `delete`, `truncate`, or `false`.
 
+**includeConstraintName** (`boolean`): Optional. Indicates if constraint names should be scripted. Default is `false`.
+
 # Examples
 
 ### Connections
