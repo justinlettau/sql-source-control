@@ -183,7 +183,8 @@ export default class Config implements IConfig {
     return Object.assign(conn, {
       options: {
         encrypt: true
-      }
+      },
+      port: +conn.port
     });
   }
 

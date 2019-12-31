@@ -34,7 +34,9 @@ import {
 import { PullOptions } from './interfaces';
 
 export default class Pull {
-  constructor(private name: string, private options: PullOptions) {}
+  constructor(private name: string, private options: PullOptions) {
+    // console.log('pull constructor', name, options);
+  }
 
   /**
    * Spinner instance.
@@ -46,7 +48,10 @@ export default class Pull {
    */
   invoke() {
     const config = new Config(this.options.config);
+    // console.log('pull config created', config);
+
     const conn = config.getConnection(this.name);
+    // console.log('pull conn created', conn);
 
     this.spinner.start(`Pulling from ${chalk.blue(conn.server)} ...`);
 
