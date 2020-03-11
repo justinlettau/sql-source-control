@@ -87,7 +87,7 @@
     "husky": "^3.0.5",
     "jasmine": "^3.4.0",
     "mock-fs": "^4.10.1",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
     "standard-version": "^7.0.0",
