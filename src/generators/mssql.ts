@@ -42,17 +42,17 @@ export default class MSSQLGenerator {
 
     switch (this.config.idempotency.data) {
       case 'delete':
-        output += `DELETE FROM ${item.name}` + EOL;
+        output += `DELETE FROM [${item.schema}].[${item.name}]` + EOL;
         output += EOL;
         break;
       case 'delete-and-reseed':
-        output += `DELETE FROM ${item.name}`;
+        output += `DELETE FROM [${item.schema}].[${item.name}]`;
         output += EOL;
-        output += `DBCC CHECKIDENT ('${item.name}', RESEED, 0)`;
+        output += `DBCC CHECKIDENT ('[${item.schema}].[${item.name}]', RESEED, 0)`;
         output += EOL;
         break;
       case 'truncate':
-        output += `TRUNCATE TABLE ${item.name}`;
+        output += `TRUNCATE TABLE [${item.schema}].[${item.name}]`;
         output += EOL;
         break;
     }
@@ -60,7 +60,7 @@ export default class MSSQLGenerator {
     output += EOL;
 
     if (item.hasIdentity) {
-      output += `SET IDENTITY_INSERT ${item.name} ON`;
+      output += `SET IDENTITY_INSERT [${item.schema}].[${item.name}] ON`;
       output += EOL;
       output += EOL;
     }
@@ -70,13 +70,14 @@ export default class MSSQLGenerator {
       const columns = keys.join(', ');
       const values = keys.map(key => this.safeValue(row[key])).join(', ');
 
-      output += `INSERT INTO ${item.name} (${columns}) VALUES (${values})`;
+      output += `INSERT INTO [${item.schema}].[${item.name}] (${columns}) VALUES (${values})`;
       output += EOL;
     });
 
     if (item.hasIdentity) {
       output += EOL;
-      output += `SET IDENTITY_INSERT ${item.name} OFF`;
+      output += `SET IDENTITY_INSERT [${item.schema}].[${item.name}]
+       OFF`;
       output += EOL;
     }
 
