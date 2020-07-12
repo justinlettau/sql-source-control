@@ -58,6 +58,7 @@ export default class Init {
         default: conn.port || undefined,
         message: 'Server port.',
         name: 'port',
+        type: 'number',
         when: answers => answers.path !== PathChoices.WebConfig
       },
       {
