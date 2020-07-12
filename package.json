@@ -88,7 +88,7 @@
     "jasmine": "^3.5.0",
     "mock-fs": "^4.12.0",
     "nyc": "^15.1.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.0",
     "pretty-quick": "^1.11.1",
     "standard-version": "^8.0.1",
     "ts-node": "^8.10.2",
