@@ -91,10 +91,11 @@ export default class Pull {
 
                 return pool
                   .request()
-                  .query(`SELECT * FROM ${item}`)
+                  .query(`SELECT * FROM [${match.schema}].[${match.name}]`)
                   .then(result => ({
                     hasIdentity: match.identity_count > 0,
-                    name: item,
+                    name: match.name,
+                    schema: match.schema,
                     result
                   }));
               })
@@ -214,7 +215,7 @@ export default class Pull {
 
     // data
     data.forEach(item => {
-      const name = `${item.name}.sql`;
+      const name = `${item.schema}.${item.name}.sql`;
       const content = generator.data(item);
 
       file.write(config.output.data, name, content);

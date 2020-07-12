@@ -22,6 +22,7 @@ export interface SqlSchema {
  */
 export interface SqlDataResult {
   name: string;
+  schema: string;
   hasIdentity: number;
   result: sql.IResult<any>;
 }
