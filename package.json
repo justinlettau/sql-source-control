@@ -79,7 +79,7 @@
     "@types/update-notifier": "^2.5.1",
     "@types/xml2js": "^0.4.5",
     "codecov": "^3.7.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.0.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
