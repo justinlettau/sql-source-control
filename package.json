@@ -69,7 +69,7 @@
     "@types/filenamify": "^2.0.2",
     "@types/fs-extra": "^9.0.1",
     "@types/glob": "^7.1.3",
-    "@types/inquirer": "^6.5.0",
+    "@types/inquirer": "^7.0.0",
     "@types/jasmine": "^3.5.11",
     "@types/mock-fs": "^4.10.0",
     "@types/mssql": "^4.3.1",
