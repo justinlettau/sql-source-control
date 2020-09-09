@@ -126,11 +126,12 @@ export const indexesRead = `
     i.name,
     c.name AS [column],
     SCHEMA_NAME(ro.schema_id) AS [schema],
-    ro.name AS [table]
+    ro.name AS [table],
+    CASE i.type WHEN 1 THEN 'CLUSTERED' WHEN 2 THEN 'NONCLUSTERED' END AS [index_type]
   FROM
     sys.index_columns ic
     JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-    JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type = 2
+    JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type IN (1, 2)
     INNER JOIN sys.objects ro ON ro.object_id = c.object_id
   WHERE
     ro.is_ms_shipped = 0

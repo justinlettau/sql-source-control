@@ -666,7 +666,7 @@ export default class MSSQLGenerator {
       output += ' UNIQUE';
     }
 
-    output += ` NONCLUSTERED INDEX [${first.name}] ON ${objectId}`;
+    output += ` ${first.index_type} INDEX [${first.name}] ON ${objectId}`;
     output += '(';
 
     if (items.length > 1) {

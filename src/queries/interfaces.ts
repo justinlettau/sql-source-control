@@ -109,6 +109,7 @@ export interface SqlIndex {
   column: string;
   schema: string;
   table: string;
+  index_type: string;
 }
 
 /**
