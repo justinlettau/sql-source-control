@@ -490,6 +490,12 @@ export default class MSSQLGenerator {
 
     if (item.is_computed) {
       output += ` AS ${item.formula}`;
+
+      if (item.is_persisted) {
+        output += ' PERSISTED';
+        output += item.is_nullable ? ' NULL' : ' NOT NULL';
+      }
+      
       return output;
     }
 
@@ -666,7 +672,7 @@ export default class MSSQLGenerator {
       output += ' UNIQUE';
     }
 
-    output += ` ${first.index_type} INDEX [${first.name}] ON ${objectId}`;
+    output += ` ${first.type} INDEX [${first.name}] ON ${objectId}`;
     output += '(';
 
     if (items.length > 1) {

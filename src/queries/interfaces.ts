@@ -64,6 +64,7 @@ export interface SqlColumn {
   seed_value: number;
   increment_value: number;
   formula: string;
+  is_persisted: boolean;
   default_name: string;
 }
 
@@ -109,7 +110,7 @@ export interface SqlIndex {
   column: string;
   schema: string;
   table: string;
-  index_type: string;
+  type: 'CLUSTERED' | 'NONCLUSTERED';
 }
 
 /**
