@@ -48,6 +48,7 @@ export const columnsRead = `
     ic.seed_value,
     ic.increment_value,
     cc.definition AS [formula],
+    cc.is_persisted,
     dc.name as default_name
   FROM
     sys.columns c
@@ -85,6 +86,10 @@ export const primaryKeysRead = `
     ic.is_included_column = 0
     AND ic.index_id = k.unique_index_id
     AND k.type = 'PK'
+  ORDER BY
+    c.object_id,
+    k.name,
+    ic.key_ordinal
 `;
 
 /**
@@ -126,11 +131,12 @@ export const indexesRead = `
     i.name,
     c.name AS [column],
     SCHEMA_NAME(ro.schema_id) AS [schema],
-    ro.name AS [table]
+    ro.name AS [table],
+    CASE i.type WHEN 1 THEN 'CLUSTERED' WHEN 2 THEN 'NONCLUSTERED' END AS [type]
   FROM
     sys.index_columns ic
     JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-    JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type = 2
+    JOIN sys.indexes i ON i.object_id = c.object_id AND i.index_id = ic.index_id AND i.is_primary_key = 0 AND i.type IN (1, 2)
     INNER JOIN sys.objects ro ON ro.object_id = c.object_id
   WHERE
     ro.is_ms_shipped = 0
@@ -138,6 +144,7 @@ export const indexesRead = `
   ORDER BY
     ro.schema_id,
     ro.name,
+    ic.key_ordinal,
     c.object_id
 `;
 
