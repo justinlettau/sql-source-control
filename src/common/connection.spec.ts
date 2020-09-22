@@ -58,7 +58,7 @@ describe('Connection class', () => {
         password,
         port,
         server,
-        user
+        user,
       });
 
       expect(conn.name).toEqual(name);

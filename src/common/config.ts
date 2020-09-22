@@ -32,10 +32,13 @@ export default class Config implements IConfig {
    * @param file Configuration file to write to.
    */
   static write(config: IConfig, file?: string) {
-    const configFile = path.join(process.cwd(), file || Config.defaultConfigFile);
+    const configFile = path.join(
+      process.cwd(),
+      file || Config.defaultConfigFile
+    );
     const content = JSON.stringify(config, null, 2);
 
-    fs.outputFile(configFile, content, error => {
+    fs.outputFile(configFile, content, (error) => {
       if (error) {
         return console.error(error);
       }
@@ -57,17 +60,19 @@ export default class Config implements IConfig {
    * @param file Relative path to Web.config file.
    */
   static getConnectionsFromWebConfig(file?: string) {
-    const configFile = path.join(process.cwd(), file || Config.defaultWebConfigFile);
+    const configFile = path.join(
+      process.cwd(),
+      file || Config.defaultWebConfigFile
+    );
     const parser = new xml2js.Parser();
     const conns: Connection[] = [];
-    let content: string;
 
     if (!fs.existsSync(configFile)) {
       // not found, use defaults
       return;
     }
 
-    content = fs.readFileSync(configFile, 'utf-8');
+    const content = fs.readFileSync(configFile, 'utf-8');
 
     parser.parseString(content, (err: Error, result: any): void => {
       if (err) {
@@ -76,15 +81,18 @@ export default class Config implements IConfig {
       }
 
       try {
-        const connectionStrings: any[] = result.configuration.connectionStrings[0].add;
+        const connectionStrings: any[] =
+          result.configuration.connectionStrings[0].add;
 
-        connectionStrings.forEach(item => {
+        connectionStrings.forEach((item) => {
           const conn = new Connection();
           conn.loadFromString(item.$.name, item.$.connectionString);
           conns.push(conn);
         });
       } catch (err) {
-        console.error('Could not parse connection strings from Web.config file!');
+        console.error(
+          'Could not parse connection strings from Web.config file!'
+        );
         process.exit();
       }
     });
@@ -124,7 +132,7 @@ export default class Config implements IConfig {
     tables: './tables',
     triggers: './triggers',
     types: './types',
-    views: './views'
+    views: './views',
   };
 
   /**
@@ -138,7 +146,7 @@ export default class Config implements IConfig {
     tables: 'if-not-exists',
     triggers: 'if-exists-drop',
     types: 'if-not-exists',
-    views: 'if-exists-drop'
+    views: 'if-exists-drop',
   };
 
   /**
@@ -170,7 +178,9 @@ export default class Config implements IConfig {
     let error: string;
 
     if (name) {
-      conn = conns.find(item => item.name.toLocaleLowerCase() === name.toLowerCase());
+      conn = conns.find(
+        (item) => item.name.toLocaleLowerCase() === name.toLowerCase()
+      );
       error = `Could not find connection by name '${name}'!`;
     } else {
       conn = conns[0];
@@ -184,8 +194,8 @@ export default class Config implements IConfig {
 
     return Object.assign(conn, {
       options: {
-        encrypt: true
-      }
+        encrypt: true,
+      },
     });
   }
 
@@ -212,7 +222,10 @@ export default class Config implements IConfig {
    * @param file Configuration file to load.
    */
   private load(file?: string) {
-    const configFile = path.join(process.cwd(), file || Config.defaultConfigFile);
+    const configFile = path.join(
+      process.cwd(),
+      file || Config.defaultConfigFile
+    );
 
     try {
       const config: Config = fs.readJsonSync(configFile);
@@ -222,9 +235,12 @@ export default class Config implements IConfig {
       this.files = config.files || this.files;
       Object.assign(this.output, config.output);
       Object.assign(this.idempotency, config.idempotency);
-      this.includeConstraintName = config.includeConstraintName || this.includeConstraintName;
+      this.includeConstraintName =
+        config.includeConstraintName || this.includeConstraintName;
     } catch (error) {
-      console.error('Could not find or parse config file. You can use the `init` command to create one!');
+      console.error(
+        'Could not find or parse config file. You can use the `init` command to create one!'
+      );
       process.exit();
     }
   }

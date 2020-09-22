@@ -1,6 +1,0 @@
-{
-  "extends": ["@justinlettau/tslint-config", "tslint-config-prettier"],
-  "rules": {
-    "no-console": false
-  }
-}

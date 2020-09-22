@@ -13,7 +13,9 @@ export default class Init {
    * Invoke action.
    */
   invoke() {
-    const webConfigConns = Config.getConnectionsFromWebConfig(this.options.webconfig);
+    const webConfigConns = Config.getConnectionsFromWebConfig(
+      this.options.webconfig
+    );
     const conn = new Connection();
 
     if (!this.options.force && Config.doesDefaultExist()) {
@@ -32,7 +34,9 @@ export default class Init {
       return;
     }
 
-    inquirer.prompt(this.getQuestions(conn, !!webConfigConns)).then(answers => this.writeFiles(answers));
+    inquirer
+      .prompt(this.getQuestions(conn, !!webConfigConns))
+      .then((answers) => this.writeFiles(answers));
   }
 
   /**
@@ -46,46 +50,46 @@ export default class Init {
         choices: () => this.getPathChoices(showWebConfig),
         message: 'Where would you like to store connections?',
         name: 'path',
-        type: 'list'
+        type: 'list',
       },
       {
         default: conn.server || undefined,
         message: 'Server URL.',
         name: 'server',
-        when: answers => answers.path !== PathChoices.WebConfig
+        when: (answers) => answers.path !== PathChoices.WebConfig,
       },
       {
         default: conn.port || undefined,
         message: 'Server port.',
         name: 'port',
         type: 'number',
-        when: answers => answers.path !== PathChoices.WebConfig
+        when: (answers) => answers.path !== PathChoices.WebConfig,
       },
       {
         default: conn.database || undefined,
         message: 'Database name.',
         name: 'database',
-        when: answers => answers.path !== PathChoices.WebConfig
+        when: (answers) => answers.path !== PathChoices.WebConfig,
       },
       {
         default: conn.user || undefined,
         message: 'Login username.',
         name: 'user',
-        when: answers => answers.path !== PathChoices.WebConfig
+        when: (answers) => answers.path !== PathChoices.WebConfig,
       },
       {
         default: conn.password || undefined,
         message: 'Login password.',
         name: 'password',
         type: 'password',
-        when: answers => answers.path !== PathChoices.WebConfig
+        when: (answers) => answers.path !== PathChoices.WebConfig,
       },
       {
         default: 'dev',
         message: 'Connection name.',
         name: 'name',
-        when: answers => answers.path !== PathChoices.WebConfig
-      }
+        when: (answers) => answers.path !== PathChoices.WebConfig,
+      },
     ];
 
     return questions;
@@ -100,18 +104,18 @@ export default class Init {
     const choices: inquirer.ChoiceOptions[] = [
       {
         name: 'Main configuration file.',
-        value: PathChoices.SscConfig
+        value: PathChoices.SscConfig,
       },
       {
         name: 'Separate connections configuration file.',
-        value: PathChoices.ConnsConfig
-      }
+        value: PathChoices.ConnsConfig,
+      },
     ];
 
     if (showWebConfig) {
       choices.push({
         name: 'Web.config file with connection strings.',
-        value: PathChoices.WebConfig
+        value: PathChoices.WebConfig,
       });
     }
 
@@ -130,7 +134,7 @@ export default class Init {
       password: answers.password,
       port: answers.port,
       server: answers.server,
-      user: answers.user
+      user: answers.user,
     };
 
     if (answers.path === PathChoices.WebConfig) {

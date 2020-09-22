@@ -41,7 +41,9 @@ export default class Cache implements ICache {
 
       this.files = cache.files;
     } catch (error) {
-      console.error(`Could not parse cache file. Try deleting the existing ${Cache.defaultCacheFile} file!`);
+      console.error(
+        `Could not parse cache file. Try deleting the existing ${Cache.defaultCacheFile} file!`
+      );
       process.exit();
     }
   }

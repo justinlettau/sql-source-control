@@ -3,7 +3,6 @@ import { IdempotencyData, IdempotencyObject } from './types';
 /**
  * Cache object properties.
  */
-// tslint:disable-next-line:interface-name
 export interface ICache {
   files: { [key: string]: string };
 }
@@ -20,7 +19,6 @@ export interface OperationCounts {
 /**
  * Configuration object properties.
  */
-// tslint:disable-next-line:interface-name
 export interface IConfig {
   connections: string | IConnection[];
   files?: string[];
@@ -32,7 +30,6 @@ export interface IConfig {
 /**
  * Connection object properties.
  */
-// tslint:disable-next-line:interface-name
 export interface IConnection {
   name: string;
   server: string;

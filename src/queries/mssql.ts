@@ -270,7 +270,7 @@ export const jobStepsRead = (database: string) => `
 /**
  * Get SQL information for job schedules.
  */
-export const jobSchedulesRead = (database: string) => `
+export const jobSchedulesRead = () => `
   SELECT
     s.schedule_uid,
     s.name AS [schedule_name],

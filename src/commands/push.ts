@@ -29,7 +29,9 @@ export default class Push {
       .prompt<inquirer.Answers>([
         {
           message: [
-            `${chalk.yellow('WARNING!')} All local SQL files will be executed against the requested database.`,
+            `${chalk.yellow(
+              'WARNING!'
+            )} All local SQL files will be executed against the requested database.`,
             'This can not be undone!',
             'Make sure to backup your database first.',
             EOL,

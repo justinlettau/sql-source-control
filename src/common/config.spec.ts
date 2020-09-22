@@ -16,7 +16,7 @@ describe('Config class', () => {
     password,
     port,
     server,
-    user
+    user,
   };
   const files = ['dbo.*'];
   const data = ['dbo.LookupTable'];
@@ -33,8 +33,8 @@ describe('Config class', () => {
 
       mock({
         [file]: JSON.stringify({
-          connections: [connection]
-        })
+          connections: [connection],
+        }),
       });
 
       const config = new Config();
@@ -49,8 +49,8 @@ describe('Config class', () => {
       mock({
         [file]: JSON.stringify({
           connections: [connection],
-          output
-        })
+          output,
+        }),
       });
 
       const config = new Config(file);
@@ -66,9 +66,9 @@ describe('Config class', () => {
         [file]: JSON.stringify({
           connections: [connection],
           output: {
-            root: ''
-          }
-        })
+            root: '',
+          },
+        }),
       });
 
       const config = new Config(file);
@@ -83,9 +83,9 @@ describe('Config class', () => {
       mock({
         [file]: JSON.stringify({
           output: {
-            root: '.'
-          }
-        })
+            root: '.',
+          },
+        }),
       });
 
       const config = new Config(file);
@@ -118,7 +118,7 @@ describe('Config class', () => {
       const file = Config.defaultConfigFile;
 
       mock({
-        [file]: ''
+        [file]: '',
       });
 
       const value = Config.doesDefaultExist();
@@ -157,7 +157,7 @@ describe('Config class', () => {
               connectionString="server=${server};database=${database};uid=${user};password=${password};" />
             </connectionStrings>
           </configuration>
-        `
+        `,
       });
 
       const conns = Config.getConnectionsFromWebConfig();
@@ -197,8 +197,8 @@ describe('Config class', () => {
           data,
           files,
           idempotency,
-          output
-        })
+          output,
+        }),
       });
 
       const config = new Config();
@@ -225,8 +225,8 @@ describe('Config class', () => {
           data,
           files,
           idempotency,
-          output
-        })
+          output,
+        }),
       });
 
       const config = new Config(file);
@@ -251,8 +251,8 @@ describe('Config class', () => {
 
       mock({
         [file]: JSON.stringify({
-          connections: [connection]
-        })
+          connections: [connection],
+        }),
       });
 
       const config = new Config();
@@ -271,8 +271,8 @@ describe('Config class', () => {
 
       mock({
         [file]: JSON.stringify({
-          connections: [connection]
-        })
+          connections: [connection],
+        }),
       });
 
       const config = new Config();
@@ -293,8 +293,8 @@ describe('Config class', () => {
 
       mock({
         [file]: JSON.stringify({
-          connections: [connection]
-        })
+          connections: [connection],
+        }),
       });
 
       const config = new Config();

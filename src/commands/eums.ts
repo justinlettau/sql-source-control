@@ -4,5 +4,5 @@
 export enum PathChoices {
   SscConfig,
   ConnsConfig,
-  WebConfig
+  WebConfig,
 }

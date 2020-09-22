@@ -48,10 +48,10 @@ export default class Connection implements IConnection {
     const parts = connString.split(';');
 
     // match connection parts
-    let server = parts.find(x => /^(server)/gi.test(x));
-    let database = parts.find(x => /^(database)/gi.test(x));
-    let user = parts.find(x => /^(uid)/gi.test(x));
-    let password = parts.find(x => /^(password|pwd)/gi.test(x));
+    let server = parts.find((x) => /^(server)/gi.test(x));
+    let database = parts.find((x) => /^(database)/gi.test(x));
+    let user = parts.find((x) => /^(uid)/gi.test(x));
+    let password = parts.find((x) => /^(password|pwd)/gi.test(x));
     let port: number;
 
     // get values
@@ -75,7 +75,7 @@ export default class Connection implements IConnection {
       password,
       port,
       server,
-      user
+      user,
     });
   }
 

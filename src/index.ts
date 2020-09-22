@@ -16,7 +16,7 @@ program
   .option('-f, --force', 'Overwrite existing config file, if present.')
   .option('-s, --skip', 'Use defaults only and skip the option prompts.')
   .option('-w, --webconfig [value]', 'Relative path to Web.config file.')
-  .action(options => {
+  .action((options) => {
     const action = new Init(options);
     action.invoke();
   });
@@ -26,14 +26,16 @@ program
   .alias('ls')
   .description('List all available connections.')
   .option('-c, --config [value]', 'Relative path to config file.')
-  .action(options => {
+  .action((options) => {
     const action = new List(options);
     action.invoke();
   });
 
 program
   .command('pull [name]')
-  .description('Generate SQL files for all tables, stored procedures, functions, etc.')
+  .description(
+    'Generate SQL files for all tables, stored procedures, functions, etc.'
+  )
   .option('-c, --config [value]', 'Relative path to config file.')
   .action((name, options) => {
     const action = new Pull(name, options);
