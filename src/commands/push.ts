@@ -1,9 +1,9 @@
-import chalk from 'chalk';
+import chalk = require('chalk');
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as inquirer from 'inquirer';
 import * as sql from 'mssql';
-import ora from 'ora';
+import ora = require('ora');
 import { EOL } from 'os';
 
 import Config from '../common/config';
@@ -33,21 +33,21 @@ export default class Push {
             'This can not be undone!',
             'Make sure to backup your database first.',
             EOL,
-            'Are you sure you want to continue?'
+            'Are you sure you want to continue?',
           ].join(' '),
           name: 'continue',
           type: 'confirm',
-          when: !this.options.skip
-        }
+          when: !this.options.skip,
+        },
       ])
-      .then(answers => {
+      .then((answers) => {
         if (answers.continue === false) {
           throw new Error('Command aborted!');
         }
       })
       .then(() => this.batch(config, conn))
       .then(() => this.spinner.succeed('Successfully pushed!'))
-      .catch(error => this.spinner.fail(error));
+      .catch((error) => this.spinner.fail(error));
   }
 
   /**
@@ -62,12 +62,12 @@ export default class Push {
 
     this.spinner.start(`Pushing to ${chalk.blue(conn.server)} ...`);
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const statements = content.split('GO' + EOL);
 
-      statements.forEach(statement => {
-        promise = promise.then(pool => {
+      statements.forEach((statement) => {
+        promise = promise.then((pool) => {
           return pool
             .request()
             .batch(statement)
@@ -95,10 +95,10 @@ export default class Push {
       config.output.procs,
       config.output.triggers,
       config.output.data,
-      config.output.jobs
+      config.output.jobs,
     ];
 
-    directories.forEach(dir => {
+    directories.forEach((dir) => {
       if (dir) {
         const files = glob.sync(`${config.getRoot()}/${dir}/**/*.sql`);
         output.push(...files);

@@ -1,6 +1,6 @@
-import chalk from 'chalk';
+import chalk = require('chalk');
 import * as checksum from 'checksum';
-import filenamify from 'filenamify';
+import filenamify = require('filenamify');
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as multimatch from 'multimatch';
@@ -48,7 +48,7 @@ export default class FileUtility {
   private stats: OperationCounts = {
     added: 0,
     removed: 0,
-    updated: 0
+    updated: 0,
   };
 
   /**
@@ -91,7 +91,7 @@ export default class FileUtility {
    * Delete all paths remaining in `existing`.
    */
   finalize() {
-    this.existingFiles.forEach(file => {
+    this.existingFiles.forEach((file) => {
       this.stats.removed++;
       fs.removeSync(file);
     });
