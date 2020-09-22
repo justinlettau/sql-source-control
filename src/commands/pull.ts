@@ -95,8 +95,8 @@ export default class Pull {
                   .then(result => ({
                     hasIdentity: match.identity_count > 0,
                     name: match.name,
-                    schema: match.schema,
-                    result
+                    result,
+                    schema: match.schema
                   }));
               })
             ).then(data => [...results, ...data]);
