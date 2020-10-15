@@ -514,13 +514,11 @@ export default class MSSQLGenerator {
       case 'char':
       case 'varbinary':
       case 'binary':
-      case 'text':
         size = item.max_length === -1 ? 'max' : item.max_length;
         output += `(${size})`;
         break;
       case 'nvarchar':
       case 'nchar':
-      case 'ntext':
         size = item.max_length === -1 ? 'max' : item.max_length / 2;
         output += `(${size})`;
         break;
