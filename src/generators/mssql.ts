@@ -223,8 +223,9 @@ export default class MSSQLGenerator {
       output += EOL;
     }
 
-    foreignKeys.forEach((fk) => {
-      output += this.foreignKey(fk);
+    const groupedForeignKeys = Helpers.groupByName(foreignKeys, 'name');
+    Object.keys(groupedForeignKeys).forEach((name) => {
+      output += this.foreignKey(groupedForeignKeys[name]);
       output += EOL;
     });
 
@@ -614,11 +615,14 @@ export default class MSSQLGenerator {
    *
    * @param item Row from foreignKeys query.
    */
-  private foreignKey(item: SqlForeignKey): string {
-    const objectId = `[${item.schema}].[${item.table}]`;
-    const keyObjectId = `[${item.schema}].[${item.name}]`;
-    const parentObjectId = `[${item.parent_schema}].[${item.parent_table}]`;
+  private foreignKey(items: SqlForeignKey[]): string {
+    const first = items[0];
+    const objectId = `[${first.schema}].[${first.table}]`;
+    const keyObjectId = `[${first.schema}].[${first.name}]`;
+    const parentObjectId = `[${first.parent_schema}].[${first.parent_table}]`;
     let output = '';
+    const columns: string[] = [];
+    const references: string[] = [];
 
     output += `IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE object_id = OBJECT_ID('${keyObjectId}') AND parent_object_id = OBJECT_ID('${objectId}'))`;
     output += EOL;
@@ -628,12 +632,18 @@ export default class MSSQLGenerator {
     output +=
       this.indent() +
       `ALTER TABLE ${objectId} WITH ${
-        item.is_not_trusted ? 'NOCHECK' : 'CHECK'
+        first.is_not_trusted ? 'NOCHECK' : 'CHECK'
       }`;
-    output += ` ADD CONSTRAINT [${item.name}] FOREIGN KEY ([${item.column}])`;
-    output += ` REFERENCES ${parentObjectId} ([${item.reference}])`;
+    items.forEach((item) => {
+      columns.push(item.column);
+      references.push(item.reference);
+    });
+    output += ` ADD CONSTRAINT [${first.name}] FOREIGN KEY ([${columns.join(
+      ', '
+    )}])`;
+    output += ` REFERENCES ${parentObjectId} ([${references.join(', ')}])`;
 
-    switch (item.delete_referential_action) {
+    switch (first.delete_referential_action) {
       case 1:
         output += ' ON DELETE CASCADE';
         break;
@@ -645,7 +655,7 @@ export default class MSSQLGenerator {
         break;
     }
 
-    switch (item.update_referential_action) {
+    switch (first.update_referential_action) {
       case 1:
         output += ' ON UPDATE CASCADE';
         break;
@@ -659,7 +669,8 @@ export default class MSSQLGenerator {
 
     output += EOL;
     output +=
-      this.indent() + `ALTER TABLE ${objectId} CHECK CONSTRAINT [${item.name}]`;
+      this.indent() +
+      `ALTER TABLE ${objectId} CHECK CONSTRAINT [${first.name}]`;
     output += EOL;
     output += 'END';
     output += EOL;
