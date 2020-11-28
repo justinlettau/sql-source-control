@@ -59,7 +59,7 @@
     "ora": "^5.1.0",
     "safe-buffer": "^5.2.1",
     "tedious": "^9.2.1",
-    "ts-util-is": "^1.2.1",
+    "ts-util-is": "^1.2.0",
     "update-notifier": "^4.1.3",
     "xml2js": "^0.4.23"
   },
