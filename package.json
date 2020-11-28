@@ -55,7 +55,7 @@
     "glob": "^7.1.6",
     "inquirer": "^7.3.3",
     "mssql": "^6.2.3",
-    "multimatch": "^4.0.0",
+    "multimatch": "^5.0.0",
     "ora": "^5.1.0",
     "safe-buffer": "^5.2.1",
     "tedious": "^9.2.1",
