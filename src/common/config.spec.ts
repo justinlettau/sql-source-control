@@ -27,6 +27,10 @@ describe('Config class', () => {
     mock.restore();
   });
 
+  afterAll(() => {
+    mock.restore();
+  });
+
   describe('getRoot method', () => {
     it('should return default root path', () => {
       const file = Config.defaultConfigFile;
