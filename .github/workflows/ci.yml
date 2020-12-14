@@ -24,7 +24,9 @@ jobs:
         uses: codecov/codecov-action@v1
 
       - name: Setup
-        run: docker-compose up -d
+        run: |
+          docker-compose up -d
+          npm link
 
       - name: E2E
         run: |
