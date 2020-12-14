@@ -37,7 +37,7 @@ jobs:
           docker-compose up -d
           .\docker\setup.ps1
           npm run build
-          npm link
+          sudo npm link
           ssc pull -c ./docker/config.json
 
       - name: Test
