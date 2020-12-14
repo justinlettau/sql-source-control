@@ -2,7 +2,7 @@
 [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
 
 $name = $env:COMPUTERNAME
-$root = "$($env:appveyor_build_folder)\test"
+$root = "$($env:appveyor_build_folder)\appveyor"
 $instance = "SQL2017"
 $server = "(local)\$instance"
 $db = "AdventureWorks2017"
@@ -17,7 +17,7 @@ $client = new-object System.Net.WebClient
 $client.DownloadFile($url, $bak)
 
 # Attach database to local instance
-sqlcmd -S "$server" -Q "Use [master]; RESTORE DATABASE [$db] FROM disk = '$bak' WITH MOVE '$($db)' TO '$mdf', MOVE '$($db)_log' TO '$ldf', REPLACE"
+sqlcmd -S "$server" -Q "Use [master]; RESTORE DATABASE [$db] FROM DISK = '$bak' WITH MOVE '$($db)' TO '$mdf', MOVE '$($db)_log' TO '$ldf', REPLACE"
 
 $smo = "Microsoft.SqlServer.Management.Smo."
 $wmi = new-object ($smo + "Wmi.ManagedComputer")

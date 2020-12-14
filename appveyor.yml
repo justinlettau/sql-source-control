@@ -5,10 +5,10 @@ install:
   - npm install
 
 build_script:
-  - ps: .\test\appveyor-mssql.ps1
+  - ps: .\appveyor\setup.ps1
   - npm run build
   - npm link
-  - ssc pull -c ./test/appveyor-config.json
+  - ssc pull -c ./appveyor/config.json
 
 test_script:
-  - node ./test/appveyor-test.js
+  - npm run test:appveyor
