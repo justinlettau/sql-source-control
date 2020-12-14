@@ -23,7 +23,7 @@ jobs:
       - name: Coverage
         uses: codecov/codecov-action@v1
   e2e:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,6 +35,7 @@ jobs:
         shell: pwsh
         run: |
           docker-compose up -d
+          .\docker\setup.ps1
           npm run build
           npm link
           ssc pull -c ./docker/config.json
