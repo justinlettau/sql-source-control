@@ -25,7 +25,7 @@ export default class Push {
     const config = new Config(this.options.config);
     const conn = config.getConnection(this.name);
 
-    inquirer
+    return inquirer
       .prompt<inquirer.Answers>([
         {
           message: [
@@ -48,8 +48,12 @@ export default class Push {
         }
       })
       .then(() => this.batch(config, conn))
-      .then(() => this.spinner.succeed('Successfully pushed!'))
-      .catch((error) => this.spinner.fail(error));
+      .then(() => {
+        this.spinner.succeed('Successfully pushed!');
+      })
+      .catch((error) => {
+        this.spinner.fail(error);
+      });
   }
 
   /**

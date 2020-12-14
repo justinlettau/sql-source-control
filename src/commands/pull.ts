@@ -51,7 +51,7 @@ export default class Pull {
     this.spinner.start(`Pulling from ${chalk.blue(conn.server)} ...`);
 
     // connect to db
-    new sql.ConnectionPool(conn)
+    return new sql.ConnectionPool(conn)
       .connect()
       .then((pool) => {
         const queries: any[] = [
@@ -109,7 +109,9 @@ export default class Pull {
           });
       })
       .then((results) => this.writeFiles(config, results))
-      .catch((error) => this.spinner.fail(error));
+      .catch((error) => {
+        this.spinner.fail(error);
+      });
   }
 
   /**

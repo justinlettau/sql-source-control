@@ -34,7 +34,7 @@ export default class Init {
       return;
     }
 
-    inquirer
+    return inquirer
       .prompt(this.getQuestions(conn, !!webConfigConns))
       .then((answers) => this.writeFiles(answers));
   }
