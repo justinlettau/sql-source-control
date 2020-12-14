@@ -2,7 +2,8 @@ services:
   - mssql2017
 
 install:
-  - npm install
+  - ps: Install-Product node ''
+  - npm ci
 
 build_script:
   - ps: .\appveyor\setup.ps1
