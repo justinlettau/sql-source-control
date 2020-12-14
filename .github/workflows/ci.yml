@@ -23,5 +23,8 @@ jobs:
       - name: Coverage
         uses: codecov/codecov-action@v1
 
-      - name: Build
-        run: npm run build
+      - name: Setup
+        run: docker-compose up -d
+
+      - name: E2E
+        run: npm run e2e:docker

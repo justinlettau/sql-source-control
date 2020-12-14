@@ -34,8 +34,8 @@
     "prepublishOnly": "npm run build",
     "release": "standard-version",
     "test": "jest",
-    "test:docker": "jest --roots=docker/",
-    "test:appveyor": "jest --roots=appveyor/",
+    "e2e:docker": "jest --roots=docker/",
+    "e2e:appveyor": "jest --roots=appveyor/",
     "format": "prettier --write ."
   },
   "bin": {

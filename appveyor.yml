@@ -12,4 +12,4 @@ build_script:
   - ssc pull -c ./appveyor/config.json
 
 test_script:
-  - npm run test:appveyor
+  - npm run e2e:appveyor
