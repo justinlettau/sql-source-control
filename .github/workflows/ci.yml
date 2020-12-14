@@ -22,13 +22,22 @@ jobs:
 
       - name: Coverage
         uses: codecov/codecov-action@v1
+  e2e:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install
+        run: npm ci
 
       - name: Setup
+        shell: pwsh
         run: |
           docker-compose up -d
-          sudo npm link
-
-      - name: E2E
-        run: |
+          npm run build
+          npm link
           ssc pull -c ./docker/config.json
-          npm run e2e:docker
+
+      - name: Test
+        run: npm run e2e:docker
