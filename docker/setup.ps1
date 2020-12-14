@@ -21,6 +21,6 @@ $ldf = "/var/opt/mssql/data/$($db)_Log.ldf"
 docker cp $bak "$($container):$($src)"
 
 # Attach database to local instance
-docker exec -it $container /opt/mssql-tools/bin/sqlcmd `
+docker exec $container /opt/mssql-tools/bin/sqlcmd `
    -S "$server" -U "$user" -P "$password" `
    -Q "RESTORE DATABASE [$db] FROM DISK = '$src' WITH MOVE '$($db)' TO '$mdf', MOVE '$($db)_log' TO '$ldf', REPLACE"
