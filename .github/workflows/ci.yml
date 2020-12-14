@@ -26,7 +26,7 @@ jobs:
       - name: Setup
         run: |
           docker-compose up -d
-          npm link
+          sudo npm link
 
       - name: E2E
         run: |
