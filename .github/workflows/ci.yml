@@ -40,9 +40,7 @@ jobs:
         run: npm ci
 
       - name: Setup
-        run: |
-          docker-compose up -d
-          sudo ./docker/wait-for-it.sh
+        run: docker-compose up -d
 
       - name: Restore
         shell: pwsh
