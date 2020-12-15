@@ -75,8 +75,7 @@ export default class MSSQLGenerator {
 
     if (item.hasIdentity) {
       output += EOL;
-      output += `SET IDENTITY_INSERT [${item.schema}].[${item.name}]
-       OFF`;
+      output += `SET IDENTITY_INSERT [${item.schema}].[${item.name}] OFF`;
       output += EOL;
     }
 
