@@ -42,7 +42,7 @@ jobs:
       - name: Setup
         run: |
           docker-compose up -d
-          .\docker\wait-for-it.sh
+          ./docker/wait-for-it.sh
 
       - name: Restore
         shell: pwsh
