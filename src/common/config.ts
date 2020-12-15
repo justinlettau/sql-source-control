@@ -155,6 +155,11 @@ export default class Config implements IConfig {
   includeConstraintName = false;
 
   /**
+   * Line ending character.
+   */
+  eol: 'auto' | 'crlf' | 'lf' = 'auto';
+
+  /**
    * Get root output directory.
    */
   getRoot() {
@@ -237,6 +242,7 @@ export default class Config implements IConfig {
       Object.assign(this.idempotency, config.idempotency);
       this.includeConstraintName =
         config.includeConstraintName || this.includeConstraintName;
+      this.eol = config.eol || this.eol;
     } catch (error) {
       console.error(
         'Could not find or parse config file. You can use the `init` command to create one!'

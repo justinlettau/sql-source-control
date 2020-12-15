@@ -28,11 +28,6 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - name: Config
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       - name: Checkout
         uses: actions/checkout@v2
 

@@ -15,5 +15,6 @@
     "Person.CountryRegion",
     "Person.PhoneNumberType",
     "Purchasing.ShipMethod"
-  ]
+  ],
+  "eol": "crlf"
 }

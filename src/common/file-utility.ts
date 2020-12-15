@@ -1,5 +1,6 @@
 import chalk = require('chalk');
 import * as checksum from 'checksum';
+import * as eol from 'eol';
 import filenamify = require('filenamify');
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
@@ -71,6 +72,20 @@ export default class FileUtility {
     }
 
     file = path.join(this.config.getRoot(), dir, file);
+
+    switch (this.config.eol) {
+      case 'crlf':
+        content = eol.crlf(content);
+        break;
+      case 'lf':
+        content = eol.lf(content);
+        break;
+      case 'auto':
+      default:
+        content = eol.auto(content);
+        break;
+    }
+
     content = content.trim();
 
     const cacheKey = this.normalize(file);
