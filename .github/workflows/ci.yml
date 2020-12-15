@@ -25,7 +25,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - name: Git Config
+      - name: Config
         run: |
           git config --global core.autocrlf false
           git config --global core.eol lf
@@ -40,6 +40,7 @@ jobs:
         shell: pwsh
         run: |
           docker-compose up -d
+          .\docker\wait-for-it.sh
           .\docker\setup.ps1
           npm run build
           sudo npm link

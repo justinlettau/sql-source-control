@@ -2,8 +2,6 @@ version: '3.9'
 services:
   db:
     image: 'mcr.microsoft.com/mssql/server:2019-latest'
-    healthcheck:
-      test: sqlcmd -S localhost -U sa -P 'Password12!' -Q 'SELECT 1'
     ports:
       - '1433:1433'
     environment:
