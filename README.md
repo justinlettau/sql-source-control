@@ -366,7 +366,7 @@ To use local docker container:
 
 ```bash
 npm run docker:up
-./docker/setup.ps1
+./docker/restore.ps1
 
 ssc pull -c ./docker/config.json
 ```
