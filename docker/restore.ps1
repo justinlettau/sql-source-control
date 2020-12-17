@@ -4,12 +4,9 @@ $user = "sa"
 $password = "Password12!"
 $db = "AdventureWorks2017"
 
-$backups = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'backups'
-$bak = Join-Path $backups "$($db).bak"
+$root = Get-Location
+$bak = Join-Path $root "$($db).bak"
 $url = "https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks2017.bak"
-
-# Create backups directory
-New-Item -ItemType Directory -Force -Path $backups
 
 # Download database backup
 $client = new-object System.Net.WebClient

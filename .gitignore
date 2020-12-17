@@ -5,7 +5,7 @@
 .vscode
 
 # Other
-backups/
+*.bak
 coverage/
 _sql-database/
 dist/
