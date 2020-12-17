@@ -199,7 +199,8 @@ export default class Config implements IConfig {
 
     return Object.assign(conn, {
       options: {
-        encrypt: true,
+        // https://github.com/tediousjs/tedious/releases/tag/v7.0.0
+        enableArithAbort: true,
       },
     });
   }
