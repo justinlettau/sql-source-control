@@ -1,6 +1,33 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.0.0](https://github.com/justinlettau/sql-source-control/compare/v2.1.1...v3.0.0) (2020-12-17)
+
+
+### Features
+
+* add `includeConstraintName` config option ([0235d94](https://github.com/justinlettau/sql-source-control/commit/0235d948e87b26a2fe592df24c99a98cbd285948))
+* add docker ([c5545a7](https://github.com/justinlettau/sql-source-control/commit/c5545a77c590fdbda2229794da2e3847f982777c))
+* add eol config option ([a5ca82e](https://github.com/justinlettau/sql-source-control/commit/a5ca82e8484a56fbcc64182691a4b3d4d140ad40)), closes [#7](https://github.com/justinlettau/sql-source-control/issues/7)
+* support both CLUSTERED and NONCLUSTERED INDEX, PERSISTED computed columns ([#133](https://github.com/justinlettau/sql-source-control/issues/133)) ([d37ad0a](https://github.com/justinlettau/sql-source-control/commit/d37ad0a4ed729a10c9c94314558e945d49740359))
+
+
+### Bug Fixes
+
+* appveyor node version ([9ccfe5a](https://github.com/justinlettau/sql-source-control/commit/9ccfe5a754cb5d8fa1fbc122bf8d3e9bd1405d6b))
+* build typing errors ([7367c73](https://github.com/justinlettau/sql-source-control/commit/7367c735f6be2bbb543b4103c3c585415234edf1))
+* convert actions to async ([8ad32f9](https://github.com/justinlettau/sql-source-control/commit/8ad32f9714918a17f4b38689ee2d7dfb8ff91002))
+* convert actions to async ([829b501](https://github.com/justinlettau/sql-source-control/commit/829b5013f0cb0539a53fe7fe1907e1240b466c7a))
+* convert actions to async ([5593747](https://github.com/justinlettau/sql-source-control/commit/55937475f451273e95e588d3426b57af6419ce91))
+* convert actions to async ([a841aee](https://github.com/justinlettau/sql-source-control/commit/a841aee6158d5b0852b732f811679b36103bfde0))
+* corrected data generation ([#117](https://github.com/justinlettau/sql-source-control/issues/117)) ([e109f7d](https://github.com/justinlettau/sql-source-control/commit/e109f7d72e4e76140e531f29053abd979843f658))
+* download bak files to backups folder ([4fa85ce](https://github.com/justinlettau/sql-source-control/commit/4fa85ce71e07cd227a85376c1df7ee5f5849a100))
+* export names of default constraints ([47eb83c](https://github.com/justinlettau/sql-source-control/commit/47eb83c9e6bb93652799e4230a67691043c9e836)), closes [#81](https://github.com/justinlettau/sql-source-control/issues/81)
+* identity insert line break ([b33b9c8](https://github.com/justinlettau/sql-source-control/commit/b33b9c8bb8af3e16fb26bd039a404912ae93a535))
+* lint error ([0e49aa6](https://github.com/justinlettau/sql-source-control/commit/0e49aa6e8a55bd0d5b8c7043f58918f36ce2d96f))
+* port type should be number instead of string ([#118](https://github.com/justinlettau/sql-source-control/issues/118)) ([69e9b2b](https://github.com/justinlettau/sql-source-control/commit/69e9b2bca1231ab61071863c9cc10deea72219ef))
+* remove backups folder ([4d7f71b](https://github.com/justinlettau/sql-source-control/commit/4d7f71b4a4547e842d04a908cf61557af643da90))
 
 <a name="2.1.1"></a>
 
