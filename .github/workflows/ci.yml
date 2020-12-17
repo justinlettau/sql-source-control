@@ -37,6 +37,9 @@ jobs:
       - name: Setup
         run: docker-compose up -d
 
+      - name: Startup
+        run: ./docker/wait.sh
+
       - name: Restore
         shell: pwsh
         run: .\docker\restore.ps1
