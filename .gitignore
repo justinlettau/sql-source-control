@@ -5,7 +5,7 @@
 .vscode
 
 # Other
-.nyc_output/
+backups/
 coverage/
 _sql-database/
 dist/
