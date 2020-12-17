@@ -38,7 +38,7 @@ jobs:
         run: docker-compose up -d
 
       - name: Startup
-        run: ./docker/wait.sh
+        run: sudo ./docker/wait.sh
 
       - name: Restore
         shell: pwsh
