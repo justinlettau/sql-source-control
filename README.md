@@ -201,7 +201,7 @@ following properties are supported.
 
 **includeConstraintName** (`boolean`): Optional. Indicates if constraint names should be scripted. Default is `false`.
 
-**eol** (`string`: Optional. Line ending character (`auto`, `crlf`, or `lf`). Default is `auto`.
+**eol** (`string`): Optional. Line ending character (`auto`, `crlf`, or `lf`). Default is `auto`.
 
 Note: See [Git documentation](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_formatting_and_whitespace) for information about how Git handles line endings.
 
