@@ -37,8 +37,10 @@ jobs:
       - name: Setup
         run: docker-compose up -d
 
-      - name: Startup
-        run: sudo ./docker/wait.sh
+      - name: Wait for MSSQL
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '10s'
 
       - name: Restore
         shell: pwsh
