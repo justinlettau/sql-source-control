@@ -64,7 +64,7 @@
     "multimatch": "^5.0.0",
     "ora": "^5.1.0",
     "safe-buffer": "^5.2.1",
-    "tedious": "^9.2.1",
+    "tedious": "^11.0.0",
     "ts-util-is": "^1.2.1",
     "update-notifier": "^5.0.1",
     "xml2js": "^0.4.23"
