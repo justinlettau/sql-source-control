@@ -54,7 +54,7 @@
     "chalk": "^4.1.0",
     "checksum": "^0.1.1",
     "cli-table": "^0.3.4",
-    "commander": "^6.2.1",
+    "commander": "^7.0.0",
     "eol": "^0.9.1",
     "filenamify": "^4.2.0",
     "fs-extra": "^9.0.1",
