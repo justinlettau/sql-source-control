@@ -23,12 +23,12 @@ BEGIN
     ALTER TABLE [Person].[Person] CHECK CONSTRAINT [FK_Person_BusinessEntity_BusinessEntityID]
 END
 
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('[Person].[Person]') AND name = 'AK_Person_rowguid')
+CREATE UNIQUE NONCLUSTERED INDEX [AK_Person_rowguid] ON [Person].[Person]([rowguid] ASC)
+
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('[Person].[Person]') AND name = 'IX_Person_LastName_FirstName_MiddleName')
 CREATE NONCLUSTERED INDEX [IX_Person_LastName_FirstName_MiddleName] ON [Person].[Person](
     [LastName] ASC,
     [FirstName] ASC,
     [MiddleName] ASC
 )
-
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('[Person].[Person]') AND name = 'AK_Person_rowguid')
-CREATE UNIQUE NONCLUSTERED INDEX [AK_Person_rowguid] ON [Person].[Person]([rowguid] ASC)
