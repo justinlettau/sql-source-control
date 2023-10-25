@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.1](https://github.com/justinlettau/sql-source-control/compare/v3.0.0...v3.0.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency xml2js to ^0.5.0 [security] ([859b589](https://github.com/justinlettau/sql-source-control/commit/859b589512ca189fe6861b30ff002c2700d63cb0))
+* **deps:** update dependency xml2js to ^0.6.0 ([355a768](https://github.com/justinlettau/sql-source-control/commit/355a768f941010c886fba1a39c3a73a1f5c21855))
+* readme ([e2b7a13](https://github.com/justinlettau/sql-source-control/commit/e2b7a13ce676d3cc4876bc83768507c6c02f271b))
+
 ## [3.0.0](https://github.com/justinlettau/sql-source-control/compare/v2.1.1...v3.0.0) (2020-12-17)
 
 
