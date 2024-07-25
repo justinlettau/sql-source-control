@@ -95,7 +95,7 @@ Options:
 | ---------- | ----- | -------- | ----------------------------- | ---------- |
 | `--config` | `-c`  | `string` | Relative path to config file. | `ssc.json` |
 
-Example output (see [here](https://github.com/justinlettau/sql-source-control-example) for full example):
+Example output:
 
 ```
 ./_sql-database
