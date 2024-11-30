@@ -108,7 +108,8 @@ export const foreignKeysRead = `
     SCHEMA_NAME(ro.schema_id) AS [parent_schema],
     ro.name AS [parent_table],
     fk.delete_referential_action,
-    fk.update_referential_action
+    fk.update_referential_action,
+    fkc.constraint_column_id
   FROM
     sys.foreign_key_columns k
     JOIN sys.columns rc ON rc.object_id = k.referenced_object_id AND rc.column_id = k.referenced_column_id
@@ -116,6 +117,11 @@ export const foreignKeysRead = `
     JOIN sys.foreign_keys fk ON fk.object_id = k.constraint_object_id
     JOIN sys.objects ro ON ro.object_id = fk.referenced_object_id
     JOIN sys.objects po ON po.object_id = fk.parent_object_id
+    JOIN sys.foreign_key_columns fkc ON fkc.parent_object_id = fk.parent_object_id and fkc.parent_column_id = k.parent_column_id
+  ORDER BY
+    po.object_id,
+    k.constraint_object_id,
+    fkc.constraint_column_id
 `;
 
 /**
