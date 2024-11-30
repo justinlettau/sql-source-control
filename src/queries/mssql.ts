@@ -62,6 +62,8 @@ export const columnsRead = `
       c.is_identity = 1
       AND c.object_id = ic.object_id
       AND c.column_id = ic.column_id
+    ORDER BY
+      c.object_id, c.column_id
 `;
 
 /**
@@ -116,6 +118,8 @@ export const foreignKeysRead = `
     JOIN sys.foreign_keys fk ON fk.object_id = k.constraint_object_id
     JOIN sys.objects ro ON ro.object_id = fk.referenced_object_id
     JOIN sys.objects po ON po.object_id = fk.parent_object_id
+  ORDER BY
+    po.object_id, k.constraint_object_id
 `;
 
 /**
@@ -144,8 +148,8 @@ export const indexesRead = `
   ORDER BY
     ro.schema_id,
     ro.name,
-    ic.key_ordinal,
-    c.object_id
+    i.name,
+    ic.key_ordinal
 `;
 
 /**

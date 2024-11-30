@@ -7,7 +7,7 @@
 # Other
 *.bak
 coverage/
-_sql-database/
+/_sql-database/
 dist/
 node_modules/
 ssc.json
